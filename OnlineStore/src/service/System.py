@@ -1,4 +1,4 @@
-from src.DomainLayer.UserHandler import *
+from OnlineStore.src.domain.user.user_handler import *
 
 
 def main():
