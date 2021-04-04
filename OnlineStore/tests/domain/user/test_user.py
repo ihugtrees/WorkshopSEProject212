@@ -1,11 +1,23 @@
 from unittest import TestCase
 
+from OnlineStore.src.domain.user.basket import Basket
+from OnlineStore.src.domain.user.cart import Cart
+from OnlineStore.src.domain.user.guest import Guest
 from OnlineStore.src.domain.user.user import User
 
 
 class TestUser(TestCase):
     def setUp(self) -> None:
-        self.user = User()
+        cart = Cart()
+        self.user = Guest(cart)
 
-    def test_view_cart(self):
-        pass
+    def test_add_product_to_cart(self):
+        self.user.add_product_to_cart(1, 2)
+        expected_list = list()
+        expected_list.append(1)
+        ans = self.user.cart.basketList[2].get_product_list()
+        self.assertEqual(expected_list, ans)
+
+    def remove_product_from_cart(self):
+        self.assertEqual(True, False)
+        print(self.user.cart.basketList[2].get_product_list())
