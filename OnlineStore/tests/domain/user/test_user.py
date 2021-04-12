@@ -2,14 +2,13 @@ from unittest import TestCase
 
 from OnlineStore.src.domain.user.basket import Basket
 from OnlineStore.src.domain.user.cart import Cart
-from OnlineStore.src.domain.user.guest import Guest
 from OnlineStore.src.domain.user.user import User
 
 
 class TestUser(TestCase):
     def setUp(self) -> None:
         cart = Cart()
-        self.user = Guest(cart)
+        #self.user = Guest(cart)
 
     def test_add_product_to_cart(self):
         self.user.add_product_to_cart(1, 2)
