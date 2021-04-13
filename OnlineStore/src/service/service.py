@@ -94,22 +94,35 @@ def purchase(user_name, payment_info):
 
 # 3.1
 def logout(user_name):
-    pass
+    try:
+        return [True, user_handler.logout(user_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 3.2, think about arguments and preconditions
 def open_store(store_name, user_name):
-    pass
+    try:
+        user_handler.check_permission_to_open_store(user_name)
+        return [True, store_handler.open_store(store_name, user_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 3.7
 def get_user_purchases_history(user_name):
-    pass
+    try:
+        return [True, user_handler.get_user_purchase_history(user_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 4.1.1
-def add_new_product_to_store_inventory(user_name, product_details, store_id):
-    pass
+def add_new_product_to_store_inventory(user_name, product_details, store_name):
+    try:
+        return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 4.1.2

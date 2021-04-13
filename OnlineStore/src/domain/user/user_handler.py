@@ -63,6 +63,27 @@ class UserHandler:
             raise Exception("user name does not exists in the system")
         return user.cart.remove_product_from_cart(product_id, quantity, store_id)
 
+    def logout(self, user_name):
+        user = self.users_dict.users[user_name]
+        if user is None:
+            raise Exception("User does not exist!")
+        user.logout()
+
+    def check_permission_to_open_store(self, user_name):
+        user = self.users_dict[user_name]
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        if not user.loggedIn:
+            raise Exception("the current user is not logged in, so he cannot open a store")
+
+    def get_user_purchase_history(self, user_name):
+        user = self.users_dict[user_name]
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        return user.purchase_history
+
+
+
 
 
 
