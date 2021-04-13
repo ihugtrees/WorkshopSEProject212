@@ -6,10 +6,11 @@ from OnlineStore.src.domain.user.user import User
 
 
 class TestUser(TestCase):
+
     def setUp(self) -> None:
         print("test user:")
         cart = Cart()
-        #self.user = User("user_name", "password", cart, True)
+        self.user = User('admin', '123', cart, 0)
 
     def test_add_product_to_cart(self):
         # self.user.add_product_to_cart(1, 2)

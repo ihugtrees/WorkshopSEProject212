@@ -1,10 +1,8 @@
 from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
+
 user_handler = UserHandler()
 store_handler = StoreHandler()
-
-
-
 
 
 # 2.1
@@ -165,6 +163,7 @@ def get_employee_information(user_name, employee_id):
 
 def get_user(user_name):
     pass
+
 
 # 4.9.2
 def get_employee_permissions(user_name, employee_id):
