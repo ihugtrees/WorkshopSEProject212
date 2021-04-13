@@ -18,5 +18,11 @@ class User:
             raise Exception("The password is incorrect")
         self.loggedIn = True
 
+    def add_product_to_cart(self, product_id: int, store_id: int):
+        self.cart.add_product_to_Cart(product_id, store_id)
+
+    def remove_product_from_cart(self, product_id: int, store_id: int):
+        self.Cart.remove_product_from_cart(product_id, store_id)
+
     def logout(self):
         self.loggedIn = False

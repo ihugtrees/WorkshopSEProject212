@@ -4,6 +4,9 @@ user_handler = UserHandler()
 store_handler = StoreHandler()
 
 
+
+
+
 # 2.1
 def get_into_site() -> str:
     return [True, user_handler.get_guest_unique_user_name()]
@@ -18,9 +21,9 @@ def exit_the_site(guest_name) -> bool:
 
 
 # 2.3
-def register(user_name, password, first_name, last_name, birthdate):
+def register(user_name, password):
     try:
-        return [True, user_handler.register(user_name, password, first_name, last_name, birthdate)]
+        return [True, user_handler.register(user_name, password)]
     except Exception as e:
         return [False, e[0]]
 
@@ -103,7 +106,7 @@ def logout(user_name):
 # 3.2, think about arguments and preconditions
 def open_store(store_name, user_name):
     try:
-        user_handler.check_permission_to_open_store(user_name)
+        user_handler.check_permission_to_open_store(user_name)  # why?
         return [True, store_handler.open_store(store_name, user_name)]
     except Exception as e:
         return [False, e[0]]
@@ -159,6 +162,9 @@ def remove_store_manager(user_name, store_manager_id):
 def get_employee_information(user_name, employee_id):
     pass
 
+
+def get_user(user_name):
+    pass
 
 # 4.9.2
 def get_employee_permissions(user_name, employee_id):
