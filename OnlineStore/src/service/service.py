@@ -1,42 +1,52 @@
-import OnlineStore.src.domain.user.user_handler as user_handler
+from OnlineStore.src.domain.user.user_handler import UserHandler
+from OnlineStore.src.domain.store.store_handler import StoreHandler
+user_handler = UserHandler()
+store_handler = StoreHandler()
 
 
 # 2.1
 def get_into_site() -> str:
-    return user_handler.get_guest_unique_user_name()
+    return [True, user_handler.get_guest_unique_user_name()]
 
 
 # 2.2
 def exit_the_site(guest_name) -> bool:
     try:
-        user_handler.exit_the_site(guest_name)
-        return [True]
+        return [True, user_handler.exit_the_site(guest_name)]
     except Exception as e:
         return [False, e[0]]
 
 
 # 2.3
 def register(user_name, password, first_name, last_name, birthdate):
-    pass
+    try:
+        return [True, user_handler.register(user_name, password, first_name, last_name, birthdate)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 2.4
 def login(user_name, password):
     try:
-        user_handler.login(user_name, password)
-        return [True]
+        return [True, user_handler.login(user_name, password)]
     except Exception as e:
         return [False, e[0]]
 
 
 # 2.5.0
-def get_information_about_products(store_id):
-    pass
+def get_information_about_products(store_name):
+    try:
+        return [True, store_handler.get_information_about_products(store_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 2.5.1
-def get_store_info(store_id):
-    pass
+def get_store_info(store_name):
+    try:
+        return [True, store_handler.get_store_info(store_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 2.6
@@ -51,20 +61,30 @@ def save_cart(user_name):
 
 # 2.8.1
 def get_cart_info(user_name):
-    pass
+    try:
+        return [True, user_handler.get_cart_info(user_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 """EDIT THE CART FUNCTIONS"""
 
 
 # 2.8.2
-def add_product(product_id, quantity):
-    pass
+def add_product(user_name, product_id, quantity, store_name):
+    try:
+        store_handler.check_product_exists_in_store(product_id, store_name)
+        return [True, user_handler.add_product(user_name, product_id, quantity, store_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 2.8.3
-def remove_product(product_id, quantity):
-    pass
+def remove_product(user_name, product_id, quantity, store_name):
+    try:
+        return [True, user_handler.remove_product(user_name, product_id, quantity, store_name)]
+    except Exception as e:
+        return [False, e[0]]
 
 
 # 2.9.0
@@ -145,5 +165,3 @@ def get_store_purchase_history_admin(user_name, store_id):
 # 6.4.2
 def get_user_purchase_history_admin(user_name, other_user_name):
     pass
-
-
