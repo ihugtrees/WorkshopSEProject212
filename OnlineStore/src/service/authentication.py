@@ -9,13 +9,13 @@ class Authentication:
 
     def register(self, username, password):
         if username in self.users:
-            return -1
+            return False
         else:
             self.users[username] = hashlib.sha256(password.encode()).hexdigest()
-            return 1
+            return True
 
     def login(self, username, password):
         if username in self.users and self.users[username] == hashlib.sha256(password.encode()).hexdigest():
-            return 1
+            return True
         else:
-            return -1
+            return False

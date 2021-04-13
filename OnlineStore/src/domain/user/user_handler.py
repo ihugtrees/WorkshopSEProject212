@@ -61,13 +61,13 @@ class UserHandler:
         user = self.users_dict[user_name]
         if user is None:
             raise Exception("user name does not exists in the system")
-        return user.cart.add_product_to_cart(product_id, quantity, store_id)
+        return user.cart.add_product_to_user(product_id, quantity, store_id)
 
     def remove_product(self, user_name, product_id, quantity, store_id):
         user = self.users_dict[user_name]
         if user is None:
             raise Exception("user name does not exists in the system")
-        return user.cart.remove_product_from_cart(product_id, quantity, store_id)
+        return user.cart.remove_product_from_user(product_id, quantity, store_id)
 
     def logout(self, user_name):
         user = self.users_dict.users[user_name]
@@ -79,7 +79,7 @@ class UserHandler:
         user = self.users_dict[user_name]
         if user is None:
             raise Exception("user name does not exists in the system")
-        if not user.loggedIn:
+        if not user.logged_in:
             raise Exception("the current user is not logged in, so he cannot open a store")
 
     def get_user_purchase_history(self, user_name):
