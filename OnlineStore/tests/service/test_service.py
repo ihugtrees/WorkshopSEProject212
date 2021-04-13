@@ -9,9 +9,9 @@ class TestService(TestCase):
         product_List_for_test5 = list()
         for i in range(0, 30):
             service.register("name" + str(i), "" + str(i))
-            service.open_store("store" + str(i), "name"+ str(i))
+            service.open_store("store" + str(i), "name" + str(i))
             for j in range(0, 3):
-                service.add_product("name" + str(i), "product"+str(j), 5, "store" + str(i))
+                service.add_product("name" + str(i), "product" + str(j), 5, "store" + str(i))
 
     def test_registered(self):
         ans = service.register("user_name_t1", "password")[0]
@@ -34,7 +34,7 @@ class TestService(TestCase):
 
     def test_open_store(self):
         ans = service.open_store("store31", "user_name1")
-        self.assertTrue(ans, msg = "failed to open store")
+        self.assertTrue(ans, msg="failed to open store")
         ans, store = service.get_store("store31")
         self.assertTrue(ans)
 
@@ -42,5 +42,3 @@ class TestService(TestCase):
         ans, info = service.get_information_about_products("store0")
         self.assertTrue(ans, "fail to open store")
         self.assertEqual(info, "TODO")
-
-
