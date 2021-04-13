@@ -2,11 +2,11 @@ from OnlineStore.src.domain.user.cart import Cart
 
 
 class User:
-    def __init__(self, user_name, cart: Cart, is_guest=True, purchase_history=None):
+    def __init__(self, user_name: str, cart: Cart, is_admin=False, purchase_history=None):
         self.logged_in = False
         self.user_name = user_name
         self.cart = cart
-        self.is_guest = is_guest
+        self.__is_admin = is_admin
         self.purchase_history = purchase_history
 
     def login(self):
@@ -14,6 +14,9 @@ class User:
 
     def logout(self):
         self.logged_in = False
+
+    def is_admin(self):
+        return self.__is_admin
 
     def add_product_to_user(self, store, product_id: int, quantity: int):
         self.cart.add_product_to_cart(store, product_id, quantity)

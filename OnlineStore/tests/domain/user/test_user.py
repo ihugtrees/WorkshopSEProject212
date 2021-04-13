@@ -6,17 +6,47 @@ from OnlineStore.src.domain.user.user import User
 
 class TestUser(TestCase):
     def setUp(self):
-        cart = Cart()
-        self.user = User('admin', cart, True)
+        self.admin = User('admin', Cart(), True)
+        self.user = User('admin', Cart())
+        self.user.add_product_to_user(1, 1, 1)
 
-    def test_add_product_to_cart(self):
-        self.user.add_product_to_user(1, 2)
-        expected_list = list()
-        expected_list.append(1)
-        ans = self.user.cart.basketList[2].get_product_dict()
-        self.assertEqual(expected_list, ans)
-        print("alive")
+    def test_login(self):
+        self.assertFalse(self.user.logged_in)
+        self.user.login()
+        self.assertTrue(self.user.logged_in)
 
-    def test_remove_product_from_cart(self):
-        self.assertEqual(True, False)
-        print(self.user.cart.basketList[2].get_product_dict())
+    def test_logout(self):
+        self.assertFalse(self.user.logged_in)
+        self.user.login()
+        self.assertTrue(self.user.logged_in)
+        self.user.logout()
+        self.assertFalse(self.user.logged_in)
+
+    def test_is_admin(self):
+        self.assertFalse(self.user.is_admin())
+        self.assertTrue(self.admin.is_admin())
+
+    def test_add_product_to_user(self):
+        self.assertRaises(Exception, self.user.add_product_to_user, 1, 1, 0)
+        self.assertRaises(Exception, self.user.add_product_to_user, 1, 1, -1)
+        self.user.add_product_to_user(1, 1, 1)
+        self.assertTrue(self.user.cart.basket_dict[1].products[1] == 2)
+        self.user.add_product_to_user(1, 2, 1)
+        self.assertTrue(self.user.cart.basket_dict[1].products[2] == 1)
+        self.user.add_product_to_user(2, 2, 2)
+        self.assertTrue(self.user.cart.basket_dict[2].products[2] == 2)
+
+    def test_remove_product_from_user(self):
+        self.assertRaises(Exception, self.user.remove_product_from_user, 2, 1, 1)
+        self.assertRaises(Exception, self.user.remove_product_from_user, 1, 2, 1)
+        self.assertRaises(Exception, self.user.remove_product_from_user, 1, 1, 0)
+        self.assertRaises(Exception, self.user.remove_product_from_user, 2, 1, -1)
+        self.user.add_product_to_user(1, 1, 1)
+        self.assertTrue(self.user.cart.basket_dict[1].products[1] == 2)
+        self.user.remove_product_from_user(1, 1, 1)
+        self.assertTrue(self.user.cart.basket_dict[1].products[1] == 1)
+        self.user.remove_product_from_user(1, 1, 1)
+        self.assertRaises(Exception, self.user.remove_product_from_user, 1, 1, 1)
+        self.user.add_product_to_user(2, 2, 2)
+        self.user.remove_product_from_user(2, 2, 1)
+        self.assertTrue(self.user.cart.basket_dict[2].products[2] == 1)

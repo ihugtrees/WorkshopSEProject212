@@ -41,7 +41,7 @@ class TestService(TestCase):
         ans = service.login("user_name0", "0")[0]
         self.assertTrue(ans)
         ans2, user = service.get_user("user_name0")
-        self.assertTrue(ans2 and (not user.is_guest))
+        self.assertTrue(ans2 and (not user.is_admin))
         ans = service.login("user_name0", "0")[0]
         self.assertFalse(ans, "try to login when the user already connected")
         ans = service.login("user_name0", "1")[0]
@@ -71,12 +71,12 @@ class TestService(TestCase):
     def test_get_cart(self):
         ans, cart = service.get_cart("user_name7")
         self.assertTrue(ans)
-        self.assertEqual(cart, service.get_user("user_name").cart)
+        self.assertEqual(cart, service.get_user("user_name").user)
 
     def test_add_product_to_cart(self):
         ans = service.add_product_to_cart("user_name8", "product44", 5, "store8")[0]
         self.assertTrue(ans, "failed")
-        self.assertTrue(service.get_user("user_name8").cart.basket_dict["store8"].product_dict["product44"] == 5)
+        self.assertTrue(service.get_user("user_name8").user.basket_dict["store8"].product_dict["product44"] == 5)
 
     def test_find_product_by_name(self):
         ans = service.find_product_by_name("notExist")[0]
