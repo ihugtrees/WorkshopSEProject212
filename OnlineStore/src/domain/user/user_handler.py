@@ -51,13 +51,19 @@ class UserHandler:
             raise Exception("user name does not exists in the system")
         return user.cart.basketList
 
-    def add_product(self, user_name, product_id, quantity, store_id):  # TODO change to add product to cart
+    def get_cart(self, user_name):
+        user = self.users_dict[user_name]
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        return user.cart
+
+    def add_product(self, user_name, product_id, quantity, store_id):
         user = self.users_dict[user_name]
         if user is None:
             raise Exception("user name does not exists in the system")
         return user.cart.add_product_to_cart(product_id, quantity, store_id)
 
-    def remove_product(self, user_name, product_id, quantity, store_id):  # TODO change func name
+    def remove_product(self, user_name, product_id, quantity, store_id):
         user = self.users_dict[user_name]
         if user is None:
             raise Exception("user name does not exists in the system")
