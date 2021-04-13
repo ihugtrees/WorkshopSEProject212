@@ -19,6 +19,12 @@ class StoreHandler:
                 "buying_types": store.buying_types, "discount_policy": store.discount_policy,
                 "discount_types": store.discount_types, }
 
+    def get_store(self, store_name):  # yonatan
+        store = self.store_dict[store_name]
+        if store is None:
+            raise Exception("store name does not exists in the system")
+        return store
+
     def check_product_exists_in_store(self, product_id, store_name):
         store = self.store_dict[store_name]
         if store is None:

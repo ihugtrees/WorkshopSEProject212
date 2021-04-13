@@ -183,3 +183,6 @@ def get_store_purchase_history_admin(user_name, store_id):
 # 6.4.2
 def get_user_purchase_history_admin(user_name, other_user_name):
     pass
+
+def get_store(store_id):
+    pass
