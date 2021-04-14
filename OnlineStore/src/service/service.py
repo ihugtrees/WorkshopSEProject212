@@ -34,7 +34,10 @@ def register(user_name, password):
 # 2.4
 def login(user_name, password):
     try:
-        return [True, user_handler.login(user_name)]
+        if auth.login(user_name, password):
+            return [True, user_handler.login(user_name)]
+        else:
+            return [False, Exception("login fail")]
     except Exception as e:
         return [False, e]
 
@@ -62,18 +65,23 @@ def get_store(store_name):
         return [False, e[0]]
 
 
-def add_product_to_store(user_name, product_details, store_name): # TODO
+def add_product_to_store(user_name, product_details, store_name):  # TODO
     try:
         return (True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name))
     except Exception as e:
         return (False, e)
+
 
 # 2.6
 def find_products(p_name, category, key_word, filter_options):
     pass
 
 
-def find_product_by_name(product_name):
+def find_product_by_name(product_name):  # TODO
+    pass
+
+
+def find_product_by_description(product_name):  # TODO maybe
     pass
 
 
@@ -199,8 +207,6 @@ def get_user(user_name):
             return True, user
     except Exception as e:
         return False, e
-
-
 
 
 # 4.9.2

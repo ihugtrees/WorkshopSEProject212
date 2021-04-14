@@ -29,6 +29,15 @@ class UserHandler:
             raise Exception("user name already exists in the system")
         self.users_dict[user_name] = User(user_name, Cart())
         return True
+        user = User(user_name, Cart())
+        self.users_dict[user_name] = user
+        return user
+
+    def get_cart_info(self, user_name):
+        user = self.users_dict[user_name]
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        return user.cart
 
     def login(self, user_name):
         if user_name not in self.users_dict:
