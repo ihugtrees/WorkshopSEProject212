@@ -10,10 +10,17 @@ class TestService(TestCase):
         auth = Authentication()
         product_List_for_test5 = list()
         for i in range(0, 30):
-            service.register("name" + str(i), "" + str(i))
+            service.register("user_name" + str(i), "" + str(i))
             service.open_store("store" + str(i), "name" + str(i))
-            for j in range(0, 3):
-                service.add_product("name" + str(i), "product" + str(i), 5, "store" + str(i))
+            product = {
+                "product_id": "product_" + str(i),
+                "product_name": "product_name" + str(i),
+                "quantity": i+10
+            }
+            service.add_new_product_to_store_inventory("user_name" + str(i), product, "store" + str(i))
+
+            if i < 10:
+                service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
 
     def test_get_into_site(self):  # 2.1
         self.assertTrue(service.get_into_site()[0])
@@ -48,7 +55,6 @@ class TestService(TestCase):
         self.assertFalse(ans, "test: wrong password")
         ans = service.login("aaaa", "bbb")[0]
         self.assertFalse(ans, "test: bad name")
-
 
     def test_open_store(self):  # 2.5
         ans = service.open_store("store31", "user_name1")

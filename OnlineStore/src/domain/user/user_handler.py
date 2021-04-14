@@ -40,10 +40,10 @@ class UserHandler:
         if self.users_dict.pop(guest_name) is None:
             raise Exception("Guest doesn't exists in the system")
 
-    def register(self, user_name, password, first_name, last_name, birthdate):
+    def register(self, user_name, password):
         if self.users_dict[user_name] is None:
             raise Exception("user name already exists in the system")
-        self.users_dict[user_name] = User(user_name, password, Cart(), first_name, last_name, birthdate, False)
+        self.users_dict[user_name] = User(user_name, password, Cart())
 
     def get_cart_info(self, user_name):
         user = self.users_dict[user_name]

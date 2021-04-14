@@ -23,7 +23,7 @@ def register(user_name, password):
     try:
         return [True, user_handler.register(user_name, password)]
     except Exception as e:
-        return [False, e[0]]
+        return (False, e)
 
 
 # 2.4
@@ -57,8 +57,12 @@ def get_store(store_name):
         return [False, e[0]]
 
 
-def add_product_to_store(): # TODO
-    pass
+def add_product_to_store(user_name, product_details, store_name): # TODO
+    try:
+        return (True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name))
+    except Exception as e:
+        return (False, e)
+
 # 2.6
 def find_products(p_name, category, key_word, filter_options):
     pass
@@ -97,7 +101,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
         store_handler.check_product_exists_in_store(product_id, store_name)
         return [True, user_handler.add_product(user_name, product_id, quantity, store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e]
 
 
 # 2.8.3
@@ -127,7 +131,7 @@ def open_store(store_name, user_name):
         user_handler.check_permission_to_open_store(user_name)  # why?
         return [True, store_handler.open_store(store_name, user_name)]
     except Exception as e:
-        return [False, e[0]]
+        return False, e
 
 
 # 3.7
@@ -143,7 +147,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     try:
         return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e]
 
 
 # 4.1.2

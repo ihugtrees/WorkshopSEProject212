@@ -3,7 +3,7 @@ from OnlineStore.src.domain.store.store import Store
 
 class StoreHandler:
     def __init__(self):
-        self.store_dict = dict()  # key-store name value-store
+        self.store_dict = dict()  # key-store name, value-store
 
     def get_information_about_products(self, store_name):
         store = self.store_dict[store_name]
