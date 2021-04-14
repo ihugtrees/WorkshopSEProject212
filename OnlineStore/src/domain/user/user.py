@@ -2,18 +2,18 @@ from OnlineStore.src.domain.user.cart import Cart
 
 
 class User:
-    def     __init__(self, user_name: str, cart: Cart, is_admin=False, purchase_history=None):
-        self.logged_in = False
+    def __init__(self, user_name: str, cart: Cart, is_admin=False, purchase_history=None):
+        self.is_logged = False
         self.user_name = user_name
         self.cart = cart
         self.__is_admin = is_admin
         self.purchase_history = purchase_history
 
     def login(self):
-        self.logged_in = True
+        self.is_logged = True
 
     def logout(self):
-        self.logged_in = False
+        self.is_logged = False
 
     def is_admin(self):
         return self.__is_admin

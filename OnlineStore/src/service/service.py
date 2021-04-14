@@ -34,7 +34,7 @@ def register(user_name, password):
 # 2.4
 def login(user_name, password):
     try:
-        return [True, user_handler.login(user_name, password)]
+        return [True, user_handler.login(user_name)]
     except Exception as e:
         return [False, e]
 
