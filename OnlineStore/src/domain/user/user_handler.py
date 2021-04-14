@@ -29,10 +29,11 @@ class UserHandler:
         user.login(password)
 
     def get_guest_unique_user_name(self):
-        guest = None
-        while guest is None:
+        new_user_name = get_random_string(GUEST_NAME_LENGTH)
+        guest = self.users_dict.get(new_user_name)
+        while guest is not None:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
-            guest = self.users_dict.get(new_user_name)
+            guest = self.users_dict[new_user_name]
         self.users_dict[guest] = User(new_user_name, None, Cart(), "guest", "guest", None, True)
         return new_user_name
 
