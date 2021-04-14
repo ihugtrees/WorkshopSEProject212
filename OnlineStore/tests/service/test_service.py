@@ -10,8 +10,8 @@ class TestService(TestCase):
         auth = Authentication()
         product_List_for_test5 = list()
         for i in range(0, 30):
-            service.register("user_name" + str(i), "" + str(i))
-            service.open_store("store" + str(i), "name" + str(i))
+            ans = service.register("user_name" + str(i), "" + str(i))[0]
+            ans_store = service.open_store("store" + str(i), "name" + str(i))[0]
             product = {
                 "product_id": "product_" + str(i),
                 "product_name": "product_name" + str(i),
@@ -23,25 +23,27 @@ class TestService(TestCase):
                 service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
 
     def test_get_into_site(self):  # 2.1
-        self.assertTrue(service.get_into_site()[0])
+        ans, user_name = service.get_into_site()
+        self.assertTrue(ans)
+        ans = service.get_user(user_name)[0]
+        self.assertTrue(ans)
 
     def test_exit_the_site(self):  # 2.2
-        user_name = service.get_into_site()
-        self.assertTrue(service.exit_the_site(user_name))
+        user_name = service.get_into_site()[1]
+        ans1 = service.exit_the_site(user_name)[0]
+        self.assertTrue(ans1)
+        ans = service.get_user(user_name)[0]
+        self.assertFalse(ans)
 
     def test_registered(self):  # 2.3
-        ans = service.register("user_name_t1", "password")[0]
+        ans = service.register("user_name31", "1")[0]
         if not ans:
             print("registration failed")
             self.assertTrue(ans)
-
-        ans2, user2 = service.get_user("user_name")
+        ans2, user2 = service.get_user("user_name31")
         self.assertTrue(ans2)
-        if user2.user_name == "user_name_t1" and user2.password == "password":
-            self.assertTrue(True)
-        else:
-            self.assertTrue(False)
-        ans = service.register("user_name1", "1")[0]
+        self.assertTrue(user2.user_name == "user_name31")
+        ans = service.register("user_name31", "1")[0]
         self.assertFalse(ans, "fail: try to register with name that already exist")
 
     def test_login(self):  # 2.4

@@ -1,8 +1,10 @@
 from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
+from OnlineStore.src.service.authentication import Authentication
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
+auth = Authentication()
 
 
 # 2.1
@@ -15,15 +17,18 @@ def exit_the_site(guest_name) -> bool:
     try:
         return [True, user_handler.exit_the_site(guest_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e]
 
 
 # 2.3
 def register(user_name, password):
     try:
-        return [True, user_handler.register(user_name, password)]
+        if auth.register(user_name, password):
+            return [True, user_handler.register(user_name)]
+        else:
+            return [False, Exception("user already exist")]
     except Exception as e:
-        return (False, e)
+        return [False, e]
 
 
 # 2.4
@@ -31,7 +36,7 @@ def login(user_name, password):
     try:
         return [True, user_handler.login(user_name, password)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e]
 
 
 # 2.5.0
@@ -89,7 +94,7 @@ def get_cart(user_name):
     try:
         return [True, user_handler.get_cart(user_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e]
 
 
 """EDIT THE CART FUNCTIONS"""
@@ -186,7 +191,16 @@ def get_employee_information(user_name, employee_id):
 
 
 def get_user(user_name):
-    pass
+    try:
+        user = user_handler.users_dict[user_name]
+        if user is None:
+            return False, None
+        else:
+            return True, user
+    except Exception as e:
+        return False, e
+
+
 
 
 # 4.9.2

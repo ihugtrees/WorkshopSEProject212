@@ -33,7 +33,7 @@ class StoreHandler:
             raise Exception("product id does not exists in the store")
 
     def open_store(self, store_name, user_name):
-        if self.store_dict[store_name] is not None:
+        if store_name in self.store_dict:
             raise Exception("store name already exists in the system")
         self.store_dict[store_name] = Store(store_name, user_name)
 
