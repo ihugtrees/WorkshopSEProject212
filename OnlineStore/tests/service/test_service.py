@@ -11,6 +11,7 @@ class TestService(TestCase):
         product_List_for_test5 = list()
         for i in range(0, 30):
             ans = service.register("user_name" + str(i), "" + str(i))[0]
+            ans_login = service.login("user_name" + str(i), str(i))[0]
             ans_store = service.open_store("store" + str(i), "user_name" + str(i))[0]
             product = {
                 "product_id": "product_" + str(i),
@@ -99,6 +100,13 @@ class TestService(TestCase):
         ans, cart = service.get_cart_info("user_name15")
         self.assertTrue(ans and cart.basket_dict["store6"][0].quantity == 12)
 
+    def test_remove_product_from_store_inventory(self):
+        ans1 = service.find_product_by_id("product_7", "store7")
+        self.assertTrue(ans1[0])
+        ans2 = service.remove_product_from_store_inventory("user_name7", "product_7", "store7")
+        self.assertTrue(ans2)
+        ans3 = service.find_product_by_id("product_7", "store7")
+        self.assertFalse(ans3[0])
 
 
 

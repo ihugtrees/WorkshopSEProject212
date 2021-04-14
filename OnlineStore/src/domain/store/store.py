@@ -27,3 +27,9 @@ class Store:
     def check_permission_to_edit_store_inventory(self, user_name):
         if (user_name not in self.managers) and (user_name not in self.owners) and user_name != self.store_founder:
             raise Exception("current user doesnt have permission to edit the inventory")
+
+    def remove_product_from_store_inventory(self, product_id):
+        self.inventory.remove_product_from_store_inventory(product_id)
+
+    def add_new_product_to_store_inventory(self, product_details):
+        self.inventory.add_new_product_to_store_inventory(product_details)
