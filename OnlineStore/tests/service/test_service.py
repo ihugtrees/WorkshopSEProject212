@@ -22,6 +22,7 @@ class TestService(TestCase):
 
             if i < 10:
                 service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
+            service.logout("user_name" + str(i))
         #for u in service.user_handler.users_dict.keys():
             #print(u)
     def test_get_into_site(self):  # 2.1
@@ -51,8 +52,8 @@ class TestService(TestCase):
     def test_login(self):  # 2.4
         ans = service.login("user_name0", "0")[0]
         self.assertTrue(ans)
-        ans2, user = service.get_user("user_name0")
-        self.assertTrue(ans2 and user.logged_in)
+        ans2 = service.get_user("user_name0")
+        self.assertTrue(ans2[0] and ans2[1].is_logged)
         ans3 = service.login("user_name0", "0")[0]
         self.assertFalse(ans3, "try to login when the user already connected")
         ans4 = service.login("user_name0", "1")[0]
