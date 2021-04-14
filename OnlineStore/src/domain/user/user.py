@@ -10,6 +10,8 @@ class User:
         self.purchase_history = purchase_history
 
     def login(self):
+        if self.is_logged:
+            raise Exception("Already loggedIn")
         self.is_logged = True
 
     def logout(self):

@@ -17,7 +17,7 @@ def exit_the_site(guest_name) -> bool:
     try:
         return [True, user_handler.exit_the_site(guest_name)]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 # 2.3
@@ -28,7 +28,7 @@ def register(user_name, password):
         else:
             return [False, Exception("user already exist")]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 # 2.4
@@ -39,7 +39,7 @@ def login(user_name, password):
         else:
             return [False, Exception("login fail")]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 # 2.5.0
@@ -47,7 +47,7 @@ def get_information_about_products(store_name):
     try:
         return [True, store_handler.get_information_about_products(store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 # 2.5.1
@@ -55,21 +55,21 @@ def get_store_info(store_name):
     try:
         return [True, store_handler.get_store_info(store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 def get_store(store_name):
     try:
         return [True, store_handler.get_store(store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 def add_product_to_store(user_name, product_details, store_name):  # TODO
     try:
-        return (True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name))
+        return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
     except Exception as e:
-        return (False, e)
+        return [False, e.args[0]]
 
 
 # 2.6
@@ -77,8 +77,12 @@ def find_products(p_name, category, key_word, filter_options):
     pass
 
 
-def find_product_by_name(product_name):  # TODO
-    pass
+def find_product_by_id(product_id, store_name):  # TODO
+    try:
+        return [True, store_handler.find_product_by_id(product_id, store_name)]
+    except Exception as e:
+        return [False, e.args[0]]
+
 
 
 def find_product_by_description(product_name):  # TODO maybe
@@ -95,14 +99,14 @@ def get_cart_info(user_name):
     try:
         return [True, user_handler.get_cart_info(user_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 def get_cart(user_name):
     try:
         return [True, user_handler.get_cart(user_name)]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 """EDIT THE CART FUNCTIONS"""
@@ -114,7 +118,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
         store_handler.check_product_exists_in_store(product_id, store_name)
         return [True, user_handler.add_product(user_name, product_id, quantity, store_name)]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 # 2.8.3
@@ -122,7 +126,7 @@ def remove_product(user_name, product_id, quantity, store_name):
     try:
         return [True, user_handler.remove_product(user_name, product_id, quantity, store_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 # 2.9.0
@@ -135,7 +139,7 @@ def logout(user_name):
     try:
         return [True, user_handler.logout(user_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 # 3.2, think about arguments and preconditions
@@ -144,7 +148,7 @@ def open_store(store_name, user_name):
         user_handler.check_permission_to_open_store(user_name)  # why?
         return [True, store_handler.open_store(store_name, user_name)]
     except Exception as e:
-        return False, e
+        return [False, e.args[0]]
 
 
 # 3.7
@@ -152,20 +156,39 @@ def get_user_purchases_history(user_name):
     try:
         return [True, user_handler.get_user_purchase_history(user_name)]
     except Exception as e:
-        return [False, e[0]]
+        return [False, e.args[0]]
 
 
 # 4.1.1
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
+    """
+
+    :param user_name:
+    :param product_details:
+    :param store_name:
+    :return:
+    """
     try:
         return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
     except Exception as e:
-        return [False, e]
+        return [False, e.args[0]]
 
 
 # 4.1.2
-def remove_product_from_store_inventory(user_name, product_id, store_id):
-    pass
+def remove_product_from_store_inventory(user_name, product_id, store_name):
+    """
+    removes a @product_id from a store named @store_name
+
+    :param user_name: user name of whom who asked to remove the product
+    :param product_id: product id to remove
+    :param store_name: store name to remove from
+    :return: [boolean, T] -> if boolean is false T is a string representation of the problem
+    if boolean is true T is None
+    """
+    try:
+        return [True, store_handler.remove_product_from_store_inventory(user_name, product_id, store_name)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 # 4.1.3
@@ -200,13 +223,13 @@ def get_employee_information(user_name, employee_id):
 
 def get_user(user_name):
     try:
-        user = user_handler.users_dict[user_name]
+        user = user_handler.users_dict.get(user_name)
         if user is None:
-            return False, None
+            return [False, None]
         else:
-            return True, user
+            return [True, user]
     except Exception as e:
-        return False, e
+        return [False, e.args[0]]
 
 
 # 4.9.2

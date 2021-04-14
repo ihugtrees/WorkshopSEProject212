@@ -1,3 +1,6 @@
+from OnlineStore.src.domain.store.inventory import Inventory
+
+
 class Store:
     def __init__(self, store_name, buying_policy, buying_types, discount_policy,
                  discount_types, inventory, purchase_history, owners, managers, store_founder):
@@ -13,10 +16,10 @@ class Store:
         self.store_founder = store_founder
 
     def __init__(self, store_name, store_founder):
-        self.managers = None
-        self.owners = None
+        self.managers = list()
+        self.owners = list()
         self.purchase_history = None
-        self.inventory = None
+        self.inventory = Inventory(dict())
         self.discount_types = None
         self.discount_policy = None
         self.buying_types = None

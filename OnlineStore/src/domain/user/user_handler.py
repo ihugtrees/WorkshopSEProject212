@@ -55,6 +55,7 @@ class UserHandler:
     def exit_the_site(self, guest_name):
         if guest_name not in self.users_dict:
             raise Exception("Guest doesn't exists in the system")
+        self.users_dict.pop(guest_name)
 
     def add_product(self, user_name, store_id, product_id, quantity):
         if user_name not in self.users_dict:
@@ -81,15 +82,15 @@ class UserHandler:
         self.users_dict[new_user_name] = User(new_user_name, Cart())
         return new_user_name
 
-    # def check_permission_to_open_store(self, user_name):
-    #     user = self.users_dict[user_name]
-    #     if user not in self.users_dict:
-    #         raise Exception("user name does not exists in the system")
-    #     if not user.is_logged:
-    #         raise Exception("the current user is not logged in, so he cannot open a store")
-    #
-    # def get_user_purchase_history(self, user_name):
-    #     user = self.users_dict[user_name]
-    #     if user is None:
-    #         raise Exception("user name does not exists in the system")
-    #     return user.purchase_history
+    def check_permission_to_open_store(self, user_name):
+        user = self.users_dict.get(user_name)
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        if user.is_logged is False:
+            raise Exception("the current user is not logged in, so he cannot open a store")
+
+    def get_user_purchase_history(self, user_name):
+        user = self.users_dict[user_name]
+        if user is None:
+            raise Exception("user name does not exists in the system")
+        return user.purchase_history

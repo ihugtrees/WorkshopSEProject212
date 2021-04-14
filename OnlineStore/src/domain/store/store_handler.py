@@ -38,10 +38,28 @@ class StoreHandler:
         self.store_dict[store_name] = Store(store_name, user_name)
 
     def add_new_product_to_store_inventory(self, user_name, product_details, store_name):
-        store = self.store_dict[store_name]
+        store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("store name does not exists in the system")
-        store.check_permission_to_edit_store_inventory(user_name)
-        if store.inventory.product_dict[product_details["product_id"]] is not None:
+        store.check_permission_to_edit_store_inventory(user_name)  # TODO
+        if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
+        store.add_new_product_to_store_inventory(product_details)
+
+    def remove_product_from_store_inventory(self, user_name, product_id, store_name):
+        store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("The store does not exists in the system")
+        store.check_permission_to_edit_store_inventory(user_name)
+        store.remove_product_from_store_inventory(product_id)
+
+    def find_product_by_id(self, product_id, store_name):
+        store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("The store does not exists in the system")
+        product = store.inventory.products_dict.get(product_id)
+        if product is None:
+            raise Exception("Product does not exist in the store")
+        return product
+
 
