@@ -16,8 +16,8 @@ class Store:
         self.store_founder = store_founder
 
     def __init__(self, store_name, store_founder):
-        self.managers = list()
-        self.owners = list()
+        self.managers = dict()
+        self.owners = dict()
         self.purchase_history = None
         self.inventory = Inventory(dict())
         self.discount_types = None
@@ -39,3 +39,20 @@ class Store:
 
     def edit_product(self, product_id, product_details):
         self.inventory.products_dict[product_id].edit_product_description(product_details)
+
+    def check_permission_to_assign(self, user_name):
+        if user_name == self.store_founder or user_name in self.owners:
+            return True
+        return False
+
+    def assign_new_owner(self, owner_name, assign_name):
+        if owner_name in self.owners:
+            raise Exception(owner_name + "already owner")
+        if owner_name in self.managers:
+            self.managers.pop(owner_name)
+        self.owners[owner_name] = assign_name
+
+    def assign_new_manager(self, manager_name, assign_name):
+        if manager_name in self.owners or manager_name in self.managers:
+            raise Exception(manager_name + "already owner")
+        self.managers[manager_name] = assign_name

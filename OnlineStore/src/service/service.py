@@ -1,3 +1,4 @@
+from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
@@ -203,12 +204,29 @@ def edit_product_details(user_name, product_details, store_id, product_id):
 
 # 4.3
 def assign_store_owner(user_name, new_store_owner_id, store_id):
-    pass
+    try:
+        store: Store = store_handler.store_dict[store_id]
+        if store.check_permission_to_assign(user_name):
+            return True, store.assign_new_owner(new_store_owner_id, user_name)
+        else:
+            return False, (user_name + " is not owner of " + store_id)
+    except Exception as e:
+        return False, (user_name + " is not owner of " + store_id)
+
+
+
 
 
 # 4.5
 def assign_store_manager(user_name, new_store_manager_id, store_id):
-    pass
+    try:
+        store: Store = store_handler.store_dict[store_id]
+        if store.check_permission_to_assign(user_name):
+            return True, store.assign_new_manager(new_store_manager_id, user_name)
+        else:
+            return False, (user_name + " is not owner of " + store_id)
+    except Exception as e:
+        return False, (user_name + " is not owner of " + store_id)
 
 
 # 4.6
