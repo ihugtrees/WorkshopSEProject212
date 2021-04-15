@@ -164,7 +164,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
 
     :param user_name:
-    :param product_details:
+    :param product_details: (dict)
     :param store_name:
     :return:
     """

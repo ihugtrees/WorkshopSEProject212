@@ -126,15 +126,38 @@ class TestService(TestCase):
         ans3, history = service.get_user_purchases_history("user_name13")
         self.assertTrue(ans3 and (history[0] == "TODO"))
 
+    def test_add_new_product_to_store_inventory(self):  # 4.1.1
+        new_product = {
+            "product_id": "product40",
+            "product_name": "product_name40",
+            "quantity": 40
+        }
+        ans = service.add_new_product_to_store_inventory("user_name14", new_product, "store14")[0]
+        self.assertTrue(ans, "failed")
+        self.assertTrue("product40" in service.get_store("store14")[1].inventory.products_dict)
+        ans2 = service.add_new_product_to_store_inventory("user_name15", new_product, "store14")[0]
+        self.assertFalse(ans2, "test: user doesnt have permissions")
 
 
 
+    def test_remove_product_from_store_inventory(self):  # 4.1.2
+        ans, result = service.remove_product_from_store_inventory("user_name14", "product15", "store15")
+        self.assertFalse(ans, "test: user doesnt have permissions")
+        ans, result = service.remove_product_from_store_inventory("user_name15", "product15", "store15")
+        self.assertTrue(ans and (not ("product15" in service.get_store("store15")[1].inventory.products_dict)))
+        ans, result = service.remove_product_from_store_inventory("user_name15", "product15", "store15")
+        self.assertFalse(ans, "test: try to remove product that doesn't exist")
 
 
+    def test_edit_product_details(self):  # 4.1.3
+        new_description = "new description"
+        ans, result = service.edit_product_details("user_name16", new_description, "store16", "product16")
+        self.assertTrue(ans and (service.get_store("store16")[1].inventory.products_dict["product16"].description == new_description))
+        #ans2, error_msg = service.edit_product_details("user_name5", new_description, "store5", "product5")
+        #self.assertFalse(ans2, "test: user logout")
+        ans2, result2 = service.edit_product_details("user_name16", new_description, "store16", "product17")
+        self.assertFalse(ans2, "test: product doesnt exist in the store")
+        ans2, result2 = service.edit_product_details("user_name17", new_description, "store16", "product16")
+        self.assertFalse(ans2, "test: user have no permissions")
 
 
-
-    # def test_add_product_to_cart(self):  # 2.7
-    #     ans = service.add_product_to_cart("user_name11", "product4", 5, "store11")[0]
-    #     self.assertTrue(ans, "failed")
-    #     self.assertTrue(service.get_user("user_name11").user.basket_dict["store11"].product_dict["product4"] == 5)
