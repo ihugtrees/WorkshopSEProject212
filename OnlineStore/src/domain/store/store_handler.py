@@ -6,7 +6,7 @@ class StoreHandler:
         self.store_dict = dict()  # key-store name, value-store
 
     def get_information_about_products(self, store_name):
-        store = self.store_dict[store_name]
+        store = self.store_dict[store_name]  # TODO fix that func
         if store is None:
             raise Exception("store name does not exists in the system")
         return store.inventory.product_list
@@ -25,12 +25,13 @@ class StoreHandler:
             raise Exception("store name does not exists in the system")
         return store
 
-    def check_product_exists_in_store(self, product_id, store_name):
+    def check_product_exists_in_store(self, product_id, store_name, quantity):
         store = self.store_dict[store_name]
         if store is None:
             raise Exception("store name does not exists in the system")
         if store.inventory.product_dict[product_id] is None:
             raise Exception("product id does not exists in the store")
+        store.inventory.products_dict[product_id].take_quantity(quantity)  # yonatan
 
     def open_store(self, store_name, user_name):
         if store_name in self.store_dict:

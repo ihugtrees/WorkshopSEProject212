@@ -2,7 +2,7 @@ from OnlineStore.src.domain.user.cart import Cart
 
 
 class User:
-    def __init__(self, user_name: str, cart: Cart, is_admin=False, purchase_history=None):
+    def __init__(self, user_name: str, cart: Cart, is_admin=False, purchase_history=list()):  # change purchase history from none to empty list (yonatan)
         self.is_logged = False
         self.user_name = user_name
         self.cart = cart

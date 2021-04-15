@@ -36,3 +36,6 @@ class Store:
 
     def add_new_product_to_store_inventory(self, product_details):
         self.inventory.add_new_product_to_store_inventory(product_details)
+
+    def edit_product(self, product_id, product_details):
+        self.inventory.products_dict[product_id].edit_product_description(product_details)

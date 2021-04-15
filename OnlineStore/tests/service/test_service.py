@@ -14,15 +14,17 @@ class TestService(TestCase):
             ans_login = service.login("user_name" + str(i), str(i))[0]
             ans_store = service.open_store("store" + str(i), "user_name" + str(i))[0]
             product = {
-                "product_id": "product_" + str(i),
+                "product_id": "product" + str(i),
                 "product_name": "product_name" + str(i),
                 "quantity": i+10
             }
             service.add_new_product_to_store_inventory("user_name" + str(i), product, "store" + str(i))
 
             if i < 10:
+                service.logout("user_name" + str(i))
+            if i < 20:
                 service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
-            service.logout("user_name" + str(i))
+
         #for u in service.user_handler.users_dict.keys():
             #print(u)
     def test_get_into_site(self):  # 2.1
@@ -61,18 +63,10 @@ class TestService(TestCase):
         ans5 = service.login("aaaa", "bbb")[0]
         self.assertFalse(ans5, "test: bad name")
 
-    def test_open_store(self):  # 2.5
-        ans = service.open_store("store31", "user_name1")
-        self.assertTrue(ans, msg="failed to open store")
-        ans, store = service.get_store("store31")
-        self.assertTrue(ans)
-        ans = service.open_store("store31", "user_name2")
-        self.assertFalse(ans, "test: store name already exist")
-
     def test_get_information_about_products(self):  # 2.5
         ans, info = service.get_information_about_products("store0")
-        self.assertTrue(ans, "fail to open store")
-        self.assertEqual(info, "TODO")
+        self.assertTrue(ans, "fail to get info")
+        self.assertEqual(info, service.get_store("store0").inventory.products_dict, "the info is not mach")
 
     def test_get_store(self):  # 2.5
         ans, store = service.get_store("store6")
@@ -82,12 +76,13 @@ class TestService(TestCase):
     def test_get_cart(self):
         ans, cart = service.get_cart("user_name7")
         self.assertTrue(ans)
-        self.assertEqual(cart, service.get_user("user_name").user)
+        self.assertEqual(cart, service.get_user("user_name7")[1].cart)
 
     def test_add_product_to_cart(self):  # 2.7
-        ans = service.add_product_to_cart("user_name8", "product44", 5, "store8")[0]
+        ans = service.add_product_to_cart("user_name11", "product4", 5, "store4")[0]
         self.assertTrue(ans, "failed")
-        self.assertTrue(service.get_user("user_name8").user.basket_dict["store8"].product_dict["product44"] == 5)
+        self.assertTrue(service.get_user("user_name11").user.basket_dict["store11"].product_dict["product4"] == 5)
+        self.assertTrue(service.store_handler.store_dict["store4"].inventory.products_dict["product4"].quantity == 14)
 
     def test_find_product_by_name(self):  # 2.6
         ans = service.find_product_by_name("notExist")[0]
@@ -101,13 +96,45 @@ class TestService(TestCase):
         ans, cart = service.get_cart_info("user_name15")
         self.assertTrue(ans and cart.basket_dict["store6"][0].quantity == 12)
 
-    def test_remove_product_from_store_inventory(self):
-        ans1 = service.find_product_by_id("product_7", "store7")
+    def test_remove_product_from_store_inventory(self):  # 2.8
+        ans1 = service.find_product_by_id("product7", "store7")
         self.assertTrue(ans1[0])
-        ans2 = service.remove_product_from_store_inventory("user_name7", "product_7", "store7")
+        ans2 = service.remove_product_from_store_inventory("user_name7", "product7", "store7")
         self.assertTrue(ans2)
-        ans3 = service.find_product_by_id("product_7", "store7")
+        ans3 = service.find_product_by_id("product7", "store7")
         self.assertFalse(ans3[0])
 
+## TODO 2.9
+
+    def test_logout(self):  # 3.1
+        ans = service.logout("user_name12")
+        self.assertTrue(ans and (not service.get_user("user_name12")[1].is_logged))
+
+    def test_open_store(self):  # 3.2
+        ans = service.open_store("store31", "user_name1")
+        self.assertTrue(ans, msg="failed to open store")
+        ans, store = service.get_store("store31")
+        self.assertTrue(ans)
+        ans = service.open_store("store31", "user_name2")
+        self.assertFalse(ans, "test: store name already exist")
+
+    def test_get_user_purchases_history(self):  # 3.7
+        ans, history = service.get_user_purchases_history("user_name13")
+        self.assertTrue(ans and (history == list()))
+        ans2, result = service.purchase("user_name13", "TODO")
+        self.assertTrue(ans2, result)
+        ans3, history = service.get_user_purchases_history("user_name13")
+        self.assertTrue(ans3 and (history[0] == "TODO"))
 
 
+
+
+
+
+
+
+
+    # def test_add_product_to_cart(self):  # 2.7
+    #     ans = service.add_product_to_cart("user_name11", "product4", 5, "store11")[0]
+    #     self.assertTrue(ans, "failed")
+    #     self.assertTrue(service.get_user("user_name11").user.basket_dict["store11"].product_dict["product4"] == 5)

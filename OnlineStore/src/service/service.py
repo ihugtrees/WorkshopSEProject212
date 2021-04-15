@@ -115,7 +115,7 @@ def get_cart(user_name):
 # 2.8.2
 def add_product_to_cart(user_name, product_id, quantity, store_name):
     try:
-        store_handler.check_product_exists_in_store(product_id, store_name)
+        store_handler.check_product_exists_in_store(product_id, store_name, quantity)
         return [True, user_handler.add_product(user_name, product_id, quantity, store_name)]
     except Exception as e:
         return [False, e.args[0]]
@@ -192,8 +192,13 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
 
 
 # 4.1.3
-def edit_product_details(user_name, product_details, store_id):
-    pass
+def edit_product_details(user_name, product_details, store_id, product_id):
+    try:
+        store_handler.store_dict[store_id].check_permission_to_edit_store_inventory(user_name)
+        return [True, store_handler.store_dict[store_id].edit_product(product_id, product_details)]
+    except Exception as e:
+        return [False, e.args[0]]
+
 
 
 # 4.3
@@ -223,11 +228,8 @@ def get_employee_information(user_name, employee_id):
 
 def get_user(user_name):
     try:
-        user = user_handler.users_dict.get(user_name)
-        if user is None:
-            return [False, None]
-        else:
-            return [True, user]
+        user = user_handler.users_dict[user_name]
+        return [True, user]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -253,4 +255,9 @@ def get_user_purchase_history_admin(user_name, other_user_name):
 
 
 def get_store(store_id):
-    pass
+    try:
+        store = store_handler.store_dict[store_id]
+        return True, store
+    except Exception as e:
+        return False, e.args[0]
+
