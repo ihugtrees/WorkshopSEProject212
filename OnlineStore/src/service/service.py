@@ -230,8 +230,12 @@ def assign_store_manager(user_name, new_store_manager_id, store_id):
 
 
 # 4.6
-def edit_store_manager_permissions(user_name, new_permissions):
-    pass
+def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_permissions: int, store_name: str):
+    try:
+        store_handler.is_manager_assigner(user_name, store_name, store_manager_name)
+        return [True, user_handler.edit_store_manager_permissions(user_name, store_manager_name, new_permissions)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 # 4.7

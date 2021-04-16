@@ -56,3 +56,7 @@ class Store:
         if manager_name in self.owners or manager_name in self.managers:
             raise Exception(manager_name + "already owner")
         self.managers[manager_name] = assign_name
+
+    def is_manager_owner(self, user_name, manager_name):
+        if self.managers.get(manager_name) is not user_name:
+            raise Exception("The user is not the one who assigned the manager")

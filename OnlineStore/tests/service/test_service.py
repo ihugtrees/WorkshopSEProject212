@@ -16,7 +16,7 @@ class TestService(TestCase):
             product = {
                 "product_id": "product" + str(i),
                 "product_name": "product_name" + str(i),
-                "quantity": i+10
+                "quantity": i + 10
             }
             service.add_new_product_to_store_inventory("user_name" + str(i), product, "store" + str(i))
 
@@ -25,8 +25,9 @@ class TestService(TestCase):
             if i < 20:
                 service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
 
-        #for u in service.user_handler.users_dict.keys():
-            #print(u)
+        # for u in service.user_handler.users_dict.keys():
+        # print(u)
+
     def test_get_into_site(self):  # 2.1
         ans, user_name = service.get_into_site()
         self.assertTrue(ans)
@@ -104,7 +105,7 @@ class TestService(TestCase):
         ans3 = service.find_product_by_id("product7", "store7")
         self.assertFalse(ans3[0])
 
-## TODO 2.9
+    ## TODO 2.9
 
     def test_logout(self):  # 3.1
         ans = service.logout("user_name12")
@@ -138,8 +139,6 @@ class TestService(TestCase):
         ans2 = service.add_new_product_to_store_inventory("user_name15", new_product, "store14")[0]
         self.assertFalse(ans2, "test: user doesnt have permissions")
 
-
-
     def test_remove_product_from_store_inventory(self):  # 4.1.2
         ans, result = service.remove_product_from_store_inventory("user_name14", "product15", "store15")
         self.assertFalse(ans, "test: user doesnt have permissions")
@@ -148,13 +147,13 @@ class TestService(TestCase):
         ans, result = service.remove_product_from_store_inventory("user_name15", "product15", "store15")
         self.assertFalse(ans, "test: try to remove product that doesn't exist")
 
-
     def test_edit_product_details(self):  # 4.1.3
         new_description = "new description"
         ans, result = service.edit_product_details("user_name16", new_description, "store16", "product16")
-        self.assertTrue(ans and (service.get_store("store16")[1].inventory.products_dict["product16"].description == new_description))
-        #ans2, error_msg = service.edit_product_details("user_name5", new_description, "store5", "product5")
-        #self.assertFalse(ans2, "test: user logout")
+        self.assertTrue(ans and (service.get_store("store16")[1].inventory.products_dict[
+                                     "product16"].description == new_description))
+        # ans2, error_msg = service.edit_product_details("user_name5", new_description, "store5", "product5")
+        # self.assertFalse(ans2, "test: user logout")
         ans2, result2 = service.edit_product_details("user_name16", new_description, "store16", "product17")
         self.assertFalse(ans2, "test: product doesnt exist in the store")
         ans2, result2 = service.edit_product_details("user_name17", new_description, "store16", "product16")
@@ -180,5 +179,5 @@ class TestService(TestCase):
         ans4, result = service.assign_store_manager("user_name14", "user_name15", "store17")
         self.assertFalse(ans4, "test: no permissions to assign")
 
-
-
+    def test_edit_manager_permissions(self):  # 4.6
+        pass

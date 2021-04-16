@@ -94,3 +94,9 @@ class UserHandler:
         if user is None:
             raise Exception("user name does not exists in the system")
         return user.purchase_history
+
+    def edit_store_manager_permissions(self, user_name, store_manager_name: str, new_permissions: int):
+        user = self.users_dict.get(store_manager_name)
+        if user is None:
+            raise Exception("Store manager does not exists in the system")
+        user.edit_store_manager_permissions(new_permissions)
