@@ -3,7 +3,13 @@ from unittest import TestCase
 from OnlineStore.src.service import service
 from OnlineStore.src.service.authentication import Authentication
 
-
+    def test_remove_store_manager(self):  # 4.7
+        ans, result = service.assign_store_manager("user_name24", "user_name25", "store24")
+        self.assertTrue(ans and ("user_name25" in service.get_store("store24")[1].managers))
+        ans2, result = service.remove_store_manager("user_name24", "user_name25", "store24")
+        self.assertTrue(ans2 and (not ("user_name25" in service.get_store("store24")[1].managers)))
+        ans3, result = service.remove_store_manager("user_name24", "user_name25", "store24")
+        self.assertFalse(ans3, "test: try to remove user that not manager")
 class TestService(TestCase):
     def setUp(self) -> None:
         print("test service start:")
@@ -80,10 +86,17 @@ class TestService(TestCase):
         self.assertEqual(cart, service.get_user("user_name7")[1].cart)
 
     def test_add_product_to_cart(self):  # 2.7
+        store = service.get_store("store4")[1]
+        product_dict = store.inventory.products_dict
+        ans4 = product_dict["product4"].quantity
+        #(print(ans4)) TODO why print 9???
         ans = service.add_product_to_cart("user_name11", "product4", 5, "store4")[0]
-        self.assertTrue(ans, "failed")
-        self.assertTrue(service.get_user("user_name11").user.basket_dict["store11"].product_dict["product4"] == 5)
-        self.assertTrue(service.store_handler.store_dict["store4"].inventory.products_dict["product4"].quantity == 14)
+        self.assertTrue(ans, "test: add product to cart")
+        self.assertTrue(service.get_user("user_name11")[1].cart.basket_dict["store4"].products_dict["product4"] == 5)
+        store = service.get_store("store4")[1]
+        product_dict = store.inventory.products_dict
+        ans3 = product_dict["product4"].quantity
+        self.assertTrue(ans3 == 4)
 
     def test_find_product_by_name(self):  # 2.6
         ans = service.find_product_by_name("notExist")[0]

@@ -29,7 +29,8 @@ class StoreHandler:
         store = self.store_dict[store_name]
         if store is None:
             raise Exception("store name does not exists in the system")
-        if store.inventory.product_dict[product_id] is None:
+        if not (product_id in store.inventory.products_dict):
+            print("fnakjfbakf")
             raise Exception("product id does not exists in the store")
         store.inventory.products_dict[product_id].take_quantity(quantity)  # yonatan
 

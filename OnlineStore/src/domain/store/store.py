@@ -57,6 +57,25 @@ class Store:
             raise Exception(manager_name + "already owner")
         self.managers[manager_name] = assign_name
 
+    def get_all_assign_of_user(self, user_name):
+        all_assign_list = list()
+        for user in self.owners:
+            if self.owners[user] == user_name:
+                all_assign_list.append(user)
+        for user in self.managers:
+            if self.managers[user] == user_name:
+                all_assign_list.append(user)
+
+    def delete_owner_assign(self, user_name_to_delete):
+        self.owners.pop(user_name_to_delete)
+        for user in self.get_all_assign_of_user(user_name_to_delete):
+            self.delete_owner_assign(user)
+
+    def delete_managers(self, user_name_to_delete, user_assign):
+        if self.managers[user_name_to_delete] == user_assign:
+            self.managers.pop(user_name_to_delete)
+
+
     def is_manager_owner(self, user_name, manager_name):
         if self.managers.get(manager_name) is not user_name:
             raise Exception("The user is not the one who assigned the manager")
