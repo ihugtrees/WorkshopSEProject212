@@ -79,6 +79,32 @@ def find_products(p_name, category, key_word, filter_options):
     pass
 
 
+def search_product_by_id(product_id): # 2.6.1
+    try:
+        for store in store_handler.store_dict:
+            if product_id in store_handler.store_dict[store].inventory.products_dict:
+                return [True, store_handler.store_dict[store].inventory.products_dict[product_id]]
+        return [False, "product not found"]
+    except Exception as e:
+        return [False, "bug, when searching by name"]
+
+
+def search_product_by_category(category):
+    try:
+        product_list = list()
+        for store in store_handler.store_dict:
+            for product in store_handler.store_dict[store].inventory.products_dict:
+                if store_handler.store_dict[store].inventory.products_dict[product].category == category:
+                    product_list.append(store_handler.store_dict[store].inventory.products_dict[product])
+        if(len(product_list) == 0):
+            return [False, "product not found"]
+        else:
+            return [True, product_list]
+    except Exception as e:
+        return [False, "bug, when searching by category"]
+
+
+
 def find_product_by_id(product_id, store_name):  # TODO
     try:
         return [True, store_handler.find_product_by_id(product_id, store_name)]
@@ -259,8 +285,8 @@ def get_user(user_name):
         return [False, e.args[0]]
 
 # 4.9.1
-def get_employee_information(user_name, employee_id):
-    pass
+# def get_employee_information(user_name, employee_id):
+#     pass
 
 
 
