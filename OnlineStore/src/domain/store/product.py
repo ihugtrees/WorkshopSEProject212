@@ -6,14 +6,16 @@ class Product:
         self.description = ""
 
     def take_quantity(self, quant):
-        if quant < 0 or self.quantity < quant:
+        if quant <= 0 or self.quantity < quant:
             raise Exception("Not enough product")
         self.quantity -= quant
 
     def add_quantity(self, quant):
-        if quant < 0:
+        if quant <= 0:
             raise Exception("cant add less than one quantity")
         self.quantity += quant
 
     def edit_product_description(self, product_description):
+        if type(product_description) != str:
+            raise Exception("description must be string")
         self.description = product_description

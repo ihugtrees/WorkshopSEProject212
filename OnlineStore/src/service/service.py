@@ -238,7 +238,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 def remove_store_manager(user_name, store_manager_id, store_id):
     try:
         store: Store = store_handler.store_dict[store_id]
-        return True, store.delete_managers(store_manager_id, user_name)
+        return True, store.delete_manager(store_manager_id, user_name)
     except Exception as e:
         return False, e.args[0]
 
