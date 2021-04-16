@@ -2,8 +2,8 @@ from OnlineStore.src.domain.store.product import Product
 
 
 class Inventory:
-    def __init__(self):
-        self.products_dict = dict()
+    def __init__(self, products_dict):
+        self.products_dict = products_dict
 
     def remove_product_inventory(self, product_id):
         if self.products_dict.get(product_id) is None:

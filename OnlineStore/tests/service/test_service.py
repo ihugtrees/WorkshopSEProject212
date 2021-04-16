@@ -5,7 +5,7 @@ from OnlineStore.src.service.authentication import Authentication
 
 
 class TestService(TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         print("test service start:")
         auth = Authentication()
         product_List_for_test5 = list()

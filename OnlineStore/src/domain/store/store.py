@@ -8,7 +8,7 @@ class Store:
         self.store_founder = store_founder
         self.owners = owners
         self.managers = managers
-        self.inventory = Inventory()
+        self.inventory = Inventory(dict())
         self.buying_policy = buying_policy
         self.discount_policy = discount_policy
         self.purchase_history = purchase_history

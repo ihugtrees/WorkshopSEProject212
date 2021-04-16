@@ -3,6 +3,7 @@ class Product:
         self.product_id = product_id
         self.product_name = product_name
         self.quantity = quantity
+        self.description = ""
 
     def take_quantity(self, quant):
         if quant < 0 or self.quantity < quant:
@@ -13,3 +14,6 @@ class Product:
         if quant < 0:
             raise Exception("cant add less than one quantity")
         self.quantity += quant
+
+    def edit_product_description(self, product_description):
+        self.description = product_description
