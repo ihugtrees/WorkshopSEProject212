@@ -31,7 +31,7 @@ class StoreHandler:
         if not (product_id in store.inventory.products_dict):
             print("fnakjfbakf")
             raise Exception("product id does not exists in the store")
-        store.inventory.products_dict[product_id].take_quantity(quantity)  # yonatan
+        #store.inventory.products_dict[product_id].take_quantity(quantity)  # yonatan
 
     def open_store(self, store_name, user_name):
         if store_name in self.store_dict:
@@ -45,14 +45,14 @@ class StoreHandler:
         store.check_permission_to_edit_store_inventory(user_name)  # TODO
         if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
-        store.add_new_product_to_store_inventory(product_details)
+        store.add_product_store(product_details)
 
     def remove_product_from_store_inventory(self, user_name, product_id, store_name):
         store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("The store does not exists in the system")
         store.check_permission_to_edit_store_inventory(user_name)
-        store.remove_product_from_store_inventory(product_id)
+        store.remove_product_store(product_id)
 
     def find_product_by_id(self, product_id, store_name):
         store = self.store_dict.get(store_name)
