@@ -1,3 +1,5 @@
+from enum import Enum
+
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
 
@@ -100,3 +102,20 @@ class UserHandler:
         if user is None:
             raise Exception("Store manager does not exists in the system")
         user.edit_store_manager_permissions(new_permissions)
+
+    def is_permitted_to_do(self, user_name: str, store_name: str, action: int):
+        user = self.users_dict.get(user_name)
+        if user is None:
+            raise Exception("The user does not exists in the system")
+        user.is_permitted_to_do(action, store_name)
+
+    def get_employee_information(self, employee_name):
+        user = self.users_dict.get(employee_name)
+        if user is None:
+            raise Exception("The Employee user does not exists in the system")
+        return user #TODO WHAT TO RETURN?? WHICH FIELDS?
+
+
+class Action(Enum):
+    EMPLOYEE_INFO = 0
+    EMPLOYEE_PERMISSIONS = 1

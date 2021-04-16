@@ -33,3 +33,6 @@ class User:
             raise Exception("The user is not a manager in the store")
         self.permissions[store_name] = new_permissions
 
+    def is_permitted_to_do(self, action: int, store_name: str):
+        if (action & self.permissions.get(store_name)) is 0:
+            raise Exception("The User does not have the permission to do the action")

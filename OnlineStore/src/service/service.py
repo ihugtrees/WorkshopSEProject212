@@ -1,5 +1,5 @@
 from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.domain.user.user_handler import UserHandler
+from OnlineStore.src.domain.user.user_handler import UserHandler, Action
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
 
@@ -83,7 +83,6 @@ def find_product_by_id(product_id, store_name):  # TODO
         return [True, store_handler.find_product_by_id(product_id, store_name)]
     except Exception as e:
         return [False, e.args[0]]
-
 
 
 def find_product_by_description(product_name):  # TODO maybe
@@ -201,7 +200,6 @@ def edit_product_details(user_name, product_details, store_id, product_id):
         return [False, e.args[0]]
 
 
-
 # 4.3
 def assign_store_owner(user_name, new_store_owner_id, store_id):
     try:
@@ -212,9 +210,6 @@ def assign_store_owner(user_name, new_store_owner_id, store_id):
             return False, (user_name + " is not owner of " + store_id)
     except Exception as e:
         return False, (user_name + " is not owner of " + store_id)
-
-
-
 
 
 # 4.5
@@ -244,8 +239,12 @@ def remove_store_manager(user_name, store_manager_id):
 
 
 # 4.9.1
-def get_employee_information(user_name, employee_id):
-    pass
+def get_employee_information(user_name: str, employee_name: str, store_name: str):
+    try:
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO)
+        return [True, user_handler.get_employee_information(user_name, employee_name)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 def get_user(user_name):
@@ -257,8 +256,13 @@ def get_user(user_name):
 
 
 # 4.9.2
-def get_employee_permissions(user_name, employee_id):
-    pass
+def get_employee_permissions(user_name: str, store_name: str, employee_name: str):
+    try:
+        user_handler.is_permitted_to_do(user_name, 1 << Action.EMPLOYEE_PERMISSIONS, store_name)
+        return [True, user_handler.get_employee_information(
+            employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 # 4.11
@@ -282,4 +286,3 @@ def get_store(store_id):
         return True, store
     except Exception as e:
         return False, e.args[0]
-
