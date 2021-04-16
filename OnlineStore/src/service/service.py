@@ -116,7 +116,7 @@ def get_cart(user_name):
 def add_product_to_cart(user_name, product_id, quantity, store_name):
     try:
         store_handler.check_product_exists_in_store(product_id, store_name, quantity)
-        return [True, user_handler.add_product(user_name, product_id, quantity, store_name)]
+        return [True, user_handler.add_product(user_name, store_name, product_id, quantity)]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -234,9 +234,12 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 
 
 # 4.7
-def remove_store_manager(user_name, store_manager_id):
-    pass
-
+def remove_store_manager(user_name, store_manager_id, store_id):
+    try:
+        store: Store = store_handler.store_dict[store_id]
+        return True, store.delete_managers(store_manager_id, user_name)
+    except Exception as e:
+        return False, e.args[0]
 
 # 4.9.1
 def get_employee_information(user_name: str, employee_name: str, store_name: str):
@@ -253,6 +256,13 @@ def get_user(user_name):
         return [True, user]
     except Exception as e:
         return [False, e.args[0]]
+
+# 4.9.1
+def get_employee_information(user_name, employee_id):
+    pass
+
+
+
 
 
 # 4.9.2
