@@ -2,6 +2,7 @@ from enum import Enum
 
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
+from threading import Lock
 
 import random
 import string
@@ -21,18 +22,19 @@ GUEST_NAME_LENGTH = 20
 class UserHandler:
     def __init__(self):
         self.users_dict = dict()  # key-user_name, value - user
+        self.lock = Lock()
         # self.data_access = Data()
 
     def print_users(self):
         print(self.users_dict)
 
     def register(self, user_name):
+        self.lock.acquire()
         if user_name in self.users_dict:
             raise Exception("user name already exists in the system")
-        self.users_dict[user_name] = User(user_name, Cart())
-        return True
         user = User(user_name, Cart())
         self.users_dict[user_name] = user
+        self.lock.release()
         return user
 
     def get_cart_info(self, user_name):
@@ -79,8 +81,10 @@ class UserHandler:
 
     def get_guest_unique_user_name(self):
         new_user_name = get_random_string(GUEST_NAME_LENGTH)
+
         while new_user_name in self.users_dict:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
+
         self.users_dict[new_user_name] = User(new_user_name, Cart())
         return new_user_name
 
@@ -116,8 +120,3 @@ class UserHandler:
         return user #TODO WHAT TO RETURN?? WHICH FIELDS?
 
 
-class Action(Enum):
-    EMPLOYEE_INFO = 0
-    EMPLOYEE_PERMISSIONS = 1
-    STORE_PURCHASE_HISTORY = 2
-    USER_PURCHASE_HISTORY = 3

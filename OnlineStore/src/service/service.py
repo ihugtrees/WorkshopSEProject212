@@ -1,5 +1,6 @@
 from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.domain.user.user_handler import UserHandler, Action
+from OnlineStore.src.domain.user.action import Action
+from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
 
