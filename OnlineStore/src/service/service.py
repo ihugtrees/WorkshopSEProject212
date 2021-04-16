@@ -258,7 +258,7 @@ def get_user(user_name):
 # 4.9.2
 def get_employee_permissions(user_name: str, store_name: str, employee_name: str):
     try:
-        user_handler.is_permitted_to_do(user_name, 1 << Action.EMPLOYEE_PERMISSIONS, store_name)
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_PERMISSIONS)
         return [True, user_handler.get_employee_information(
             employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
     except Exception as e:
@@ -266,18 +266,26 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
 
 
 # 4.11
-def get_store_purchase_history(user_name, store_id):
-    pass
+def get_store_purchase_history(user_name, store_name):
+    try:
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.STORE_PURCHASE_HISTORY)
+        return [True, store_handler.get_store_purchase_history(store_name)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 # 6.4.1
-def get_store_purchase_history_admin(user_name, store_id):
-    pass
+def get_store_purchase_history_admin(user_name, store_name):
+    get_store_purchase_history(user_name, store_name)
 
 
 # 6.4.2
 def get_user_purchase_history_admin(user_name, other_user_name):
-    pass
+    try:
+        user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY)
+        return [True, user_handler.get_user_purchase_history(other_user_name)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 def get_store(store_id):

@@ -1,4 +1,5 @@
 from OnlineStore.src.domain.user.cart import Cart
+from OnlineStore.src.domain.user.user_handler import Action
 
 
 class User:
@@ -34,5 +35,8 @@ class User:
         self.permissions[store_name] = new_permissions
 
     def is_permitted_to_do(self, action: int, store_name: str):
-        if (action & self.permissions.get(store_name)) is 0:
+        if self.__is_admin is False and (action & self.permissions.get(store_name)) is 0:
             raise Exception("The User does not have the permission to do the action")
+        if self.__is_admin is True and (
+                action is not 1 << Action.STORE_PURCHASE_HISTORY or action is not 1 << Action.USER_HISTORY):
+            raise Exception("Admin doesnt have permission to do so")

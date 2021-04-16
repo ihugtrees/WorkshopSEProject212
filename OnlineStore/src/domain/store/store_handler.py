@@ -69,4 +69,11 @@ class StoreHandler:
             raise Exception("The store does not exists in the system")
         store.is_manager_owner(user_name, manager_name)
 
+    def get_store_purchase_history(self, store_name):
+        store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("The store does not exists in the system")
+        return store.purchase_history
+
+
 
