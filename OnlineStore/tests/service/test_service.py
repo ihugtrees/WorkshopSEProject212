@@ -170,15 +170,15 @@ class TestService(TestCase):
         ans4, result = service.assign_store_owner("user_name14", "user_name15", "store17")
         self.assertFalse(ans4, "test: no permissions to assign")
 
-    # def test_assign_store_manager(self):  # 4.3
-    #     ans, result = service.assign_store_manager("user_name20", "user_name21", "store20")
-    #     self.assertTrue(ans and ("user_name21" in service.get_store("store20")[1].owners))
-    #     ans2, result = service.assign_store_manager("user_name20", "user_name21", "store20")
-    #     self.assertFalse(ans2, "test: try to assign owner")
-    #     ans3, result = service.assign_store_manager("user_name21", "user_name22", "store20")
-    #     self.assertFalse(ans3, "test: 21 try to assign, he just manager")
-    #     ans4, result = service.assign_store_manager("user_name14", "user_name15", "store17")
-    #     self.assertFalse(ans4, "test: no permissions to assign")
+    def test_assign_store_manager(self):  # 4.3
+        ans, result = service.assign_store_manager("user_name20", "user_name21", "store20")
+        self.assertTrue(ans and ("user_name21" in service.get_store("store20")[1].managers))
+        ans2, result = service.assign_store_manager("user_name20", "user_name21", "store20")
+        self.assertFalse(ans2, "test: try to assign owner")
+        ans3, result = service.assign_store_manager("user_name21", "user_name22", "store20")
+        self.assertFalse(ans3, "test: 21 try to assign, he just manager")
+        ans4, result = service.assign_store_manager("user_name14", "user_name15", "store17")
+        self.assertFalse(ans4, "test: no permissions to assign")
 
 
 
