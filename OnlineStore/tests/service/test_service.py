@@ -83,7 +83,7 @@ class TestService(TestCase):
         store = service.get_store("store4")[1]
         product_dict = store.inventory.products_dict
         ans4 = product_dict["product4"].quantity
-        # (print(ans4)) TODO why print 9???
+        #(print(ans4)) TODO why print 9???
         ans = service.add_product_to_cart("user_name11", "product4", 5, "store4")[0]
         self.assertTrue(ans, "test: add product to cart")
         self.assertTrue(service.get_user("user_name11")[1].cart.basket_dict["store4"].products_dict["product4"] == 5)
