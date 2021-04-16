@@ -6,10 +6,9 @@ class StoreHandler:
         self.store_dict = dict()  # key-store name, value-store
 
     def get_information_about_products(self, store_name):
-        store = self.store_dict[store_name]  # TODO fix that func
-        if store is None:
+        if store_name not in self.store_dict:
             raise Exception("store name does not exists in the system")
-        return store.inventory.product_list
+        return self.store_dict[store_name].inventory.products_dict
 
     def get_store_info(self, store_name):
         store = self.store_dict[store_name]

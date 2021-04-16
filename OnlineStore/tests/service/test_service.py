@@ -3,13 +3,7 @@ from unittest import TestCase
 from OnlineStore.src.service import service
 from OnlineStore.src.service.authentication import Authentication
 
-    def test_remove_store_manager(self):  # 4.7
-        ans, result = service.assign_store_manager("user_name24", "user_name25", "store24")
-        self.assertTrue(ans and ("user_name25" in service.get_store("store24")[1].managers))
-        ans2, result = service.remove_store_manager("user_name24", "user_name25", "store24")
-        self.assertTrue(ans2 and (not ("user_name25" in service.get_store("store24")[1].managers)))
-        ans3, result = service.remove_store_manager("user_name24", "user_name25", "store24")
-        self.assertFalse(ans3, "test: try to remove user that not manager")
+
 class TestService(TestCase):
     def setUp(self) -> None:
         print("test service start:")
@@ -89,7 +83,7 @@ class TestService(TestCase):
         store = service.get_store("store4")[1]
         product_dict = store.inventory.products_dict
         ans4 = product_dict["product4"].quantity
-        #(print(ans4)) TODO why print 9???
+        # (print(ans4)) TODO why print 9???
         ans = service.add_product_to_cart("user_name11", "product4", 5, "store4")[0]
         self.assertTrue(ans, "test: add product to cart")
         self.assertTrue(service.get_user("user_name11")[1].cart.basket_dict["store4"].products_dict["product4"] == 5)
@@ -194,3 +188,11 @@ class TestService(TestCase):
 
     def test_edit_manager_permissions(self):  # 4.6
         pass
+
+    def test_remove_store_manager(self):  # 4.7
+        ans, result = service.assign_store_manager("user_name24", "user_name25", "store24")
+        self.assertTrue(ans and ("user_name25" in service.get_store("store24")[1].managers))
+        ans2, result = service.remove_store_manager("user_name24", "user_name25", "store24")
+        self.assertTrue(ans2 and (not ("user_name25" in service.get_store("store24")[1].managers)))
+        ans3, result = service.remove_store_manager("user_name24", "user_name25", "store24")
+        self.assertFalse(ans3, "test: try to remove user that not manager")

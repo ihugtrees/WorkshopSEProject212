@@ -2,40 +2,26 @@ from OnlineStore.src.domain.store.inventory import Inventory
 
 
 class Store:
-    def __init__(self, store_name, buying_policy, buying_types, discount_policy,
-                 discount_types, inventory, purchase_history, owners, managers, store_founder):
-        self.managers = managers
+    def __init__(self, store_name, store_founder, owners=dict(), managers=dict(),
+                 buying_policy=None, discount_policy=None, purchase_history=None):
+        self.name = store_name
+        self.store_founder = store_founder
         self.owners = owners
-        self.purchase_history = purchase_history
-        self.inventory = inventory
-        self.discount_types = discount_types
-        self.discount_policy = discount_policy
-        self.buying_types = buying_types
+        self.managers = managers
+        self.inventory = Inventory()
         self.buying_policy = buying_policy
-        self.name = store_name
-        self.store_founder = store_founder
-
-    def __init__(self, store_name, store_founder):
-        self.managers = dict()
-        self.owners = dict()
-        self.purchase_history = None
-        self.inventory = Inventory(dict())
-        self.discount_types = None
-        self.discount_policy = None
-        self.buying_types = None
-        self.buying_policy = None
-        self.name = store_name
-        self.store_founder = store_founder
+        self.discount_policy = discount_policy
+        self.purchase_history = purchase_history
 
     def check_permission_to_edit_store_inventory(self, user_name):
         if (user_name not in self.managers) and (user_name not in self.owners) and user_name != self.store_founder:
             raise Exception("current user doesnt have permission to edit the inventory")
 
     def remove_product_from_store_inventory(self, product_id):
-        self.inventory.remove_product_from_store_inventory(product_id)
+        self.inventory.remove_product_inventory(product_id)
 
     def add_new_product_to_store_inventory(self, product_details):
-        self.inventory.add_new_product_to_store_inventory(product_details)
+        self.inventory.add_product_inventory(product_details)
 
     def edit_product(self, product_id, product_details):
         self.inventory.products_dict[product_id].edit_product_description(product_details)
@@ -74,7 +60,6 @@ class Store:
     def delete_managers(self, user_name_to_delete, user_assign):
         if self.managers[user_name_to_delete] == user_assign:
             self.managers.pop(user_name_to_delete)
-
 
     def is_manager_owner(self, user_name, manager_name):
         if self.managers.get(manager_name) is not user_name:
