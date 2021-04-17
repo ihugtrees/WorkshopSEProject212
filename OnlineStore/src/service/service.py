@@ -1,19 +1,26 @@
 from OnlineStore.src.domain.external.payment_system import address_payment_system
 from OnlineStore.src.domain.external.supply_system import address_supply_system
 from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.domain.user.user_handler import UserHandler, Action
+from OnlineStore.src.domain.user.action import Action
+from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
+from OnlineStore.src.service.event import Event
+from OnlineStore.src.service.event_log import Event_Log
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
 auth = Authentication()
+event_log = Event_Log
 
 
 # 2.1
-def get_into_site():
-    return [True, user_handler.get_guest_unique_user_name()]
-
+def get_into_site() -> str:
+    try:
+        return [True, user_handler.get_guest_unique_user_name()]
+    except Exception as e:
+        event = Event("get_into_site", list(), e.args[0])
+        return [False, e.args[0]]
 
 # 2.2
 def exit_the_site(guest_name):
@@ -80,6 +87,32 @@ def find_products(p_name, category, key_word, filter_options):
     pass
 
 
+def search_product_by_id(product_id): # 2.6.1
+    try:
+        for store in store_handler.store_dict:
+            if product_id in store_handler.store_dict[store].inventory.products_dict:
+                return [True, store_handler.store_dict[store].inventory.products_dict[product_id]]
+        return [False, "product not found"]
+    except Exception as e:
+        return [False, "bug, when searching by name"]
+
+
+def search_product_by_category(category):
+    try:
+        product_list = list()
+        for store in store_handler.store_dict:
+            for product in store_handler.store_dict[store].inventory.products_dict:
+                if store_handler.store_dict[store].inventory.products_dict[product].category == category:
+                    product_list.append(store_handler.store_dict[store].inventory.products_dict[product])
+        if(len(product_list) == 0):
+            return [False, "product not found"]
+        else:
+            return [True, product_list]
+    except Exception as e:
+        return [False, "bug, when searching by category"]
+
+
+
 def find_product_by_id(product_id, store_name):  # TODO
     try:
         return [True, store_handler.find_product_by_id(product_id, store_name)]
@@ -117,7 +150,7 @@ def get_cart(user_name):
 # 2.8.2
 def add_product_to_cart(user_name, product_id, quantity, store_name):
     try:
-        store_handler.check_product_exists_in_store(product_id, store_name, quantity)
+        store_handler.check_product_exists_in_store(product_id, store_name)
         return [True, user_handler.add_product(user_name, store_name, product_id, quantity)]
     except Exception as e:
         return [False, e.args[0]]
@@ -126,7 +159,9 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 # 2.8.3
 def remove_product(user_name, product_id, quantity, store_name):
     try:
-        return [True, user_handler.remove_product(user_name, product_id, quantity, store_name)]
+        ans = user_handler.remove_product(user_name, product_id, quantity, store_name)
+
+        return [True, ans]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -146,9 +181,11 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         cart = user.cart
         store_handler.is_valid_for_purchase(cart, user)
         store_handler.take_quantity(cart)
-        cart_sum: int = store_handler.calculate_cart_sum(cart)
+        cart_sum = store_handler.calculate_cart_sum(cart)
         address_payment_system(payment_info, cart_sum)
-        return [True, address_supply_system(cart, destination)]
+        date = address_supply_system(cart, destination)
+        user.empty_cart()
+        return [True, date]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -256,7 +293,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 def remove_store_manager(user_name, store_manager_id, store_id):
     try:
         store: Store = store_handler.store_dict[store_id]
-        return True, store.delete_managers(store_manager_id, user_name)
+        return True, store.delete_manager(store_manager_id, user_name)
     except Exception as e:
         return False, e.args[0]
 
@@ -270,12 +307,14 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         return [False, e.args[0]]
 
 
-def get_user(user_name):
-    try:
-        user = user_handler.users_dict[user_name]
-        return [True, user]
-    except Exception as e:
-        return [False, e.args[0]]
+
+
+# 4.9.1
+# def get_employee_information(user_name, employee_id):
+#     pass
+
+
+
 
 
 # 4.9.2
@@ -317,3 +356,14 @@ def get_store(store_id):
         return True, store
     except Exception as e:
         return False, e.args[0]
+
+
+def get_user(user_name):
+    try:
+        user = user_handler.users_dict[user_name]
+        return [True, user]
+    except Exception as e:
+        return [False, e.args[0]]
+
+
+
