@@ -7,7 +7,6 @@ from OnlineStore.src.service.authentication import Authentication
 
 class TestService(TestCase):
     def setUp(self):
-        auth = Authentication()
         product_List_for_test5 = list()
         for i in range(0, 30):
             ans = service.register("user_name" + str(i), "" + str(i))[0]
@@ -27,6 +26,11 @@ class TestService(TestCase):
 
         # for u in service.user_handler.users_dict.keys():
         # print(u)
+
+    def tearDown(self):
+        service.user_handler.users_dict = dict()
+        service.store_handler.store_dict = dict()
+        service.auth = Authentication()
 
     def test_get_into_site(self):  # 2.1
         ans, user_name = service.get_into_site()
