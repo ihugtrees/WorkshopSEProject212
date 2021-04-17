@@ -62,14 +62,14 @@ class StoreHandler:
             raise Exception("Product does not exist in the store")
         return product
 
-    # def is_manager_assigner(self, user_name: str, store_name: str, manager_name: str):
-    #     store = self.store_dict.get(store_name)
-    #     if store is None:
-    #         raise Exception("The store does not exists in the system")
-    #     store.is_manager_owner(user_name, manager_name)
+    def is_manager_assigner(self, user_name: str, store_name: str, manager_name: str):
+        store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("The store does not exists in the system")
+        store.is_manager_owner(user_name, manager_name)
 
-    # def get_store_purchase_history(self, store_name):
-    #     store = self.store_dict.get(store_name)
-    #     if store is None:
-    #         raise Exception("The store does not exists in the system")
-    #     return store.purchase_history
+    def get_store_purchase_history(self, store_name):
+        store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("The store does not exists in the system")
+        return store.purchase_history

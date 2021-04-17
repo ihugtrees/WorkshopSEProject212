@@ -3,16 +3,22 @@ from OnlineStore.src.domain.user.action import Action
 from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
+from OnlineStore.src.service.event import Event
+from OnlineStore.src.service.event_log import Event_Log
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
 auth = Authentication()
+event_log = Event_Log
 
 
 # 2.1
 def get_into_site() -> str:
-    return [True, user_handler.get_guest_unique_user_name()]
-
+    try:
+        return [True, user_handler.get_guest_unique_user_name()]
+    except Exception as e:
+        event = Event("get_into_site", list(), e.args[0])
+        return [False, e.args[0]]
 
 # 2.2
 def exit_the_site(guest_name) -> bool:
@@ -142,7 +148,7 @@ def get_cart(user_name):
 # 2.8.2
 def add_product_to_cart(user_name, product_id, quantity, store_name):
     try:
-        store_handler.check_product_exists_in_store(product_id, store_name, quantity)
+        store_handler.check_product_exists_in_store(product_id, store_name)
         return [True, user_handler.add_product(user_name, store_name, product_id, quantity)]
     except Exception as e:
         return [False, e.args[0]]
@@ -151,7 +157,9 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 # 2.8.3
 def remove_product(user_name, product_id, quantity, store_name):
     try:
-        return [True, user_handler.remove_product(user_name, product_id, quantity, store_name)]
+        ans = user_handler.remove_product(user_name, product_id, quantity, store_name)
+
+        return [True, ans]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -277,12 +285,7 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         return [False, e.args[0]]
 
 
-def get_user(user_name):
-    try:
-        user = user_handler.users_dict[user_name]
-        return [True, user]
-    except Exception as e:
-        return [False, e.args[0]]
+
 
 # 4.9.1
 # def get_employee_information(user_name, employee_id):
@@ -331,3 +334,14 @@ def get_store(store_id):
         return True, store
     except Exception as e:
         return False, e.args[0]
+
+
+def get_user(user_name):
+    try:
+        user = user_handler.users_dict[user_name]
+        return [True, user]
+    except Exception as e:
+        return [False, e.args[0]]
+
+
+

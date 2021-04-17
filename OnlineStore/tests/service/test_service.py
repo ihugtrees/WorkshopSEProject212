@@ -6,7 +6,6 @@ from OnlineStore.src.service.authentication import Authentication
 
 class TestService(TestCase):
     def setUp(self):
-        print("test service start:")
         auth = Authentication()
         product_List_for_test5 = list()
         for i in range(0, 30):
@@ -223,3 +222,6 @@ class TestService(TestCase):
         self.assertTrue(ans)
         ans2, r2 = service.get_store_purchase_history("user_name13", "store13")
         self.assertTrue(ans2)
+
+    def test_get_store_purchase_history_admin(self):  # 6.4.1
+        pass
