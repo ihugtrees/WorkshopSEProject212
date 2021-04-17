@@ -5,20 +5,15 @@ from OnlineStore.src.domain.user.action import Action
 from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
-from OnlineStore.src.service.event import Event
-from OnlineStore.src.service.event_log import Event_Log
-import logging
-from datetime import datetime
+#from OnlineStore.src.service.event import Event
+#from OnlineStore.src.service.event_log import Event_Log
+from OnlineStore.src.service.logger import Logger
 
-dt_string = datetime.now().strftime("%d_%m_%Y")
-logging.basicConfig(filename=f'service_{dt_string}.log', format='%(asctime)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-logging.info('started function')
+logging = Logger()
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
 auth = Authentication()
-event_log = Event_Log
 
 
 # 2.1
@@ -30,7 +25,6 @@ def get_into_site() -> str:
     except Exception as e:
         logging.error("fail in get_into_site: " + e.args[0])
         return [False, e.args[0]]
-
 
 # 2.2
 def exit_the_site(guest_name):
@@ -192,17 +186,23 @@ def search_product_by_category(category, filters):
                 if product.category.find(category) != -1:
                     product_list.append(product)
         if len(product_list) == 0:
+            logging.info("search_product_by_category: category: "+ category+ "product not found")
             return [False, "product not found"]
         else:
+            logging.info("search_product_by_category: category: " + category)
             return [True, product_list]
     except Exception as e:
+        logging.error("search_product_by_category fail: " + e.args[0])
         return [False, "bug, when searching by category"]
 
 
 def find_product_by_id(product_id, store_name):  # TODO
     try:
-        return [True, store_handler.find_product_by_id(product_id, store_name)]
+        ans = store_handler.find_product_by_id(product_id, store_name)
+        logging.info("find_product_by_id: id = " + product_id + "store name = " + store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name)
         return [False, e.args[0]]
 
 
@@ -243,15 +243,21 @@ def save_cart(user_name):
 # 2.8.1
 def get_cart_info(user_name):
     try:
-        return [True, user_handler.get_cart_info(user_name)]
+        ans = user_handler.get_cart_info(user_name)
+        logging.info("get_cart_info: user name = " + get_cart_info)
+        return [True, ans]
     except Exception as e:
+        logging.error("get_cart_info fail user name = "+ user_name + e.args[0])
         return [False, e.args[0]]
 
 
 def get_cart(user_name):
     try:
-        return [True, user_handler.get_cart(user_name)]
+        ans = user_handler.get_cart(user_name)
+        logging.info("get_cart")
+        return [True, ans]
     except Exception as e:
+        logging.error("get_cart fail " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -262,8 +268,11 @@ def get_cart(user_name):
 def add_product_to_cart(user_name, product_id, quantity, store_name):
     try:
         store_handler.check_product_exists_in_store(product_id, store_name)
-        return [True, user_handler.add_product(user_name, store_name, product_id, quantity)]
+        ans = user_handler.add_product(user_name, store_name, product_id, quantity)
+        logging.info("add_product_to_cart")
+        return [True, ans]
     except Exception as e:
+        logging.error("add_product_to_cart fail: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -271,9 +280,10 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 def remove_product(user_name, product_id, quantity, store_name):
     try:
         ans = user_handler.remove_product(user_name, product_id, quantity, store_name)
-
+        logging.info("remove_product")
         return [True, ans]
     except Exception as e:
+        logging.error("remove_product fail: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -296,33 +306,44 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         address_payment_system(payment_info, cart_sum)
         date = address_supply_system(cart, destination)
         user.empty_cart()
+        logging.info("purchase user name = " + user)
         return [True, date]
     except Exception as e:
+        logging.error("purchase fail " + e.args[0])
         return [False, e.args[0]]
 
 
 # 3.1
 def logout(user_name):
     try:
-        return [True, user_handler.logout(user_name)]
+        ans = user_handler.logout(user_name)
+        logging.info("logout user name: " + user_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("logout fail " + e.args[0])
         return [False, e.args[0]]
 
 
 # 3.2, think about arguments and preconditions
 def open_store(store_name, user_name):
     try:
-        user_handler.check_permission_to_open_store(user_name)  # why?
-        return [True, store_handler.open_store(store_name, user_name)]
+        user_handler.check_permission_to_open_store(user_name)
+        ans = store_handler.open_store(store_name, user_name)
+        logging.info("open_store user name: " + user_name + " store name: "+ store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("open_store fail: " + e.args[0])
         return [False, e.args[0]]
 
 
 # 3.7
 def get_user_purchases_history(user_name):
     try:
-        return [True, user_handler.get_user_purchase_history(user_name)]
+        ans = user_handler.get_user_purchase_history(user_name)
+        logging.info("get_user_purchases_history: user name: " + user_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("get_user_purchases_history fail: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -336,8 +357,11 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     :return:
     """
     try:
-        return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
+        ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
+        logging.info("add_new_product_to_store_inventory: store name: " + store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("add_new_product_to_store_inventory fail: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -353,8 +377,11 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
     if boolean is true T is None
     """
     try:
-        return [True, store_handler.remove_product_from_store_inventory(user_name, product_id, store_name)]
+        ans = store_handler.remove_product_from_store_inventory(user_name, product_id, store_name)
+        logging.info("remove_product_from_store_inventory: product ID: " + product_id)
+        return [True, ans ]
     except Exception as e:
+        logging.error("remove_product_from_store_inventory fail: " +e.args[0])
         return [False, e.args[0]]
 
 
@@ -362,8 +389,11 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
 def edit_product_details(user_name, product_details, store_id, product_id):
     try:
         store_handler.store_dict[store_id].check_permission_to_edit_store_inventory(user_name)
-        return [True, store_handler.store_dict[store_id].edit_product(product_id, product_details)]
+        ans = store_handler.store_dict[store_id].edit_product(product_id, product_details)
+        logging.info("edit_product_details")
+        return [True, ans]
     except Exception as e:
+        logging.error("edit_product_details fail: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -372,10 +402,14 @@ def assign_store_owner(user_name, new_store_owner_id, store_id):
     try:
         store: Store = store_handler.store_dict[store_id]
         if store.check_permission_to_assign(user_name):
-            return True, store.assign_new_owner(new_store_owner_id, user_name)
+            ans = store.assign_new_owner(new_store_owner_id, user_name)
+            logging.info("assign_store_owner")
+            return True, ans
         else:
+            logging.info("assign_store_owner: " + user_name + " is not owner of " + store_id)
             return False, (user_name + " is not owner of " + store_id)
     except Exception as e:
+        logging.error("assign_store_owner fail: " + e.args[0])
         return False, (user_name + " is not owner of " + store_id)
 
 
@@ -384,10 +418,15 @@ def assign_store_manager(user_name, new_store_manager_id, store_id):
     try:
         store: Store = store_handler.store_dict[store_id]
         if store.check_permission_to_assign(user_name):
-            return True, store.assign_new_manager(new_store_manager_id, user_name)
+            ans = store.assign_new_manager(new_store_manager_id, user_name)
+            user_handler.users_dict[new_store_manager_id].set_permissions(1, store_id)
+            logging.info("assign_store_manager")
+            return True, ans
         else:
+            logging.info("assign_store_manager " + user_name + " is not owner of " + store_id)
             return False, (user_name + " is not owner of " + store_id)
     except Exception as e:
+        logging.error("assign_store_manager "+ e.args[0])
         return False, (user_name + " is not owner of " + store_id)
 
 
@@ -395,8 +434,11 @@ def assign_store_manager(user_name, new_store_manager_id, store_id):
 def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_permissions: int, store_name: str):
     try:
         store_handler.is_manager_assigner(user_name, store_name, store_manager_name)
-        return [True, user_handler.edit_store_manager_permissions(user_name, store_manager_name, new_permissions)]
+        ans = user_handler.edit_store_manager_permissions(user_name, store_manager_name, new_permissions)
+        logging.info("edit_store_manager_permissions")
+        return [True, ans]
     except Exception as e:
+        logging.error("edit_store_manager_permissions " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -404,8 +446,11 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 def remove_store_manager(user_name, store_manager_id, store_id):
     try:
         store: Store = store_handler.store_dict[store_id]
-        return True, store.delete_manager(store_manager_id, user_name)
+        ans = store.delete_manager(store_manager_id, user_name)
+        logging.info("remove_store_manager")
+        return True, ans
     except Exception as e:
+        logging.error("remove_store_manager " + e.args[0])
         return False, e.args[0]
 
 
@@ -413,8 +458,11 @@ def remove_store_manager(user_name, store_manager_id, store_id):
 def get_employee_information(user_name: str, employee_name: str, store_name: str):
     try:
         user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO.value)
-        return [True, user_handler.get_employee_information(employee_name)]
+        ans = user_handler.get_employee_information(employee_name)
+        logging.info("get_employee_information")
+        return [True, ans]
     except Exception as e:
+        logging.error("get_employee_information " + e.args[0])
         return [False, e.args[0]]
 
 

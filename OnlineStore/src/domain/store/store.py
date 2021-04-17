@@ -50,6 +50,7 @@ class Store:
             raise Exception(new_manager + "already owner or manager")
         self.managers[new_manager] = assigner
 
+
     def __get_assigns_of_user(self, assigner):
         all_assign_list = list()
         for owner in self.owners:

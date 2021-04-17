@@ -43,3 +43,6 @@ class User:
 
     def empty_cart(self):
         self.cart = Cart()
+
+    def set_permissions(self, permissions: int, store_name: str):
+        self.permissions[store_name] = permissions
