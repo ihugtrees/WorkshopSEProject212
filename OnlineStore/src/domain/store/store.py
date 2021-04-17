@@ -14,6 +14,7 @@ class Store:
         self.buying_policy = buying_policy
         self.discount_policy = discount_policy
         self.purchase_history = purchase_history
+        self.rating = 0
 
     def check_permission_to_edit_store_inventory(self, user_name):
         if (user_name not in self.managers) and (user_name not in self.owners) and user_name != self.store_founder:

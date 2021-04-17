@@ -65,8 +65,8 @@ class TestService(TestCase):
         ans5 = service.login("aaaa", "bbb")[0]
         self.assertFalse(ans5, "test: bad name")
 
-    def test_test_login_sync(self):
-        t1 = threading.Thread(service.login, ("user_name5", "5"))
+    # def test_test_login_sync(self):
+    # t1 = threading.Thread(service.login, ("user_name5", "5"))
 
     def test_get_information_about_products(self):  # 2.5
         ans, info = service.get_information_about_products("store0")
@@ -97,9 +97,10 @@ class TestService(TestCase):
         self.assertTrue(ans2 and quantity == 11)
 
     def test_search_product_by_category(self):  # 2.6.2
-        ans = service.search_product_by_category("dogs")[0]
+        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
+        ans = service.search_product_by_category("dogs", filters)[0]
         self.assertFalse(ans, "test: not exist category")
-        ans2, product_list = service.search_product_by_category("null")
+        ans2, product_list = service.search_product_by_category("null", filters)
         self.assertTrue(ans2 and (len(product_list) > 25))
 
     def test_add_product_to_cart(self):  # 2.7
@@ -166,7 +167,8 @@ class TestService(TestCase):
         new_product = {
             "product_id": "product40",
             "product_name": "product_name40",
-            "quantity": 40
+            "quantity": 40,
+            "price": 10
         }
         ans = service.add_new_product_to_store_inventory("user_name14", new_product, "store14")[0]
         self.assertTrue(ans, "failed")

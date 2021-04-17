@@ -28,7 +28,7 @@ class Inventory:
             except Exception as e:
                 exception_string += e.args[0]
 
-        if exception_string is not "":
+        if exception_string != "":
             self.__rollback_from_take_quantity(basket)
             raise Exception(exception_string)
 

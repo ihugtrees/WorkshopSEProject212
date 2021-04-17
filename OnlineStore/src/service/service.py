@@ -31,6 +31,7 @@ def get_into_site() -> str:
         logging.error("fail in get_into_site: " + e.args[0])
         return [False, e.args[0]]
 
+
 # 2.2
 def exit_the_site(guest_name):
     try:
@@ -62,13 +63,13 @@ def login(user_name, password):
     try:
         if auth.login(user_name, password):
             ans = user_handler.login(user_name)
-            logging.info("login "+ user_name+", " + password)
+            logging.info("login " + user_name + ", " + password)
             return [True, ans]
         else:
             logging.info("login: invalid input")
             return [False, Exception("login fail")]
     except Exception as e:
-        logging.error("fail in login: "+e.args[0])
+        logging.error("fail in login: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -76,7 +77,7 @@ def login(user_name, password):
 def get_information_about_products(store_name):
     try:
         ans = store_handler.get_information_about_products(store_name)
-        logging.info("get_information_about_products "+ store_name)
+        logging.info("get_information_about_products " + store_name)
         return [True, ans]
     except Exception as e:
         logging.error("fail: get_information_about_products " + e.args[0])
@@ -87,7 +88,7 @@ def get_information_about_products(store_name):
 def get_store_info(store_name):
     try:
         ans = store_handler.get_store_info(store_name)
-        logging.info("get_store_info "+ store_name)
+        logging.info("get_store_info " + store_name)
         return [True, ans]
     except Exception as e:
         logging.error("fail in get_store_info " + e.args[0])
@@ -118,8 +119,8 @@ def add_product_to_store(user_name, product_details, store_name):
 # def find_products(p_name, category, key_word, filter_options):
 #     pass
 
-
-def search_product_by_id(product_id):  # 2.6.1
+# 2.6
+def search_product_by_id(product_id):
     try:
         for store in store_handler.store_dict:
             if product_id in store_handler.store_dict[store].inventory.products_dict:
@@ -133,20 +134,69 @@ def search_product_by_id(product_id):  # 2.6.1
         return [False, "bug, when searching by name"]
 
 
-def search_product_by_category(category):
+"""
+filters = 
+{
+min: int
+max: int
+prating: int
+category: str
+srating: int
+}
+"""
+
+
+def get_stores_with_rating(rating):
+    if rating is None:
+        rating = 0
+    store_list = list()
+    for key, store in store_handler.store_dict.items():
+        if store.rating >= rating:
+            store_list.append(store)
+    return store_list
+
+
+def get_products_with_filters(store, filters):
+    min_price = 0
+    rating = 0
+    cat = ''
+
+    if filters['min'] is not None:
+        min_price = filters['min']
+    if filters['prating'] is not None:
+        rating = filters['prating']
+    if filters['category'] is not None:
+        cat = filters['category']
+
+    product_list = list()
+    if filters['max'] is not None:
+        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
+            if min_price <= product.price <= filters['max'] and rating <= product.rating and product.category.find(
+                    cat) != -1:
+                product_list.append(product)
+    else:
+        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
+            if min_price <= product.price and rating <= product.rating and product.category.find(cat) != -1:
+                product_list.append(product)
+    return product_list
+
+
+# 2.6.1
+def search_product_by_category(category, filters):
     try:
+        if filters['category'] is not None and category.find(filters['category']) == -1:
+            return [False, "category doesnt match"]
         product_list = list()
-        for store in store_handler.store_dict:
-            for product in store_handler.store_dict[store].inventory.products_dict:
-                if store_handler.store_dict[store].inventory.products_dict[product].category == category:
-                    product_list.append(store_handler.store_dict[store].inventory.products_dict[product])
-        if(len(product_list) == 0):
+        for store in get_stores_with_rating(filters['srating']):
+            for product in get_products_with_filters(store.name, filters):
+                if product.category.find(category) != -1:
+                    product_list.append(product)
+        if len(product_list) == 0:
             return [False, "product not found"]
         else:
             return [True, product_list]
     except Exception as e:
         return [False, "bug, when searching by category"]
-
 
 
 def find_product_by_id(product_id, store_name):  # TODO
@@ -156,8 +206,33 @@ def find_product_by_id(product_id, store_name):  # TODO
         return [False, e.args[0]]
 
 
-def find_product_by_description(product_name):  # TODO maybe
-    pass
+# 2.6.3
+def find_product_by_keyword(keyword, filters):
+    try:
+        product_list = list()
+        for store in get_stores_with_rating(filters['srating']):
+            for product in get_products_with_filters(store, filters):
+                if product.description.find(keyword) != -1:
+                    product_list.append(product)
+        if len(product_list) == 0:
+            return [False, "product not found"]
+        else:
+            return [True, product_list]
+    except Exception as e:
+        return [False, "bug, when searching by keyword"]
+
+
+# 2.6.4
+# def filter_product_by_price(product_list):
+#     try:
+#         for product in product_list:
+#
+#         if len(product_list) == 0:
+#             return [False, "product not found"]
+#         else:
+#             return [True, product_list]
+#     except Exception as e:
+#         return [False, "bug, when searching by keyword"]
 
 
 # 2.7
@@ -343,14 +418,9 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         return [False, e.args[0]]
 
 
-
-
 # 4.9.1
 # def get_employee_information(user_name, employee_id):
 #     pass
-
-
-
 
 
 # 4.9.2
@@ -400,6 +470,3 @@ def get_user(user_name):
         return [True, user]
     except Exception as e:
         return [False, e.args[0]]
-
-
-
