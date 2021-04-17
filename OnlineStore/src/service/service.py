@@ -1,3 +1,5 @@
+from OnlineStore.src.domain.external.payment_system import address_payment_system
+from OnlineStore.src.domain.external.supply_system import address_supply_system
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.user_handler import UserHandler, Action
 from OnlineStore.src.domain.store.store_handler import StoreHandler
@@ -9,12 +11,12 @@ auth = Authentication()
 
 
 # 2.1
-def get_into_site() -> str:
+def get_into_site():
     return [True, user_handler.get_guest_unique_user_name()]
 
 
 # 2.2
-def exit_the_site(guest_name) -> bool:
+def exit_the_site(guest_name):
     try:
         return [True, user_handler.exit_the_site(guest_name)]
     except Exception as e:
@@ -130,8 +132,25 @@ def remove_product(user_name, product_id, quantity, store_name):
 
 
 # 2.9.0
-def purchase(user_name, payment_info):
-    pass
+def purchase(user_name: str, payment_info: dict, destination: str):
+    """
+    Purchase all the items in the cart
+
+    :param destination: the address of the customer
+    :param user_name: user name
+    :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
+    :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
+    """
+    try:
+        user = get_user(user_name)[1]
+        cart = user.cart
+        store_handler.is_valid_for_purchase(cart, user)
+        store_handler.take_quantity(cart)
+        cart_sum: int = store_handler.calculate_cart_sum(cart)
+        address_payment_system(payment_info, cart_sum)
+        return [True, address_supply_system(cart, destination)]
+    except Exception as e:
+        return [False, e.args[0]]
 
 
 # 3.1
@@ -241,11 +260,12 @@ def remove_store_manager(user_name, store_manager_id, store_id):
     except Exception as e:
         return False, e.args[0]
 
+
 # 4.9.1
 def get_employee_information(user_name: str, employee_name: str, store_name: str):
     try:
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO)
-        return [True, user_handler.get_employee_information(user_name, employee_name)]
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO.value)
+        return [True, user_handler.get_employee_information(employee_name)]
     except Exception as e:
         return [False, e.args[0]]
 
@@ -257,18 +277,11 @@ def get_user(user_name):
     except Exception as e:
         return [False, e.args[0]]
 
-# 4.9.1
-def get_employee_information(user_name, employee_id):
-    pass
-
-
-
-
 
 # 4.9.2
 def get_employee_permissions(user_name: str, store_name: str, employee_name: str):
     try:
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_PERMISSIONS)
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_PERMISSIONS.value)
         return [True, user_handler.get_employee_information(
             employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
     except Exception as e:
@@ -278,7 +291,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
 # 4.11
 def get_store_purchase_history(user_name, store_name):
     try:
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.STORE_PURCHASE_HISTORY)
+        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.STORE_PURCHASE_HISTORY.value)
         return [True, store_handler.get_store_purchase_history(store_name)]
     except Exception as e:
         return [False, e.args[0]]
@@ -292,7 +305,7 @@ def get_store_purchase_history_admin(user_name, store_name):
 # 6.4.2
 def get_user_purchase_history_admin(user_name, other_user_name):
     try:
-        user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY)
+        user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
         return [True, user_handler.get_user_purchase_history(other_user_name)]
     except Exception as e:
         return [False, e.args[0]]

@@ -1,4 +1,6 @@
 from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain.user.cart import Cart
+from OnlineStore.src.domain.user.user import User
 
 
 class StoreHandler:
@@ -76,5 +78,24 @@ class StoreHandler:
             raise Exception("The store does not exists in the system")
         return store.purchase_history
 
+    def __get_stores_from_cart(self, cart: Cart):
+        stores = list()
+        for store_name in cart.basket_dict.keys():
+            stores.append(self.get_store(store_name))
+        return stores
 
+    def is_valid_for_purchase(self, cart: Cart, user: User):
+        for store in self.__get_stores_from_cart(cart):
+            store.is_policies_eligible(user)
 
+    def take_quantity(self, cart: Cart):
+        for store in self.__get_stores_from_cart(cart):
+            store.inventory.take_quantity(cart.basket_dict.get(store.name))
+
+    def calculate_cart_sum(self, cart: Cart) -> int:
+        money_sum: int = 0
+
+        for store in self.__get_stores_from_cart(cart):
+            money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
+
+        return sum
