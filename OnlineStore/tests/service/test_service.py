@@ -22,7 +22,7 @@ class TestService(TestCase):
 
             if i < 10:
                 service.logout("user_name" + str(i))
-            if i < 20:
+            if i < 20 or i == 27:
                 service.add_product_to_cart("user_name" + str(i), "product" + str(i), 5, "store" + str(i))
 
         # for u in service.user_handler.users_dict.keys():
@@ -130,7 +130,17 @@ class TestService(TestCase):
         ans3 = service.find_product_by_id("product7", "store7")
         self.assertFalse(ans3[0])
 
-    ## TODO 2.9
+    # 2.9.0
+    def test_purchase(self):
+        user_name = "user_name27"
+        store_name = "store27"
+        product_name = "product27"
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
+        self.assertTrue(ans[0], ans[1])
+        self.assertTrue((service.get_store(store_name)[1].inventory.products_dict.get(product_name).quantity == 32), "quntity didnt drop")
+        service.add_product_to_cart(user_name, product_name, 50, store_name)
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
+        self.assertFalse(ans[0], ans[1])
 
     def test_logout(self):  # 3.1
         ans = service.logout("user_name12")

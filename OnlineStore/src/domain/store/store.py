@@ -1,4 +1,6 @@
 from OnlineStore.src.domain.store.inventory import Inventory
+from OnlineStore.src.domain.user.basket import Basket
+from OnlineStore.src.domain.user.user import User
 
 
 class Store:
@@ -61,6 +63,20 @@ class Store:
         for user in self.__get_assigns_of_user(user_name_to_delete):
             self.delete_owner(user)
 
+    # def is_manager_owner(self, user_name, manager_name):
+    #     if self.managers.get(manager_name) is not user_name:
+    #         raise Exception("The user is not the one who assigned the manager")
+
+    def is_policies_eligible(self, user: User):  # TODO
+        pass
+
+    def calculate_basket_sum(self, basket: Basket) -> int:
+        basket_sum = 0
+        for product_name in basket.products_dict.keys():
+            basket_sum += self.inventory.products_dict.get(product_name).calculate_product_sum(
+                basket.products_dict.get(product_name))
+
+        return basket_sum
     def delete_manager(self, user_name_to_delete, assigner):
         if self.managers[user_name_to_delete] != assigner:
             raise Exception("Only assigner can delete his manager")

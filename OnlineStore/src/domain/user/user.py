@@ -40,3 +40,6 @@ class User:
         if self.__is_admin is True and (
                 action is not 1 << Action.STORE_PURCHASE_HISTORY or action is not 1 << Action.USER_HISTORY):
             raise Exception("Admin doesnt have permission to do so")
+
+    def empty_cart(self):
+        self.cart = Cart()
