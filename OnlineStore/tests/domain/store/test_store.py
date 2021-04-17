@@ -6,7 +6,7 @@ from OnlineStore.src.domain.store.store import Store
 class TestStore(TestCase):
     def setUp(self):
         self.store = Store('store', 'batman', {'own': 'batman'}, {'mngr': 'batman'})
-        self.store.add_product_store({'product_id': 1, 'product_name': 'name', 'quantity': 1})
+        self.store.add_product_store({'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10})
 
     def test_check_permission_to_edit_store_inventory(self):
         self.assertRaises(Exception, self.store.check_permission_to_edit_store_inventory, 'spiderman')
@@ -21,8 +21,8 @@ class TestStore(TestCase):
 
     def test_add_new_product_to_store_inventory(self):
         self.assertRaises(Exception, self.store.add_product_store,
-                          {'product_id': 1, 'product_name': 'name', 'quantity': 1})
-        self.store.add_product_store({'product_id': 2, 'product_name': 'name', 'quantity': 1})
+                          {'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10})
+        self.store.add_product_store({'product_id': 2, 'product_name': 'name', 'quantity': 1, 'price': 10})
         self.assertTrue(2 in self.store.inventory.products_dict and self.store.inventory.products_dict[2].quantity == 1)
 
     def test_edit_product(self):

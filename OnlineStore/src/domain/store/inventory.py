@@ -16,7 +16,8 @@ class Inventory:
             raise Exception("Product already exist in the store")
         self.products_dict[product_details["product_id"]] = Product(product_details["product_id"],
                                                                     product_details["product_name"],
-                                                                    product_details["quantity"])
+                                                                    product_details["quantity"],
+                                                                    product_details["price"])
 
     def take_quantity(self, basket: Basket):
         exception_string = ""
