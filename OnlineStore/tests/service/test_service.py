@@ -64,6 +64,11 @@ class TestService(TestCase):
         ans5 = service.login("aaaa", "bbb")[0]
         self.assertFalse(ans5, "test: bad name")
 
+    def test_test_login_sync(self):
+        t1 = threading.Thread(service.login, ("user_name5", "5"))
+
+
+
     def test_get_information_about_products(self):  # 2.5
         ans, info = service.get_information_about_products("store0")
         self.assertTrue(ans, "fail to get info")

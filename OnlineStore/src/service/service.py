@@ -5,6 +5,13 @@ from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.service.authentication import Authentication
 from OnlineStore.src.service.event import Event
 from OnlineStore.src.service.event_log import Event_Log
+import logging
+from datetime import datetime
+
+dt_string = datetime.now().strftime("%d_%m_%Y")
+logging.basicConfig(filename=f'service_{dt_string}.log', format='%(asctime)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+logging.info('started function')
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -15,16 +22,21 @@ event_log = Event_Log
 # 2.1
 def get_into_site() -> str:
     try:
-        return [True, user_handler.get_guest_unique_user_name()]
+        ans = user_handler.get_guest_unique_user_name()
+        logging.info("get_into_site")
+        return [True, ans]
     except Exception as e:
-        event = Event("get_into_site", list(), e.args[0])
+        logging.error("fail in get_into_site: " + e.args[0])
         return [False, e.args[0]]
 
 # 2.2
 def exit_the_site(guest_name) -> bool:
     try:
-        return [True, user_handler.exit_the_site(guest_name)]
+        ans = user_handler.exit_the_site(guest_name)
+        logging.info("exit_the_site")
+        return [True, ans]
     except Exception as e:
+        logging.error("fail in exit_the_site: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -32,10 +44,14 @@ def exit_the_site(guest_name) -> bool:
 def register(user_name, password):
     try:
         if auth.register(user_name, password):
-            return [True, user_handler.register(user_name)]
+            ans = user_handler.register(user_name)
+            logging.info("register")
+            return [True, ans]
         else:
+            logging.info("register: user already exist")
             return [False, Exception("user already exist")]
     except Exception as e:
+        logging.error("faili in register: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -43,55 +59,75 @@ def register(user_name, password):
 def login(user_name, password):
     try:
         if auth.login(user_name, password):
-            return [True, user_handler.login(user_name)]
+            ans = user_handler.login(user_name)
+            logging.info("login "+ user_name+", " + password)
+            return [True, ans]
         else:
+            logging.info("login: invalid input")
             return [False, Exception("login fail")]
     except Exception as e:
+        logging.error("fail in login: "+e.args[0])
         return [False, e.args[0]]
 
 
 # 2.5.0
 def get_information_about_products(store_name):
     try:
-        return [True, store_handler.get_information_about_products(store_name)]
+        ans = store_handler.get_information_about_products(store_name)
+        logging.info("get_information_about_products "+ store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("fail: get_information_about_products " + e.args[0])
         return [False, e.args[0]]
 
 
 # 2.5.1
 def get_store_info(store_name):
     try:
-        return [True, store_handler.get_store_info(store_name)]
+        ans = store_handler.get_store_info(store_name)
+        logging.info("get_store_info "+ store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("fail in get_store_info " + e.args[0])
         return [False, e.args[0]]
 
 
 def get_store(store_name):
     try:
-        return [True, store_handler.get_store(store_name)]
+        ans = store_handler.get_store(store_name)
+        logging.info("get store " + store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("get_store faild " + e.args[0])
         return [False, e.args[0]]
 
 
-def add_product_to_store(user_name, product_details, store_name):  # TODO
+def add_product_to_store(user_name, product_details, store_name):
     try:
-        return [True, store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)]
+        ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
+        logging.info("add_product_to_store " + user_name + store_name)
+        return [True, ans]
     except Exception as e:
+        logging.error("add_product_to_store faild, " + e.args[0])
         return [False, e.args[0]]
 
 
-# 2.6
-def find_products(p_name, category, key_word, filter_options):
-    pass
+# # 2.6
+# def find_products(p_name, category, key_word, filter_options):
+#     pass
 
 
-def search_product_by_id(product_id): # 2.6.1
+def search_product_by_id(product_id):  # 2.6.1
     try:
         for store in store_handler.store_dict:
             if product_id in store_handler.store_dict[store].inventory.products_dict:
-                return [True, store_handler.store_dict[store].inventory.products_dict[product_id]]
+                ans = store_handler.store_dict[store].inventory.products_dict[product_id]
+                logging.info("search_product_by_id" + product_id)
+                return [True, ans]
+        logging.info("search_product_by_id " + "product not found")
         return [False, "product not found"]
     except Exception as e:
+        logging.error("search_product_by_id fail " + e.args[0])
         return [False, "bug, when searching by name"]
 
 
