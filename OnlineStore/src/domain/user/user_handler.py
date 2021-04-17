@@ -1,4 +1,3 @@
-from enum import Enum
 
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
@@ -20,10 +19,10 @@ GUEST_NAME_LENGTH = 20
 
 
 class UserHandler:
+
     def __init__(self):
         self.users_dict = dict()  # key-user_name, value - user
         self.lock = Lock()
-        # self.data_access = Data()
 
     def print_users(self):
         print(self.users_dict)
@@ -117,6 +116,4 @@ class UserHandler:
         user = self.users_dict.get(employee_name)
         if user is None:
             raise Exception("The Employee user does not exists in the system")
-        return user #TODO WHAT TO RETURN?? WHICH FIELDS?
-
-
+        return user  # TODO WHAT TO RETURN?? WHICH FIELDS?

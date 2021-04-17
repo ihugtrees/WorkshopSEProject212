@@ -4,12 +4,12 @@ from OnlineStore.src.domain.user.user import User
 
 
 class Store:
-    def __init__(self, store_name, store_founder, owners=dict(), managers=dict(),
+    def __init__(self, store_name, store_founder, owners=None, managers=None,
                  buying_policy=None, discount_policy=None, purchase_history=None):
         self.name = store_name
         self.store_founder = store_founder
-        self.owners = owners  # key-username, val-assigner:str
-        self.managers = managers  # key-username, val-assigner:str
+        self.owners = owners if owners is not None else dict()  # key-username, val-assigner:str
+        self.managers = managers if managers is not None else dict()  # key-username, val-assigner:str
         self.inventory = Inventory(dict())
         self.buying_policy = buying_policy
         self.discount_policy = discount_policy

@@ -1,16 +1,18 @@
+
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
 
 
 class StoreHandler:
+
     def __init__(self):
         self.store_dict = dict()  # key-store name, value-store
 
     def open_store(self, store_name, founder):
         if store_name in self.store_dict:
             raise Exception("store name already exists in the system")
-        self.store_dict[store_name] = Store(store_name, founder)
+        self.store_dict[store_name] = Store(store_name=store_name, store_founder=founder)
 
     def add_new_product_to_store_inventory(self, user_name, product_details, store_name):
         store = self.store_dict.get(store_name)
