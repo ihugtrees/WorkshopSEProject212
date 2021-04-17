@@ -16,7 +16,8 @@ class TestService(TestCase):
             product = {
                 "product_id": "product" + str(i),
                 "product_name": "product_name" + str(i),
-                "quantity": i + 10
+                "quantity": i + 10,
+                "price": i + 10
             }
             service.add_new_product_to_store_inventory("user_name" + str(i), product, "store" + str(i))
 
@@ -66,8 +67,6 @@ class TestService(TestCase):
 
     def test_test_login_sync(self):
         t1 = threading.Thread(service.login, ("user_name5", "5"))
-
-
 
     def test_get_information_about_products(self):  # 2.5
         ans, info = service.get_information_about_products("store0")
@@ -137,7 +136,8 @@ class TestService(TestCase):
         product_name = "product27"
         ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
         self.assertTrue(ans[0], ans[1])
-        self.assertTrue((service.get_store(store_name)[1].inventory.products_dict.get(product_name).quantity == 32), "quntity didnt drop")
+        self.assertTrue((service.get_store(store_name)[1].inventory.products_dict.get(product_name).quantity == 32),
+                        "quntity didnt drop")
         service.add_product_to_cart(user_name, product_name, 50, store_name)
         ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
         self.assertFalse(ans[0], ans[1])

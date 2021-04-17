@@ -38,7 +38,7 @@ class UserHandler:
         return user
 
     def get_cart_info(self, user_name):
-        user = self.users_dict[user_name]
+        user = self.users_dict.get(user_name)
         if user is None:
             raise Exception("user name does not exists in the system")
         return user.cart
@@ -96,7 +96,7 @@ class UserHandler:
             raise Exception("the current user is not logged in, so he cannot open a store")
 
     def get_user_purchase_history(self, user_name):
-        user = self.users_dict[user_name]
+        user = self.users_dict.get(user_name)
         if user is None:
             raise Exception("user name does not exists in the system")
         return user.purchase_history
