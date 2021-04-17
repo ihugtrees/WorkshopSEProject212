@@ -1,3 +1,4 @@
+import threading
 from unittest import TestCase
 
 from OnlineStore.src.service import service
@@ -225,3 +226,44 @@ class TestService(TestCase):
 
     def test_get_store_purchase_history_admin(self):  # 6.4.1
         pass
+
+    def test_get_into_site_sync(self):
+        try:
+            num_of_users = len(service.user_handler.users_dict)
+            t1 = threading.Thread(target=service.get_into_site, args=())
+            t2 = threading.Thread(target=service.get_into_site, args=())
+            t3 = threading.Thread(target=service.get_into_site, args=())
+            t4 = threading.Thread(target=service.get_into_site, args=())
+            t1.start()
+            t2.start()
+            t3.start()
+            t4.start()
+
+            t1.join()
+            t2.join()
+            t3.join()
+            t4.join()
+            num_after = len(service.user_handler.users_dict)
+            bool = num_of_users + 4 == num_after
+            self.assertTrue(bool)
+        except:
+            self.assertTrue(False, "bug")
+
+    def test_register_sync(self):
+        try:
+            t1 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t2 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t3 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t4 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t1.start()
+            t2.start()
+            t3.start()
+            t4.start()
+
+            t1.join()
+            t2.join()
+            t3.join()
+            t4.join()
+
+        except:
+            self.assertTrue(False, "buuug")
