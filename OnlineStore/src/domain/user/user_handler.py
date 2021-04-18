@@ -32,9 +32,13 @@ class UserHandler:
     def register(self, user_name):
         self.lock.acquire()
         user = User(user_name, Cart())
-        users.add_user(user)
-        self.lock.release()
-        return user
+        try:
+            users.add_user(user)
+            self.lock.release()
+            return user
+        except Exception as e:
+            self.lock.release()
+            raise e
 
     def get_cart_info(self, user_name):
         user = users.get_user_by_name(user_name)

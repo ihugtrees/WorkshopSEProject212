@@ -18,6 +18,8 @@ class User:
         self.is_logged = True
 
     def logout(self):
+        if not self.is_logged:
+            raise Exception("Already disconnected")
         self.is_logged = False
 
     def is_admin(self):
