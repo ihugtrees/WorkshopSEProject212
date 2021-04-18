@@ -226,10 +226,8 @@ srating: int/none
 
 def get_stores_with_rating(rating):
     """
-    TODO IGOR/YONATAN COMPLETE
-
-    :param rating:
-    :return:
+    :param rating: store rating
+    :return: store list
     """
     if rating is None:
         rating = 0
@@ -243,11 +241,9 @@ def get_stores_with_rating(rating):
 # 2.6
 def get_products_with_filters(store, filters):
     """
-    TODO IGOR/YONATAN COMPLETE
-
-    :param store:
-    :param filters:
-    :return:
+    :param store: store name
+    :param filters: filters
+    :return: product list
     """
     min_price = 0
     rating = 0
@@ -276,11 +272,9 @@ def get_products_with_filters(store, filters):
 # 2.6.1
 def search_product_by_category(category, filters):
     """
-    TODO IGOR/YONATAN COMPLETE
-
-    :param category:
-    :param filters:
-    :return:
+    :param category: product category
+    :param filters: filters
+    :return: product list
     """
     try:
         if filters['category'] is not None and category.find(filters['category']) == -1:
@@ -306,9 +300,9 @@ def search_product_by_name(name, filters):
     """
     Search specific product of a specific store
 
-    :param product_id: product id
-    :param store_name: store name
-    :return: Product
+    :param name: product name
+    :param filters: filters
+    :return: product list
     """
     try:
         product_list = list()
@@ -329,9 +323,9 @@ def search_product_by_keyword(keyword, filters):
     """
     TODO IGOR/YONATAN COMPLETE
 
-    :param keyword:
-    :param filters:
-    :return:
+    :param keyword: product keyword
+    :param filters: filters
+    :return: product list
     """
     try:
         product_list = list()
