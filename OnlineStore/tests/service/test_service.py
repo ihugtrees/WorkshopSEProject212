@@ -122,7 +122,7 @@ class TestService(TestCase):
         ans2, product = service.find_product_by_id(product_name, store_name)
         self.assertTrue(ans2 and product.quantity == 10)
 
-    def test_search_product_by_id(self):  # 2.6.1
+    def test_search_product_by_id(self):  # 2.6.0
         product_name = "product"
         ans = service.search_product_by_id("notExist")[0]
         self.assertFalse(ans, "test: not exist name")
@@ -130,12 +130,26 @@ class TestService(TestCase):
         quantity = product.quantity
         self.assertTrue(ans2 and quantity == 10)
 
-    def test_search_product_by_category(self):  # 2.6.2
+    def test_search_product_by_category(self):  # 2.6.1
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans = service.search_product_by_category("dogs", filters)
         self.assertFalse(ans[0], ans[1])
         ans2, product_list = service.search_product_by_category("null", filters)
         self.assertTrue(ans2 and (len(product_list) == product_id), product_list)
+
+    def test_search_product_by_name(self):  # 2.6.2
+        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
+        ans, result = service.search_product_by_name("not exist", filters)
+        self.assertFalse(ans)
+        ans2, result = service.search_product_by_name("product" , filters)
+        self.assertTrue(ans2 and result[0].quantity == 10)
+
+    def test_search_product_by_keyword(self):  # 2.6.3
+        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
+        ans, result = service.search_product_by_keyword("not exist", filters)
+        self.assertFalse(ans)
+        ans2, result = service.search_product_by_name("", filters)
+        self.assertTrue(ans2 and result[0].quantity == 10)
 
     def test_add_product_to_cart(self):  # 2.7
         store_name = "store0"

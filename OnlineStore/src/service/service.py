@@ -229,7 +229,7 @@ def get_stores_with_rating(rating):
             store_list.append(store)
     return store_list
 
-
+#2.6
 def get_products_with_filters(store, filters):
     """
     TODO IGOR/YONATAN COMPLETE
@@ -299,7 +299,7 @@ def search_product_by_name(name, filters):
     try:
         product_list = list()
         for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store, filters):
+            for product in get_products_with_filters(store.name, filters):
                 if product.product_name.find(name) != -1:
                     product_list.append(product)
         if len(product_list) == 0:
@@ -321,7 +321,7 @@ def search_product_by_keyword(keyword, filters):
     try:
         product_list = list()
         for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store, filters):
+            for product in get_products_with_filters(store.name, filters):
                 if product.description.find(keyword) != -1:
                     product_list.append(product)
         if len(product_list) == 0:
