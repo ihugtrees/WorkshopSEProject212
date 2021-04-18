@@ -262,15 +262,15 @@ class TestService(TestCase):
         product_name = "product"
         new_description = "new description"
 
-        ans = service.edit_product_details(user_name, new_description, store_name, product_name)
+        ans = service.edit_product_description(user_name, new_description, store_name, product_name)
         self.assertTrue(ans[0] and (service.get_store(store_name)[1].inventory.products_dict[
                                         product_name].description == new_description), ans[1])
 
-        ans = service.edit_product_details(user_name, new_description, store_name, "product17")
+        ans = service.edit_product_description(user_name, new_description, store_name, "product17")
         self.assertFalse(ans[0], ans[1])
 
         wrong_user_name = users_hash["user_name0"]
-        ans = service.edit_product_details(wrong_user_name, new_description, store_name, product_name)
+        ans = service.edit_product_description(wrong_user_name, new_description, store_name, product_name)
         self.assertFalse(ans[0], ans[1])
 
     def test_assign_store_owner(self):  # 4.3
@@ -289,9 +289,9 @@ class TestService(TestCase):
         ans4, result = service.assign_store_owner(not_owner_already_name, users_hash["user_name4"], store_name)
         self.assertFalse(ans4, result)
 
-        now_owner = not_owner_already_name
+        not_owner_already_name = "user_name0"
         assignee_user_name = users_hash["user_name2"]
-        ans3, result = service.assign_store_owner(assignee_user_name, now_owner, store_name)
+        ans3, result = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
         self.assertTrue(ans3 and (not_owner_already_name in service.get_store(store_name)[1].owners), result)
 
     def test_assign_store_manager(self):  # 4.3
