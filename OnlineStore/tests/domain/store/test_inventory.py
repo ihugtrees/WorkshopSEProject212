@@ -6,7 +6,7 @@ from OnlineStore.src.domain.store.inventory import Inventory
 class TestInventory(TestCase):
     def setUp(self):
         self.inv = Inventory(dict())
-        self.inv.add_product_inventory({'product_id': 1, 'product_name': 'name', 'quantity': 1})
+        self.inv.add_product_inventory({'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10})
 
     def test_remove_product_inventory(self):
         self.assertRaises(Exception, self.inv.remove_product_inventory, 2)
@@ -15,6 +15,6 @@ class TestInventory(TestCase):
 
     def test_add_product_inventory(self):
         self.assertRaises(Exception, self.inv.add_product_inventory,
-                          {'product_id': 1, 'product_name': 'name', 'quantity': 1})
-        self.inv.add_product_inventory({'product_id': 2, 'product_name': 'name', 'quantity': 1})
+                          {'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10})
+        self.inv.add_product_inventory({'product_id': 2, 'product_name': 'name', 'quantity': 1, 'price': 10})
         self.assertTrue(2 in self.inv.products_dict and self.inv.products_dict[2].quantity == 1)

@@ -5,7 +5,7 @@ from OnlineStore.src.domain.store.product import Product
 
 class TestProduct(TestCase):
     def setUp(self):
-        self.prod = Product(1, 'name', 1)
+        self.prod = Product(1, 'name', 1, 10)
 
     def test_take_quantity(self):
         self.assertRaises(Exception, self.prod.take_quantity, 0)
@@ -14,7 +14,7 @@ class TestProduct(TestCase):
         self.assertRaises(Exception, self.prod.take_quantity, 1)
 
     def test_add_quantity(self):
-        self.assertRaises(Exception, self.prod.take_quantity, 0)
+        self.assertRaises(Exception, self.prod.add_quantity, 0)
         self.prod.add_quantity(1)
         self.assertTrue(self.prod.quantity == 2)
 
