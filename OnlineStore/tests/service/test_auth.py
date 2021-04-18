@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from OnlineStore.src.service.authentication import Authentication
+from OnlineStore.src.security.authentication import Authentication
 
 
 class TestService(TestCase):
