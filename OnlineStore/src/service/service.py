@@ -128,6 +128,7 @@ def get_store_info(store_name: str):
         logging.error("fail in get_store_info " + e.args[0])
         return [False, e.args[0]]
 
+
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
 def get_store(store_name: str):
     """
@@ -164,7 +165,7 @@ def add_product_to_store(user_name, product_details, store_name):  # TODO
         return [False, e.args[0]]
 
 
-def search_product_by_id(product_id):  # 2.6.1
+def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
     """
     Search a product by his id.
     :param product_id: product id
@@ -182,6 +183,24 @@ def search_product_by_id(product_id):  # 2.6.1
     except Exception as e:
         logging.error("search_product_by_id fail " + e.args[0])
         return [False, "bug, when searching by name"]
+
+
+def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF DECIDED THAT EVERY PRODUCT HAS
+    # DIFFERENT ID IS THE SAME NEED TO CHECK
+    """
+    Search specific product of a specific store
+    :param product_id: product id
+    :param store_name: store name
+    :return: Product
+    """
+    global store_handler
+    try:
+        ans = store_handler.find_product_by_id(product_id, store_name)
+        logging.info("find_product_by_id: id = " + product_id + "store name = " + store_name)
+        return [True, ans]
+    except Exception as e:
+        logging.error("find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name)
+        return [False, e.args[0]]
 
 
 """
@@ -269,26 +288,30 @@ def search_product_by_category(category, filters):
         return [False, "bug, when searching by category"]
 
 
-def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF DECIDED THAT EVERY PRODUCT HAS
-    # DIFFERENT ID IS THE SAME NEED TO CHECK
+# 2.6.2
+def search_product_by_name(name, filters):
     """
-    Search specific product of a specific store
-    :param product_id: product id
-    :param store_name: store name
-    :return: Product
+    TODO IGOR/YONATAN COMPLETE
+    :param name:
+    :param filters:
+    :return:
     """
-    global store_handler
     try:
-        ans = store_handler.find_product_by_id(product_id, store_name)
-        logging.info("find_product_by_id: id = " + product_id + "store name = " + store_name)
-        return [True, ans]
+        product_list = list()
+        for store in get_stores_with_rating(filters['srating']):
+            for product in get_products_with_filters(store, filters):
+                if product.product_name.find(name) != -1:
+                    product_list.append(product)
+        if len(product_list) == 0:
+            return [False, "product not found"]
+        else:
+            return [True, product_list]
     except Exception as e:
-        logging.error("find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name)
-        return [False, e.args[0]]
+        return [False, "bug, when searching by keyword"]
 
 
 # 2.6.3
-def find_product_by_keyword(keyword, filters):
+def search_product_by_keyword(keyword, filters):
     """
     TODO IGOR/YONATAN COMPLETE
     :param keyword:
@@ -345,6 +368,7 @@ def get_cart_info(user_name):
     except Exception as e:
         logging.error("get_cart_info fail user name = " + user_name + e.args[0])
         return [False, e.args[0]]
+
 
 # TODO THE SAME AS GET CART INFO ABOVE MAYBE DELETE?
 def get_cart(user_name):
