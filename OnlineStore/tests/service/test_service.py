@@ -209,7 +209,6 @@ class TestService(TestCase):
 
         ans, store = service.get_store(store_name)
         self.assertTrue(ans)
-
         ans = service.open_store(store_name, user_name)[0]
         self.assertFalse(ans, "test: store name already exist")
 
