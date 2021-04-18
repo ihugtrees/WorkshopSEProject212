@@ -206,11 +206,11 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
 """
 filters = 
 {
-min: int
-max: int
-prating: int
-category: str
-srating: int
+min: int/none
+max: int/none
+prating: int/none
+category: str/none
+srating: int/none
 }
 """
 
