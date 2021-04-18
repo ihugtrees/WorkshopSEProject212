@@ -12,7 +12,7 @@ class Product:
         self.rating = 0
 
     def take_quantity(self, num_to_take):
-        if self.quantity < num_to_take:
+        if num_to_take <= 0 or self.quantity < num_to_take:
             raise Exception("There are only " + str(self.quantity) + " from " + self.product_name + " in the store.\n")
         self.quantity -= num_to_take
 
