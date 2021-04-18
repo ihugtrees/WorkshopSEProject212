@@ -229,7 +229,8 @@ def get_stores_with_rating(rating):
             store_list.append(store)
     return store_list
 
-#2.6
+
+# 2.6
 def get_products_with_filters(store, filters):
     """
     TODO IGOR/YONATAN COMPLETE
