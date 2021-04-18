@@ -1,12 +1,13 @@
 from unittest import TestCase
 
 from OnlineStore.src.domain.user.user_handler import UserHandler
+import OnlineStore.src.data_layer.users_data as users
 
 
 class TestUserHandler(TestCase):
     def setUp(self):
         self.user_handler = UserHandler()
-        self.user_handler.register('admin')
+        self.user_handler.register('admin', "password")
 
     def test_register(self):
         self.assertRaises(Exception, self.user_handler.register, 'admin')
@@ -28,10 +29,11 @@ class TestUserHandler(TestCase):
 
     def test_add_product(self):
         self.assertRaises(Exception, self.user_handler.add_product, 'batman', 1, 1, 1)
-        self.user_handler.add_product('admin', 1, 1, 1)
-        self.assertTrue(1 in self.user_handler.users_dict['admin'].cart.basket_dict)
-        self.assertTrue(1 in self.user_handler.users_dict['admin'].cart.basket_dict[1].products_dict)
-        self.assertTrue(1 == self.user_handler.users_dict['admin'].cart.basket_dict[1].products_dict[1])
+        user = self.user_handler.login('admin', "password")
+        self.user_handler.add_product(user, 1, 1, 1)
+        self.assertTrue(1 in users.get_user_by_name('admin').cart.basket_dict)
+        self.assertTrue(1 in users.get_user_by_name('admin').cart.basket_dict[1].products_dict)
+        self.assertTrue(1 == users.get_user_by_name('admin').cart.basket_dict[1].products_dict[1])
 
     def test_remove_product(self):
         self.assertRaises(Exception, self.user_handler.add_product, 'batman', 1, 1, 1)
@@ -44,4 +46,4 @@ class TestUserHandler(TestCase):
         self.assertFalse(1 in self.user_handler.users_dict['admin'].cart.basket_dict[1].products_dict)
 
     def test_get_cart(self):
-        self.fail() # TODO IMBLEMENT
+        self.fail()  # TODO IMBLEMENT

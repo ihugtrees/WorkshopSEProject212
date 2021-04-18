@@ -10,7 +10,8 @@ class TestStoreHandler(TestCase):
         self.handler = StoreHandler()
         self.handler.open_store('store', 'batman')
         self.handler.add_new_product_to_store_inventory('batman',
-                                                        {'product_id': 1, 'product_name': 'prod name', 'quantity': 1},
+                                                        {'product_id': 1, 'product_name': 'prod name', 'quantity': 1,
+                                                         'price': 10},
                                                         'store')
 
     def test_open_store(self):
@@ -20,13 +21,14 @@ class TestStoreHandler(TestCase):
 
     def test_add_new_product_to_store_inventory(self):
         self.assertRaises(Exception, self.handler.add_new_product_to_store_inventory, 'batman',
-                          {'product_id': 1, 'product_name': 'name', 'quantity': 1}, 'no store')
+                          {'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10}, 'no store')
         self.assertRaises(Exception, self.handler.add_new_product_to_store_inventory, 'batman',
-                          {'product_id': 1, 'product_name': 'name', 'quantity': 1}, 'store')
+                          {'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10}, 'store')
         self.assertRaises(Exception, self.handler.add_new_product_to_store_inventory, 'no permission',
-                          {'product_id': 1, 'product_name': 'name', 'quantity': 1}, 'store')
+                          {'product_id': 1, 'product_name': 'name', 'quantity': 1, 'price': 10}, 'store')
         self.handler.add_new_product_to_store_inventory('batman',
-                                                        {'product_id': 2, 'product_name': 'name', 'quantity': 1},
+                                                        {'product_id': 2, 'product_name': 'name', 'quantity': 1,
+                                                         'price': 10},
                                                         'store')
         self.assertTrue(2 in self.handler.store_dict['store'].inventory.products_dict)
 
