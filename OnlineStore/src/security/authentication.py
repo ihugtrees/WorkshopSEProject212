@@ -35,9 +35,9 @@ class Authentication:
     def get_username_from_hash(self, username_hash):
         return self._hash_to_name[username_hash]
 
-    def logout(self, username_hash):  #TODO MAYBE CHANGE
+    def logout(self, username_hash):  # TODO MAYBE CHANGE
         self.users[username_hash] = False
 
-    def guest_registeting(self, user_name) -> None:  # TODO MAYBE CHANGE
+    def guest_registering(self, user_name) -> None:  # TODO MAYBE CHANGE
         self.users[user_name] = True
         self._hash_to_name[user_name] = user_name

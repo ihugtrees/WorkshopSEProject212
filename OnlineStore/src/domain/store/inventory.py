@@ -3,13 +3,10 @@ from OnlineStore.src.domain.user.basket import Basket
 from threading import Lock
 
 
-
 class Inventory:
     def __init__(self, products_dict):
         self.products_dict = products_dict
         self.lock = Lock()
-
-
 
     def remove_product_inventory(self, product_id):
         if self.products_dict.get(product_id) is None:
@@ -19,6 +16,7 @@ class Inventory:
     def add_product_inventory(self, product_details):
         self.lock.acquire()
         if product_details["product_id"] in self.products_dict:
+            self.lock.release()
             raise Exception("Product already exist in the store")
         self.products_dict[product_details["product_id"]] = Product(product_details["product_id"],
                                                                     product_details["product_name"],
@@ -41,6 +39,7 @@ class Inventory:
             self.lock.release()
             raise Exception(exception_string)
         self.lock.release()
+
     def __rollback_from_take_quantity(self, basket):
         for product_name in basket.products_dict.keys():
             try:

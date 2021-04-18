@@ -29,7 +29,7 @@ def get_into_site() -> str:
     global auth
     try:
         ans = user_handler.get_guest_unique_user_name()
-        auth.guest_registeting(ans)
+        auth.guest_registering(ans)
         logging.info("get_into_site")
         return [True, ans]
     except Exception as e:

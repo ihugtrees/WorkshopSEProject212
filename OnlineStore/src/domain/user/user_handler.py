@@ -1,4 +1,3 @@
-import datetime
 
 import OnlineStore.src.data_layer.users_data as users
 from OnlineStore.src.domain.user.cart import Cart
@@ -21,7 +20,6 @@ GUEST_NAME_LENGTH = 20
 
 
 class UserHandler:
-
     def __init__(self):
         self.users_dict = dict()  # key-user_name, value - user
         self.lock = Lock()
@@ -103,7 +101,7 @@ class UserHandler:
     def get_employee_information(self, employee_name: str, store_name: str):
         user = users.get_user_by_name(employee_name)
         user.is_an_employee_in_store(store_name)
-        return user  # TODO WHAT TO RETURN?? WHICH FIELDS?
+        return user
 
     def get_user_by_name(self, user_name) -> User:
         return users.get_user_by_name(user_name)
