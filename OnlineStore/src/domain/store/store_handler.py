@@ -1,4 +1,3 @@
-
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
@@ -6,6 +5,10 @@ import OnlineStore.src.data_layer.purchase_data as purchase_handler
 from OnlineStore.src.domain.store.purchase import Purchase
 import random
 import string
+
+from OnlineStore.src.dto.cart_dto import CartDTO
+from OnlineStore.src.dto.user_dto import UserDTO
+
 
 class StoreHandler:
 
@@ -94,21 +97,21 @@ class StoreHandler:
             stores.append(self.get_store(store_name))
         return stores
 
-    def is_valid_for_purchase(self, cart: Cart, user: User):
+    def is_valid_for_purchase(self, cart: CartDTO, user: UserDTO):
         for store in self.__get_stores_from_cart(cart):
             store.is_policies_eligible(user)
 
-    def take_quantity(self, cart: Cart):
+    def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
             store.inventory.take_quantity(cart.basket_dict.get(store.name))
 
-    def calculate_cart_sum(self, cart: Cart) -> int:
+    def calculate_cart_sum(self, cart: CartDTO) -> int:
         money_sum = 0
         for store in self.__get_stores_from_cart(cart):
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
 
-    def add_all_basket_purchases_to_history(self, cart, user_name):
+    def add_all_basket_purchases_to_history(self, cart: CartDTO, user_name):
         for store_name in cart.basket_dict.keys():
             while True:
                 try:
@@ -118,3 +121,28 @@ class StoreHandler:
                     continue
             # print("end ")
             # print(datetime.datetime.now())
+
+    def assign_store_owner(self, user_name, new_store_owner_name, store_name):
+
+        store: Store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("store does not exists")
+
+        store.check_permission_to_assign(user_name)
+        ans = store.assign_new_owner(new_store_owner_name, user_name)
+        return ans
+
+    def assign_store_manager(self, user_name, new_store_manager_name, store_name):
+        store: Store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("store does not exists")
+        store.check_permission_to_assign(user_name)
+        return store.assign_new_manager(new_store_manager_name, user_name)
+
+    def remove_store_manager(self, user_name, store_manager_name, store_name):
+
+        store: Store = self.store_dict.get(store_name)
+        if store is None:
+            raise Exception("store does not exists")
+
+        return store.delete_manager(store_manager_name, user_name)

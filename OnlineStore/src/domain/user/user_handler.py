@@ -7,6 +7,9 @@ from threading import Lock
 import random
 import string
 
+from OnlineStore.src.dto.cart_dto import CartDTO
+from OnlineStore.src.dto.user_dto import UserDTO
+
 
 def get_random_string(length):
     # choose from all lowercase letter
@@ -38,9 +41,9 @@ class UserHandler:
             self.lock.release()
             raise e
 
-    def get_cart_info(self, user_name):
+    def get_cart_info(self, user_name) -> CartDTO:
         user = users.get_user_by_name(user_name)
-        return user.cart
+        return CartDTO(user.cart)
 
     def login(self, user_name):
         users.get_user_by_name(user_name).login()
@@ -58,9 +61,6 @@ class UserHandler:
 
     def remove_product(self, user_name, store_id, product_id, quantity):
         users.get_user_by_name(user_name).remove_product_from_user(store_id, product_id, quantity)
-
-    def get_cart(self, user_name):
-        return users.get_user_by_name(user_name).cart
 
     # def load_users(self):
     #     self.users_dict = data_access.load_users()
@@ -103,5 +103,11 @@ class UserHandler:
         user.is_an_employee_in_store(store_name)
         return user
 
-    def get_user_by_name(self, user_name) -> User:
-        return users.get_user_by_name(user_name)
+    def get_user_dto_by_name(self, user_name) -> UserDTO:
+        return UserDTO(users.get_user_by_name(user_name))
+
+    def set_permissions(self, new_store_manager_name, permission, store_name):
+        users.get_user_by_name(new_store_manager_name).set_permissions(permission, store_name)
+
+    def empty_cart(self, user_name):
+        users.get_user_by_name(user_name).empty_cart()
