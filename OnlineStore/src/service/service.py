@@ -469,18 +469,8 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         address_payment_system(payment_info, cart_sum)
         date = address_supply_system(cart, destination)
         user.empty_cart()
+        store_handler.add_all_basket_purchases_to_history(cart, user_name)
 
-        for store_name in cart.basket_dict.keys():
-            # print("start ")
-            # print(datetime.datetime.now())
-            while True:
-                try:
-                    purchase_handler.add_purchase(Purchase(get_random_string(20), user_name, store_name))
-                    break
-                except:
-                    continue
-            # print("end ")
-            # print(datetime.datetime.now())
 
         logging.info("purchase user name = " + user_name)
         return [True, date]

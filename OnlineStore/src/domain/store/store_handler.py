@@ -2,12 +2,22 @@
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
-
+import OnlineStore.src.data_layer.purchase_data as purchase_handler
+from OnlineStore.src.domain.store.purchase import Purchase
+import random
+import string
 
 class StoreHandler:
 
     def __init__(self):
         self.store_dict = dict()  # key-store name, value-store
+
+    def get_random_string(self, length):
+        # choose from all lowercase letter
+        letters = string.ascii_lowercase
+        result_str = ''.join(random.choice(letters) for i in range(length))
+        return result_str
+        # print("Random string of length", length, "is:", result_str)
 
     def open_store(self, store_name, founder):
         if store_name in self.store_dict:
@@ -97,3 +107,14 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
+
+    def add_all_basket_purchases_to_history(self, cart, user_name):
+        for store_name in cart.basket_dict.keys():
+            while True:
+                try:
+                    purchase_handler.add_purchase(Purchase(self.get_random_string(20), user_name, store_name))
+                    break
+                except:
+                    continue
+            # print("end ")
+            # print(datetime.datetime.now())

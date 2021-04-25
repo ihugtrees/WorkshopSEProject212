@@ -1,0 +1,15 @@
+from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.dto.inventory_dto import InventoryDTO
+
+
+class StoreDTO:
+    def __init__(self, store: Store):  # change purchase history from none to empty list (yonatan)
+        self.name = store.store_name
+        self.store_founder = store.store_founder
+        self.owners = store.owners
+        self.managers = store.managers
+        self.inventory = InventoryDTO(store.inventory)
+        self.buying_policy = store.buying_policy
+        self.discount_policy = store.discount_policy
+        self.purchase_history = store.purchase_history
+        self.rating = store.rating

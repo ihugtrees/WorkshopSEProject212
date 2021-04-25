@@ -5,7 +5,7 @@ from threading import Lock
 
 class Inventory:
     def __init__(self, products_dict):
-        self.products_dict = products_dict
+        self.products_dict = products_dict  # {String: Product}
         self.lock = Lock()
 
     def remove_product_inventory(self, product_id):
