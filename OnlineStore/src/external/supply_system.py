@@ -1,7 +1,4 @@
 import datetime
-
-
-# 8
 from OnlineStore.src.dto.cart_dto import CartDTO
 
 

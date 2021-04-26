@@ -1,7 +1,6 @@
 import datetime
 
-from OnlineStore.src.domain.external.payment_system import address_payment_system
-from OnlineStore.src.domain.external.supply_system import address_supply_system
+from OnlineStore.src.domain.adapters import payment_adapter, supply_adapter
 from OnlineStore.src.domain.store.purchase import Purchase
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.action import Action
@@ -454,8 +453,8 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         store_handler.is_valid_for_purchase(cart_dto, user_dto)
         store_handler.take_quantity(cart_dto)
         cart_sum = store_handler.calculate_cart_sum(cart_dto)
-        address_payment_system(payment_info, cart_sum)
-        date = address_supply_system(cart_dto, destination)
+        payment_adapter.pay_for_cart(payment_info, cart_sum)
+        date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
         store_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
         logging.info("purchase user name = " + user_name)
