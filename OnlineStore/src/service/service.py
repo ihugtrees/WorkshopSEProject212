@@ -64,7 +64,7 @@ def register(user_name: str, password: str):
 
     :param user_name: user name
     :param password: password
-    :return: The new user
+    :return: None
     """
     # TODO see why need to return new user
     global user_handler
@@ -72,8 +72,8 @@ def register(user_name: str, password: str):
     try:
         logging.info("register")
         user_name_hash = auth.register(user_name, password)
-        ans = user_handler.register(user_name)
-        return [True, ans]
+        user_handler.register(user_name)
+        return [True, None]
     except Exception as e:
         logging.info("register: user already exist")
         logging.error("fail in register: " + e.args[0])
