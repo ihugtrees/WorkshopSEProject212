@@ -36,7 +36,6 @@ class UserHandler:
         try:
             users.add_user(user)
             self.lock.release()
-            return user
         except Exception as e:
             self.lock.release()
             raise e
