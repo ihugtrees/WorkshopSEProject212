@@ -67,8 +67,9 @@ class Store:
     #     if self.managers.get(manager_name) is not user_name:
     #         raise Exception("The user is not the one who assigned the manager")
 
-    def is_policies_eligible(self, user: User):  # TODO
-        pass
+    def is_policies_eligible(self, user: UserDTO)->None:
+        if self.buying_policy is not None:
+            self.buying_policy.elligible_for_buying(user)
 
     def calculate_basket_sum(self, basket: Basket) -> int:
         basket_sum = 0
