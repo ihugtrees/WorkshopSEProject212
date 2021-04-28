@@ -72,12 +72,11 @@ def register(user_name: str, password: str):
     global user_handler
     global auth
     try:
-        logging.info("register")
         user_name_hash = auth.register(user_name, password)
         user_handler.register(user_name)
+        logging.info("register" + user_name)
         return [True, None]
     except Exception as e:
-        logging.error("register: user already exist")
         logging.error("fail in register: " + e.args[0])
         return [False, e.args[0]]
 
@@ -95,7 +94,7 @@ def login(user_name: str, password: str):
     try:
         user_name_hash = auth.login(user_name, password)
         user_handler.login(user_name)
-        logging.info("login " + user_name + ", " + password)
+        logging.info("login " + user_name)
         return [True, user_name_hash]
     except Exception as e:
         logging.error("fail in login: " + e.args[0])
@@ -170,7 +169,7 @@ def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
                 ans = store_handler.store_dict[store].inventory.products_dict[product_id]
                 logging.info("search_product_by_id" + product_id)
                 return [True, ans]
-        logging.info("search_product_by_id " + "product not found")
+        logging.info("search_product_by_id product not found")
         return [False, "product not found"]
     except Exception as e:
         logging.error("search_product_by_id fail " + e.args[0])
@@ -231,7 +230,7 @@ def search_product_by_name(name, filters):
         else:
             return [True, product_list]
     except Exception as e:
-        return [False, "bug, when searching by keyword"]
+        return [False, "bug, when searching by keyword " + e.args[0]]
 
 
 # 2.6.3
@@ -248,7 +247,7 @@ def search_product_by_keyword(keyword, filters):
         else:
             return [True, product_list]
     except Exception as e:
-        return [False, "bug, when searching by keyword"]
+        return [False, "bug, when searching by keyword " + e.args[0]]
 
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
@@ -623,6 +622,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
         return [True, user_handler.get_employee_information(
             employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
     except Exception as e:
+        logging.error("get_employee_permissions " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -642,6 +642,7 @@ def get_store_purchase_history(user_name, store_name):
         permission_handler.is_permmited_to(user_name, Action.STORE_PURCHASE_HISTORY.value, store_name)
         return [True, purchase_handler.get_store_purchases(store_name)]
     except Exception as e:
+        logging.error("get_store_purchase_history " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -666,6 +667,7 @@ def get_user_purchase_history_admin(user_name, other_user_name):
         # check if admin
         return [True, purchase_handler.get_user_purchases(other_user_name)]
     except Exception as e:
+        logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
 
 
