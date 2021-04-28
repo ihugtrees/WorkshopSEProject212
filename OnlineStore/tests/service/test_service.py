@@ -100,7 +100,8 @@ class TestService(TestCase):
         store_name = "store0"
         ans, info = service.get_information_about_products(store_name)
         self.assertTrue(ans, "fail to get info")
-        self.assertEqual(info, service.get_store_for_tests(store_name)[1].inventory.products_dict, "the info is not mach")
+        self.assertEqual(info, service.get_store_for_tests(store_name)[1].inventory.products_dict,
+                         "the info is not mach")
 
     def test_get_store(self):  # 2.5
         store_name = "store0"
@@ -135,7 +136,7 @@ class TestService(TestCase):
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans, result = service.search_product_by_name("not exist", filters)
         self.assertFalse(ans)
-        ans2, result = service.search_product_by_name("product" , filters)
+        ans2, result = service.search_product_by_name("product", filters)
         self.assertTrue(ans2 and result[0].quantity == 10)
 
     def test_search_product_by_keyword(self):  # 2.6.3
@@ -157,7 +158,8 @@ class TestService(TestCase):
 
         ans = service.add_product_to_cart(user_name, product_name, 5, store_name)[0]
         self.assertTrue(ans, "test: add product to cart")
-        self.assertTrue(service.get_user_for_tests(user_name)[1].cart.basket_dict[store_name].products_dict[product_name] == 10)
+        self.assertTrue(
+            service.get_user_for_tests(user_name)[1].cart.basket_dict[store_name].products_dict[product_name] == 10)
         store = service.get_store_for_tests(store_name)[1]
         product_dict = store.inventory.products_dict
         ans3 = product_dict[product_name].quantity
@@ -196,8 +198,9 @@ class TestService(TestCase):
 
         ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
         self.assertTrue(ans[0], ans[1])
-        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 5),
-                        "quntity didnt drop")
+        self.assertTrue(
+            (service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 5),
+            "quntity didnt drop")
 
         service.add_product_to_cart(user_name, product_name, 50, store_name)
         ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")

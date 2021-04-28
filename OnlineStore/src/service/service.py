@@ -212,66 +212,6 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
         return [False, e.args[0]]
 
 
-"""
-filters = 
-{
-min: int/none
-max: int/none
-prating: int/none
-category: str/none
-srating: int/none
-}
-"""
-
-
-def get_stores_with_rating(rating):
-    """
-    :param rating: store rating
-    :return: store list
-    """
-    if rating is None:
-        rating = 0
-    store_list = list()
-    for key, store in store_handler.store_dict.items():
-        if store.rating >= rating:
-            # TODO change store to storeDTO and move logic to handlers
-            store_list.append(store)
-    return store_list
-
-
-# 2.6
-def get_products_with_filters(store, filters):
-    """
-    :param store: store name
-    :param filters: filters
-    :return: product list
-    """
-    min_price = 0
-    rating = 0
-    cat = ''
-
-    if filters['min'] is not None:
-        min_price = filters['min']
-    if filters['prating'] is not None:
-        rating = filters['prating']
-    if filters['category'] is not None:
-        cat = filters['category']
-
-    product_list = list()
-    if filters['max'] is not None:
-        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
-            if min_price <= product.price <= filters['max'] and rating <= product.rating and product.category.find(
-                    cat) != -1:
-                product_list.append(product)
-    else:
-        # TODO change product to productDTO and move logic to handlers
-        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
-            if min_price <= product.price and rating <= product.rating and product.category.find(cat) != -1:
-                product_list.append(product)
-    return product_list
-
-
-
 # 2.6.1
 def search_product_by_category(category, filters):
     """
@@ -279,15 +219,8 @@ def search_product_by_category(category, filters):
     :param filters: filters
     :return: product list
     """
-    # TODO change product to productDTO and move logic to handlers
     try:
-        if filters['category'] is not None and category.find(filters['category']) == -1:
-            return [False, "category doesnt match"]
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.category.find(category) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_category(category, filters)
         if len(product_list) == 0:
             logging.info("search_product_by_category: category: " + category + "product not found")
             return [False, "product not found"]
@@ -308,13 +241,8 @@ def search_product_by_name(name, filters):
     :param filters: filters
     :return: product list
     """
-    # TODO change product to productDTO and move logic to handlers
     try:
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.product_name.find(name) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_name(name, filters)
         if len(product_list) == 0:
             return [False, "product not found"]
         else:
@@ -326,39 +254,18 @@ def search_product_by_name(name, filters):
 # 2.6.3
 def search_product_by_keyword(keyword, filters):
     """
-    TODO IGOR/YONATAN COMPLETE
-
     :param keyword: product keyword
     :param filters: filters
     :return: product list
     """
-    # TODO change product to productDTO and move logic to handlers
     try:
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.description.find(keyword) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_keyword(keyword, filters)
         if len(product_list) == 0:
             return [False, "product not found"]
         else:
             return [True, product_list]
     except Exception as e:
         return [False, "bug, when searching by keyword"]
-
-
-# TODO NEED THE CODE BELOW? IGOR/YONATAN
-# 2.6.4
-# def filter_product_by_price(product_list):
-#     try:
-#         for product in product_list:
-#
-#         if len(product_list) == 0:
-#             return [False, "product not found"]
-#         else:
-#             return [True, product_list]
-#     except Exception as e:
-#         return [False, "bug, when searching by keyword"]
 
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
