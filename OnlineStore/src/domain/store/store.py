@@ -1,6 +1,7 @@
 from OnlineStore.src.domain.store.inventory import Inventory
 from OnlineStore.src.domain.user.basket import Basket
 from OnlineStore.src.domain.user.user import User
+from OnlineStore.src.dto.user_dto import UserDTO
 
 
 class Store:
