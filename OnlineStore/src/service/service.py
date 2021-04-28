@@ -77,7 +77,7 @@ def register(user_name: str, password: str):
         user_handler.register(user_name)
         return [True, None]
     except Exception as e:
-        logging.info("register: user already exist")
+        logging.error("register: user already exist")
         logging.error("fail in register: " + e.args[0])
         return [False, e.args[0]]
 
