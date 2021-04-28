@@ -196,15 +196,124 @@ class TestService(TestCase):
         store_name = "store0"
         product_name = "product"
 
-        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", True, True)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
         self.assertTrue(ans[0], ans[1])
         self.assertTrue(
             (service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 5),
             "quntity didnt drop")
 
         service.add_product_to_cart(user_name, product_name, 50, store_name)
-        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
-        self.assertFalse(ans[0], ans[1])
+
+        cart_before = service.get_cart_info(user_name)[1]
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", True, True)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
+        self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 5), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_delivery_fail(self):
+        user_name = users_hash["user_name0"]
+        store_name = "store0"
+        product_name = "product"
+
+        cart_before = service.get_cart_info(user_name)[1]
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", False, True)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
+        self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+        cart_before = service.get_cart_info(user_name)[1]
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", False, False)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
+        self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
+        self.assertTrue(
+            (service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 10),
+            "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_payment_fail(self):
+        user_name = users_hash["user_name0"]
+        store_name = "store0"
+        product_name = "product"
+
+        cart_before = service.get_cart_info(user_name)[1]
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", True, False)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
+        self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+
+        cart_before = service.get_cart_info(user_name)[1]
+        store_history_before = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_before = service.get_user_purchases_history(user_name)[1]
+
+        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva", False, False)
+
+        cart_after = service.get_cart_info(user_name)[1]
+        store_history_after = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history_after = service.get_user_purchases_history(user_name)[1]
+
+        self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
+        self.assertTrue(
+            (service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 10),
+            "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
 
     def test_logout(self):  # 3.1
         user_name = users_hash["user_name1"]

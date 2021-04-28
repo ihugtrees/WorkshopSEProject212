@@ -343,15 +343,18 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 
 # 2.9.0
-def purchase(user_name: str, payment_info: dict, destination: str):
+def purchase(user_name: str, payment_info: dict, destination: str, payment_success: bool, delivery_success: bool):
     """
     Purchase all the items in the cart
 
+    :param delivery_success:
+    :param payment_success:
     :param destination: the address of the customer
     :param user_name: user name
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
     :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
     """
+    payment_done_delivery_done = {"payment_done": False, "delivery_done": False}
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
@@ -360,15 +363,18 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         store_handler.is_valid_for_purchase(cart_dto, user_dto)
         store_handler.take_quantity(cart_dto)
         cart_sum = store_handler.calculate_cart_sum(cart_dto)
-        payment_adapter.pay_for_cart(payment_info, cart_sum)
-        date = supply_adapter.supply_products_to_user(cart_dto, destination)
+
+        payment_adapter.pay_for_cart(payment_info, cart_sum, payment_success)
+        payment_done_delivery_done["payment_done"] = True
+        date = supply_adapter.supply_products_to_user(cart_dto, destination, delivery_success)
+        payment_done_delivery_done["delivery_done"] = True
         user_handler.empty_cart(user_name)
         store_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
         logging.info("purchase user name = " + user_name)
         return [True, date]
     except Exception as e:
         logging.error("purchase fail " + e.args[0])
-        return [False, e.args[0]]
+        return [False, e.args[0], payment_done_delivery_done]
 
 
 # 3.1
