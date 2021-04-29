@@ -1,6 +1,8 @@
+from OnlineStore.src.domain.store.buying_policy import BuyingPolicyMock
 from OnlineStore.src.domain.store.inventory import Inventory
 from OnlineStore.src.domain.user.basket import Basket
 from OnlineStore.src.domain.user.user import User
+from OnlineStore.src.dto.user_dto import UserDTO
 
 
 class Store:
@@ -11,7 +13,10 @@ class Store:
         self.owners = owners if owners is not None else dict()  # key-username, val-assigner:str
         self.managers = managers if managers is not None else dict()  # key-username, val-assigner:str
         self.inventory = Inventory(dict())
-        self.buying_policy = buying_policy
+        if buying_policy is None:
+            self.buying_policy = BuyingPolicyMock()
+        else:
+            self.buying_policy = buying_policy
         self.discount_policy = discount_policy
         self.purchase_history = purchase_history
         self.rating = 0
@@ -34,9 +39,8 @@ class Store:
         self.inventory.products_dict[product_id].edit_product_description(product_details)
 
     def check_permission_to_assign(self, user_name):
-        if user_name == self.store_founder or user_name in self.owners:
-            return True
-        return False
+        if user_name != self.store_founder and user_name not in self.owners:
+            raise Exception("permission denied")
 
     def assign_new_owner(self, new_owner, assigner):
         if new_owner in self.owners:
@@ -68,8 +72,9 @@ class Store:
     #     if self.managers.get(manager_name) is not user_name:
     #         raise Exception("The user is not the one who assigned the manager")
 
-    def is_policies_eligible(self, user: User):  # TODO
-        pass
+    def is_policies_eligible(self, user: UserDTO)->None:
+        if self.buying_policy is not None:
+            self.buying_policy.elligible_for_buying(user)
 
     def calculate_basket_sum(self, basket: Basket) -> int:
         basket_sum = 0

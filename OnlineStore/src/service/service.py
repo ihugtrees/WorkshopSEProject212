@@ -1,7 +1,6 @@
 import datetime
 
-from OnlineStore.src.domain.external.payment_system import address_payment_system
-from OnlineStore.src.domain.external.supply_system import address_supply_system
+from OnlineStore.src.domain.adapters import payment_adapter, supply_adapter
 from OnlineStore.src.domain.store.purchase import Purchase
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.action import Action
@@ -10,9 +9,10 @@ from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.security.authentication import Authentication
 from OnlineStore.src.service.logger import Logger
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
+import OnlineStore.src.data_layer.users_data as users
 
 logging = Logger()
-
+#payment_adapter =
 user_handler = UserHandler()
 store_handler = StoreHandler()
 auth = Authentication()
@@ -63,7 +63,7 @@ def register(user_name: str, password: str):
 
     :param user_name: user name
     :param password: password
-    :return: The new user
+    :return: None
     """
     # TODO see why need to return new user
     global user_handler
@@ -71,8 +71,8 @@ def register(user_name: str, password: str):
     try:
         logging.info("register")
         user_name_hash = auth.register(user_name, password)
-        ans = user_handler.register(user_name)
-        return [True, ans]
+        user_handler.register(user_name)
+        return [True, None]
     except Exception as e:
         logging.info("register: user already exist")
         logging.error("fail in register: " + e.args[0])
@@ -136,21 +136,21 @@ def get_store_info(store_name: str):
 
 
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
-def get_store(store_name: str):
-    """
-    Gets a specific store
-
-    :param store_name: store name
-    :return: Store
-    """
-    global store_handler
-    try:
-        ans = store_handler.get_store(store_name)
-        logging.info("get store " + store_name)
-        return [True, ans]
-    except Exception as e:
-        logging.error("get_store faild " + e.args[0])
-        return [False, e.args[0]]
+# def get_store(store_name: str):
+#     """
+#     Gets a specific store
+#
+#     :param store_name: store name
+#     :return: Store
+#     """
+#     global store_handler
+#     try:
+#         ans = store_handler.get_store(store_name)
+#         logging.info("get store " + store_name)
+#         return [True, ans]
+#     except Exception as e:
+#         logging.error("get_store faild " + e.args[0])
+#         return [False, e.args[0]]
 
 
 def add_product_to_store(user_name, product_details, store_name):  # TODO
@@ -212,63 +212,6 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
         return [False, e.args[0]]
 
 
-"""
-filters = 
-{
-min: int/none
-max: int/none
-prating: int/none
-category: str/none
-srating: int/none
-}
-"""
-
-
-def get_stores_with_rating(rating):
-    """
-    :param rating: store rating
-    :return: store list
-    """
-    if rating is None:
-        rating = 0
-    store_list = list()
-    for key, store in store_handler.store_dict.items():
-        if store.rating >= rating:
-            store_list.append(store)
-    return store_list
-
-
-# 2.6
-def get_products_with_filters(store, filters):
-    """
-    :param store: store name
-    :param filters: filters
-    :return: product list
-    """
-    min_price = 0
-    rating = 0
-    cat = ''
-
-    if filters['min'] is not None:
-        min_price = filters['min']
-    if filters['prating'] is not None:
-        rating = filters['prating']
-    if filters['category'] is not None:
-        cat = filters['category']
-
-    product_list = list()
-    if filters['max'] is not None:
-        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
-            if min_price <= product.price <= filters['max'] and rating <= product.rating and product.category.find(
-                    cat) != -1:
-                product_list.append(product)
-    else:
-        for key, product in store_handler.store_dict[store].inventory.products_dict.items():
-            if min_price <= product.price and rating <= product.rating and product.category.find(cat) != -1:
-                product_list.append(product)
-    return product_list
-
-
 # 2.6.1
 def search_product_by_category(category, filters):
     """
@@ -277,13 +220,7 @@ def search_product_by_category(category, filters):
     :return: product list
     """
     try:
-        if filters['category'] is not None and category.find(filters['category']) == -1:
-            return [False, "category doesnt match"]
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.category.find(category) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_category(category, filters)
         if len(product_list) == 0:
             logging.info("search_product_by_category: category: " + category + "product not found")
             return [False, "product not found"]
@@ -305,11 +242,7 @@ def search_product_by_name(name, filters):
     :return: product list
     """
     try:
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.product_name.find(name) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_name(name, filters)
         if len(product_list) == 0:
             return [False, "product not found"]
         else:
@@ -321,38 +254,18 @@ def search_product_by_name(name, filters):
 # 2.6.3
 def search_product_by_keyword(keyword, filters):
     """
-    TODO IGOR/YONATAN COMPLETE
-
     :param keyword: product keyword
     :param filters: filters
     :return: product list
     """
     try:
-        product_list = list()
-        for store in get_stores_with_rating(filters['srating']):
-            for product in get_products_with_filters(store.name, filters):
-                if product.description.find(keyword) != -1:
-                    product_list.append(product)
+        product_list = store_handler.search_product_by_keyword(keyword, filters)
         if len(product_list) == 0:
             return [False, "product not found"]
         else:
             return [True, product_list]
     except Exception as e:
         return [False, "bug, when searching by keyword"]
-
-
-# TODO NEED THE CODE BELOW? IGOR/YONATAN
-# 2.6.4
-# def filter_product_by_price(product_list):
-#     try:
-#         for product in product_list:
-#
-#         if len(product_list) == 0:
-#             return [False, "product not found"]
-#         else:
-#             return [True, product_list]
-#     except Exception as e:
-#         return [False, "bug, when searching by keyword"]
 
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
@@ -377,25 +290,6 @@ def get_cart_info(user_name):
         return [True, ans]
     except Exception as e:
         logging.error("get_cart_info fail user name = " + user_name + e.args[0])
-        return [False, e.args[0]]
-
-
-# TODO THE SAME AS GET CART INFO ABOVE MAYBE DELETE?
-def get_cart(user_name):
-    """
-    Get the user's cart
-
-    :param user_name: user name
-    :return: Cart
-    """
-    global user_handler
-    try:
-        user_name = auth.get_username_from_hash(user_name)
-        ans = user_handler.get_cart(user_name)
-        logging.info("get_cart")
-        return [True, ans]
-    except Exception as e:
-        logging.error("get_cart fail " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -453,40 +347,34 @@ def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
 
+    :param delivery_success:
+    :param payment_success:
     :param destination: the address of the customer
     :param user_name: user name
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
     :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
     """
+    payment_done_delivery_done = {"payment_done": False, "delivery_done": False}
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user = user_handler.get_user_by_name(user_name)
-        cart = user.cart
-        store_handler.is_valid_for_purchase(cart, user)
-        store_handler.take_quantity(cart)
-        cart_sum = store_handler.calculate_cart_sum(cart)
-        address_payment_system(payment_info, cart_sum)
-        date = address_supply_system(cart, destination)
-        user.empty_cart()
+        user_dto = user_handler.get_user_dto_by_name(user_name)
+        cart_dto = user_dto.cart
+        store_handler.is_valid_for_purchase(cart_dto, user_dto)
+        store_handler.take_quantity(cart_dto)
+        cart_sum = store_handler.calculate_cart_sum(cart_dto)
 
-        for store_name in cart.basket_dict.keys():
-            # print("start ")
-            # print(datetime.datetime.now())
-            while True:
-                try:
-                    purchase_handler.add_purchase(Purchase(get_random_string(20), user_name, store_name))
-                    break
-                except:
-                    continue
-            # print("end ")
-            # print(datetime.datetime.now())
-
+        payment_adapter.pay_for_cart(payment_info, cart_sum)
+        payment_done_delivery_done["payment_done"] = True
+        date = supply_adapter.supply_products_to_user(cart_dto, destination)
+        payment_done_delivery_done["delivery_done"] = True
+        user_handler.empty_cart(user_name)
+        store_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
         logging.info("purchase user name = " + user_name)
         return [True, date]
     except Exception as e:
         logging.error("purchase fail " + e.args[0])
-        return [False, e.args[0]]
+        return [False, e.args[0], payment_done_delivery_done]
 
 
 # 3.1
@@ -526,7 +414,7 @@ def open_store(store_name, user_name):
         user_name = auth.get_username_from_hash(user_name)
         user_handler.check_permission_to_open_store(user_name)
         ans = store_handler.open_store(store_name, user_name)
-        user_handler.get_user_by_name(user_name).set_permissions(1 << Action.OWNER.value, store_name)
+        user_handler.set_permissions(user_name, 1 << Action.OWNER.value, store_name)
         logging.info("open_store user name: " + user_name + " store name: " + store_name)
         return [True, ans]
     except Exception as e:
@@ -633,16 +521,10 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        store: Store = store_handler.store_dict[store_name]
-        if store.check_permission_to_assign(user_name):
-            ans = store.assign_new_owner(new_store_owner_name, user_name)
-            user_handler.get_user_by_name(new_store_owner_name).set_permissions(1 << Action.OWNER.value, store_name)
-            logging.info("assign_store_owner")
-            return True, ans
-        else:
-            logging.info("assign_store_owner: " + user_name +
-                         " is not owner of " + store_name)
-            return False, (user_name + " is not owner of " + store_name)
+        ans = store_handler.assign_store_owner(user_name, new_store_owner_name, store_name)
+        user_handler.set_permissions(new_store_owner_name, 1 << Action.OWNER.value, store_name)
+        logging.info("assign_store_owner")
+        return True, ans
     except Exception as e:
         logging.error("assign_store_owner fail: " + e.args[0])
         return False, (user_name + " is not owner of " + store_name)
@@ -661,16 +543,11 @@ def assign_store_manager(user_name: str, new_store_manager_name: str, store_name
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        store: Store = store_handler.store_dict[store_name]
-        if store.check_permission_to_assign(user_name):
-            ans = store.assign_new_manager(new_store_manager_name, user_name)
-            user_handler.get_user_by_name(new_store_manager_name).set_permissions(1, store_name)
-            logging.info("assign_store_manager")
-            return True, ans
-        else:
-            logging.info("assign_store_manager " + user_name +
-                         " is not owner of " + store_name)
-            return False, (user_name + " is not owner of " + store_name)
+        ans = store_handler.assign_store_manager(user_name, new_store_manager_name, store_name)
+
+        user_handler.set_permissions(new_store_manager_name, 1, store_name)
+        logging.info("assign_store_manager")
+        return True, ans
     except Exception as e:
         logging.error("assign_store_manager " + e.args[0])
         return False, (user_name + " is not owner of " + store_name)
@@ -713,8 +590,7 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        store: Store = store_handler.store_dict[store_name]
-        ans = store.delete_manager(store_manager_name, user_name)
+        ans = store_handler.remove_store_manager(user_name, store_manager_name, store_name)
         logging.info("remove_store_manager")
         return True, ans
     except Exception as e:
@@ -806,7 +682,7 @@ def get_user_purchase_history_admin(user_name, other_user_name):
         return [False, e.args[0]]
 
 
-def get_store(store_id):
+def get_store_for_tests(store_id)->(bool,Store):
     global store_handler
     try:
         store = store_handler.store_dict[store_id]
@@ -815,11 +691,11 @@ def get_store(store_id):
         return False, e.args[0]
 
 
-def get_user(user_name):
+def get_user_for_tests(user_name):
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user = user_handler.get_user_by_name(user_name)
+        user = users.get_user_by_name(user_name)
         return [True, user]
     except Exception as e:
         return [False, e.args[0]]

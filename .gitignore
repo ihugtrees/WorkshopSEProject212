@@ -8,5 +8,8 @@
 /httpRequests/
 *.log
 
-.idea
 __pycache__/
+.idea
+
+
+
