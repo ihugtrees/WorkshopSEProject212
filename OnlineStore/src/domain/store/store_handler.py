@@ -9,12 +9,14 @@ import string
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.dto.product_dto import ProductDTO
 from OnlineStore.src.dto.user_dto import UserDTO
+from threading import Lock
 
 
 class StoreHandler:
 
     def __init__(self):
         self.store_dict = dict()  # key-store name, value-store
+        self.lock = Lock()
 
     def get_random_string(self, length):
         # choose from all lowercase letter
@@ -24,9 +26,12 @@ class StoreHandler:
         # print("Random string of length", length, "is:", result_str)
 
     def open_store(self, store_name, founder):
+        self.lock.acquire()
         if store_name in self.store_dict:
+            self.lock.release()
             raise Exception("store name already exists in the system")
         self.store_dict[store_name] = Store(store_name=store_name, store_founder=founder)
+        self.lock.release()
 
     def add_new_product_to_store_inventory(self, user_name, product_details, store_name):
         store = self.store_dict.get(store_name)

@@ -108,10 +108,11 @@ class TestService(TestCase):
 
     def test_get_store(self):  # 2.5
         store_name = "store0"
-        ans, store = service.get_store_for_tests(store_name)
+        ans, store = service.get_store_info(store_name)
         self.assertTrue(ans, "fail to get the store")
-        self.assertEqual(store.name, store_name)
-
+        self.assertEqual(store["store_name"], store_name)
+        # {"store_name": store.name, "store_founder": store.store_founder,
+        #  "buying_policy": store.buying_policy, "discount_policy": store.discount_policy}
     def test_find_product_by_id(self):  # 2.6
         store_name = "store0"
         product_name = "product"
@@ -347,19 +348,7 @@ class TestService(TestCase):
         ans, store_history = service.get_store_purchase_history(user_name0, store_name)
         self.assertTrue(ans, store_history)
         self.assertTrue(len(store_history) == 2)
-        # cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
-        #
-        # ans = service.purchase(user_name, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
-        #
-        # cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
-        #
-        # self.assertFalse(ans[0] or ans[2]["payment_done"] or ans[2]["delivery_done"], ans[1])
-        # self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
-        #                  == 10), "quantity drop")
-        # for store_name, basket in cart_before.basket_dict.items():
-        #     self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
-        # self.assertTrue(len(store_history_before) == len(store_history_after))
-        # self.assertTrue(len(user_history_before) == len(user_history_after))
+
 
     def test_logout(self):  # 3.1
         user_name = users_hash["user_name1"]
@@ -489,9 +478,6 @@ class TestService(TestCase):
         store: Store = service.get_store_for_tests(store_name)[1]
         assign_list = store.managers
         self.assertTrue(len(assign_list) == 1)
-
-
-
 
 
     def test_edit_manager_permissions(self):  # 4.6

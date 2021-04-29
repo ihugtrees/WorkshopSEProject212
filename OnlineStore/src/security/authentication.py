@@ -1,4 +1,5 @@
 import hashlib
+from threading import Lock
 
 
 class Authentication:
@@ -6,16 +7,21 @@ class Authentication:
         self.passwords = passwords if passwords is not None else dict()
         self.users = users if users is not None else dict()  # {"username_hash": loggedIn}
         self._hash_to_name = hash_to_name if hash_to_name is not None else dict()
+        self.lock = Lock()
 
     def register(self, username, password) -> str:
+        self.lock.acquire()
         if username in self.passwords:
+            self.lock.release()
             raise Exception("User name already exists")
         else:
             self.passwords[username] = hashlib.sha256(password.encode()).hexdigest()
+            self.lock.release()
             username_hash = hashlib.sha256(username.encode()).hexdigest()
             self.users[username_hash] = False
             self._hash_to_name[username_hash] = username
             return username_hash
+
 
     def login(self, username, password) -> str:
         if username not in self.passwords:
