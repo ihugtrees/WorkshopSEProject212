@@ -13,7 +13,7 @@ class Store:
         self.owners = owners if owners is not None else dict()  # key-username, val-assigner:str
         self.managers = managers if managers is not None else dict()  # key-username, val-assigner:str
         self.inventory = Inventory(dict())
-        if self.buying_policy is None:
+        if buying_policy is None:
             self.buying_policy = BuyingPolicyMock()
         else:
             self.buying_policy = buying_policy

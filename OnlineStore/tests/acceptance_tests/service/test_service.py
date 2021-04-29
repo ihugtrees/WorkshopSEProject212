@@ -1,6 +1,7 @@
 import threading
 from unittest import TestCase
 
+from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
 import OnlineStore.src.data_layer.users_data as users
@@ -321,6 +322,10 @@ class TestService(TestCase):
         user_name3 = users_hash["user_name3"]
         store_name = "store0"
         product_name = "product"
+        add_to_cart1 = service.add_product_to_cart(user_name1, product_name, 5, store_name)
+        self.assertTrue(add_to_cart1[0], add_to_cart1[1])
+        service.add_product_to_cart(user_name2, product_name, 5, store_name)
+        service.add_product_to_cart(user_name3, product_name, 5, store_name)
 
         t1 = threading.Thread(target=service.purchase, args=(user_name0, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
         t2 = threading.Thread(target=service.purchase, args=(user_name1, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
@@ -335,9 +340,13 @@ class TestService(TestCase):
         t2.join()
         t3.join()
         t4.join()
+        store = service.get_store_for_tests(store_name)[1]
+        quantity = store.inventory.products_dict[product_name].quantity
 
-        self.assertTrue(service.get_store_for_tests(store_name)[1].inventory.products_dict[product_name] == 0)
-
+        self.assertTrue(quantity == 0)
+        ans, store_history = service.get_store_purchase_history(user_name0, store_name)
+        self.assertTrue(ans, store_history)
+        self.assertTrue(len(store_history) == 2)
         # cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
         #
         # ans = service.purchase(user_name, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
@@ -455,6 +464,35 @@ class TestService(TestCase):
         not_user_manager = users_hash["user_name3"]
         ans4, result = service.assign_store_manager(not_user_manager, "user_name4", store_name)
         self.assertFalse(ans4, result)
+    def test_assign_store_manager_sync(self):
+        user_name0 = users_hash["user_name0"]
+        user_name1 = users_hash["user_name1"]
+        user_name2 = users_hash["user_name2"]
+        user_name3 = users_hash["user_name3"]
+        store_name = "store0"
+        product_name = "product"
+        store_before: Store = service.get_store_for_tests(store_name)[1]
+        assign_list = store_before.managers
+        self.assertTrue(len(assign_list) == 0)
+        t1 = threading.Thread(target=service.assign_store_manager,
+                             args=(user_name0, user_name3, store_name,))
+        t2 = threading.Thread(target=service.assign_store_manager,
+                              args=(user_name1, user_name3, store_name,))
+        t3 = threading.Thread(target=service.assign_store_manager,
+                              args=(user_name2, user_name3, store_name,))
+        t1.start()
+        t2.start()
+        t3.start()
+        t1.join()
+        t2.join()
+        t3.join()
+        store: Store = service.get_store_for_tests(store_name)[1]
+        assign_list = store.managers
+        self.assertTrue(len(assign_list) == 1)
+
+
+
+
 
     def test_edit_manager_permissions(self):  # 4.6
         pass
