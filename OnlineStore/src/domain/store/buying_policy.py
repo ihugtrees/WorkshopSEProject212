@@ -1,6 +1,6 @@
 from OnlineStore.src.dto.user_dto import UserDTO
 
-class BuyingPolicy:
+class BuyingPolicyMock:
     def __init__(self):
         pass
 

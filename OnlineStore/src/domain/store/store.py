@@ -1,3 +1,4 @@
+from OnlineStore.src.domain.store.buying_policy import BuyingPolicyMock
 from OnlineStore.src.domain.store.inventory import Inventory
 from OnlineStore.src.domain.user.basket import Basket
 from OnlineStore.src.domain.user.user import User
@@ -12,7 +13,10 @@ class Store:
         self.owners = owners if owners is not None else dict()  # key-username, val-assigner:str
         self.managers = managers if managers is not None else dict()  # key-username, val-assigner:str
         self.inventory = Inventory(dict())
-        self.buying_policy = buying_policy
+        if self.buying_policy is None:
+            self.buying_policy = BuyingPolicyMock()
+        else:
+            self.buying_policy = buying_policy
         self.discount_policy = discount_policy
         self.purchase_history = purchase_history
         self.rating = 0

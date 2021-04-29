@@ -12,7 +12,7 @@ import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.data_layer.users_data as users
 
 logging = Logger()
-
+#payment_adapter =
 user_handler = UserHandler()
 store_handler = StoreHandler()
 auth = Authentication()
@@ -343,7 +343,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 
 # 2.9.0
-def purchase(user_name: str, payment_info: dict, destination: str, payment_success: bool, delivery_success: bool):
+def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
 
@@ -364,9 +364,9 @@ def purchase(user_name: str, payment_info: dict, destination: str, payment_succe
         store_handler.take_quantity(cart_dto)
         cart_sum = store_handler.calculate_cart_sum(cart_dto)
 
-        payment_adapter.pay_for_cart(payment_info, cart_sum, payment_success)
+        payment_adapter.pay_for_cart(payment_info, cart_sum)
         payment_done_delivery_done["payment_done"] = True
-        date = supply_adapter.supply_products_to_user(cart_dto, destination, delivery_success)
+        date = supply_adapter.supply_products_to_user(cart_dto, destination)
         payment_done_delivery_done["delivery_done"] = True
         user_handler.empty_cart(user_name)
         store_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
@@ -682,7 +682,7 @@ def get_user_purchase_history_admin(user_name, other_user_name):
         return [False, e.args[0]]
 
 
-def get_store_for_tests(store_id):
+def get_store_for_tests(store_id)->(bool,Store):
     global store_handler
     try:
         store = store_handler.store_dict[store_id]
