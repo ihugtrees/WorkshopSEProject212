@@ -31,7 +31,6 @@ class StoreHandler:
         store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("store name does not exists in the system")
-        store.check_permission_to_edit_store_inventory(user_name)
         if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
         store.add_product_store(product_details)
@@ -40,7 +39,6 @@ class StoreHandler:
         store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("The store does not exists in the system")
-        store.check_permission_to_edit_store_inventory(user_name)
         store.remove_product_store(product_id)
 
     def get_information_about_products(self, store_name):
@@ -79,12 +77,6 @@ class StoreHandler:
             raise Exception("Product does not exist in the store")
         return product
 
-    def is_manager_assigner(self, user_name: str, store_name: str, manager_name: str):
-        store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("The store does not exists in the system")
-        store.is_manager_owner(user_name, manager_name)
-
     def get_store_purchase_history(self, store_name):
         store = self.store_dict.get(store_name)
         if store is None:
@@ -119,30 +111,3 @@ class StoreHandler:
                     break
                 except:
                     continue
-            # print("end ")
-            # print(datetime.datetime.now())
-
-    def assign_store_owner(self, user_name, new_store_owner_name, store_name):
-
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-
-        store.check_permission_to_assign(user_name)
-        ans = store.assign_new_owner(new_store_owner_name, user_name)
-        return ans
-
-    def assign_store_manager(self, user_name, new_store_manager_name, store_name):
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-        store.check_permission_to_assign(user_name)
-        return store.assign_new_manager(new_store_manager_name, user_name)
-
-    def remove_store_manager(self, user_name, store_manager_name, store_name):
-
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-
-        return store.delete_manager(store_manager_name, user_name)
