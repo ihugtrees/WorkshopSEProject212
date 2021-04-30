@@ -118,31 +118,7 @@ class StoreHandler:
                 except:
                     continue
 
-    def assign_store_owner(self, user_name, new_store_owner_name, store_name):
-
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-
-        store.check_permission_to_assign(user_name)
-        ans = store.assign_new_owner(new_store_owner_name, user_name)
-        return ans
-
-    def assign_store_manager(self, user_name, new_store_manager_name, store_name):
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-        store.check_permission_to_assign(user_name)
-        return store.assign_new_manager(new_store_manager_name, user_name)
-
-    def remove_store_manager(self, user_name, store_manager_name, store_name):
-
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-
-        return store.delete_manager(store_manager_name, user_name)
-
+    
     ########## Search related functions ##########
     def get_stores_with_rating(self, rating):
         if rating is None:
