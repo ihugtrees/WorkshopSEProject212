@@ -9,4 +9,3 @@ class UserDTO:
         self.cart = CartDTO(user.cart)
         self.__is_admin = user.is_admin
         self.purchase_history = user.purchase_history
-        self.permissions = user.permissions  # {str(store_name): int}
