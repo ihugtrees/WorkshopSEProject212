@@ -5,6 +5,7 @@ from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.purchase_data as purchases
+import OnlineStore.src.data_layer.permissions_data as permissions
 
 product_id: int = 0
 users_hash: dict = dict()
@@ -181,14 +182,14 @@ class TestService(TestCase):
         product_name = "product"
         user_name = users_hash["user_name0"]
 
-        ans1 = service.find_product_by_id(product_name, store_name)
-        self.assertTrue(ans1[0])
+        ans = service.find_product_by_id(product_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans2 = service.remove_product_from_store_inventory(user_name, product_name, store_name)
-        self.assertTrue(ans2)
+        ans = service.remove_product_from_store_inventory(user_name, product_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans3 = service.find_product_by_id(product_name, store_name)
-        self.assertFalse(ans3[0])
+        ans = service.find_product_by_id(product_name, store_name)
+        self.assertFalse(ans[0], ans[1])
 
     # 2.9.0
     def test_purchase(self):
@@ -215,13 +216,13 @@ class TestService(TestCase):
         store_name = "new store"
         user_name = users_hash["user_name1"]
 
-        ans = service.open_store(store_name, user_name)[0]
-        self.assertTrue(ans, msg="failed to open store")
+        ans = service.open_store(store_name, user_name)
+        self.assertTrue(ans[0], msg=ans[1])
 
         ans, store = service.get_store_for_tests(store_name)
         self.assertTrue(ans)
-        ans = service.open_store(store_name, user_name)[0]
-        self.assertFalse(ans, "test: store name already exist")
+        ans = service.open_store(store_name, user_name)
+        self.assertFalse(ans[0], ans[1])
 
     def test_get_user_purchases_history(self):  # 3.7
         user_name = users_hash["user_name1"]
@@ -276,20 +277,20 @@ class TestService(TestCase):
         store_name = "store1"
         service.login("user_name0", "password0")
 
-        ans, result = service.assign_store_owner(user_name, assignee_user_name, store_name)
-        self.assertTrue(ans and (assignee_user_name in service.get_store_for_tests(store_name)[1].owners))
+        ans = service.assign_store_owner(user_name, assignee_user_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans2, result = service.assign_store_owner(user_name, assignee_user_name, store_name)
-        self.assertFalse(ans2, result)
+        ans = service.assign_store_owner(user_name, assignee_user_name, store_name)
+        self.assertFalse(ans[0], ans[1])
 
         not_owner_already_name = users_hash["user_name0"]
-        ans4, result = service.assign_store_owner(not_owner_already_name, users_hash["user_name4"], store_name)
-        self.assertFalse(ans4, result)
+        ans = service.assign_store_owner(not_owner_already_name, users_hash["user_name4"], store_name)
+        self.assertFalse(ans[0], ans[1])
 
         not_owner_already_name = "user_name0"
         assignee_user_name = users_hash["user_name2"]
-        ans3, result = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
-        self.assertTrue(ans3 and (not_owner_already_name in service.get_store_for_tests(store_name)[1].owners), result)
+        ans = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
     def test_assign_store_manager(self):  # 4.3
         user_name = users_hash["user_name1"]
@@ -297,7 +298,7 @@ class TestService(TestCase):
         store_name = "store1"
 
         ans, result = service.assign_store_manager(user_name, new_store_manager_name, store_name)
-        self.assertTrue(ans and (new_store_manager_name in service.get_store_for_tests(store_name)[1].managers))
+        self.assertTrue(ans, result)
 
         ans2, result = service.assign_store_manager(user_name, new_store_manager_name, store_name)
         self.assertFalse(ans2, result)
@@ -319,10 +320,10 @@ class TestService(TestCase):
         removed_manager = "user_name2"
 
         ans, result = service.assign_store_manager(user_name, removed_manager, store_name)
-        self.assertTrue(ans and (removed_manager in service.get_store_for_tests(store_name)[1].managers), result)
+        self.assertTrue(ans, result)
 
         ans2, result = service.remove_store_manager(user_name, removed_manager, store_name)
-        self.assertTrue(ans2 and (not (removed_manager in service.get_store_for_tests(store_name)[1].managers)), result)
+        self.assertTrue(ans2, result)
 
         ans3, result = service.remove_store_manager(user_name, removed_manager, store_name)
         self.assertFalse(ans3, result)
@@ -401,3 +402,4 @@ class TestService(TestCase):
         purchases.purchases = dict()
         service.store_handler.store_dict = dict()
         service.auth = Authentication()
+        permissions.permissions = dict()

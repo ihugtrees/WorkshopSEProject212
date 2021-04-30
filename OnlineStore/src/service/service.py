@@ -8,13 +8,16 @@ from OnlineStore.src.domain.user.user_handler import UserHandler, get_random_str
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.security.authentication import Authentication
 from OnlineStore.src.service.logger import Logger
+from OnlineStore.src.domain.permissions.permission_handler import PermissionHandler
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
+import OnlineStore.src.domain.user.action as action
 import OnlineStore.src.data_layer.users_data as users
 
 logging = Logger()
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
+permission_handler = PermissionHandler()
 auth = Authentication()
 
 
@@ -65,7 +68,7 @@ def register(user_name: str, password: str):
     :param password: password
     :return: None
     """
-    # TODO see why need to return new user
+    
     global user_handler
     global auth
     try:
@@ -150,26 +153,6 @@ def get_store(store_name: str):
         return [True, ans]
     except Exception as e:
         logging.error("get_store faild " + e.args[0])
-        return [False, e.args[0]]
-
-
-def add_product_to_store(user_name, product_details, store_name):  # TODO
-    """
-    Add non-existent product to the store inventory
-
-    :param user_name: user name (the one who asks to add the product)
-    :param product_details: {"price": int, "product_name": str, "product_id": str, "quantity": int}
-    :param store_name: store name
-    :return: None
-    """
-    global store_handler
-    try:
-        user_name = auth.get_username_from_hash(user_name)
-        ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
-        logging.info("add_product_to_store " + user_name + store_name)
-        return [True, ans]
-    except Exception as e:
-        logging.error("add_product_to_store faild, " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -382,10 +365,10 @@ def logout(user_name):
     global user_handler
     global auth
     try:
-        auth.logout(user_name)
-
+        hash_user_name = user_name
         user_name = auth.get_username_from_hash(user_name)
-
+        permission_handler.is_permmited_to(user_name = user_name, action = Action.LOGOUT.value)
+        auth.logout(hash_user_name)
         ans = user_handler.logout(user_name)
         logging.info("logout user name: " + user_name)
         return [True, ans]
@@ -406,9 +389,10 @@ def open_store(store_name, user_name):
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user_handler.check_permission_to_open_store(user_name)
+        permission_handler.is_permmited_to(user_name = user_name, action = Action.OPEN_STORE.value)
+        user_handler.check_permission_to_open_store(user_name) # just checks if user is logged in need to see if to change name
         ans = store_handler.open_store(store_name, user_name)
-        user_handler.set_permissions(user_name, 1 << Action.OWNER.value, store_name)
+        permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS, user_name, store_name)
         logging.info("open_store user name: " + user_name + " store name: " + store_name)
         return [True, ans]
     except Exception as e:
@@ -448,6 +432,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
+        permission_handler.is_permmited_to(user_name, Action.ADD_PRODUCT_TO_INVENTORY.value, store_name)
         ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
         logging.info("add_new_product_to_store_inventory: store name: " + store_name)
         return [True, ans]
@@ -470,6 +455,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
+        permission_handler.is_permmited_to(user_name, Action.REMOVE_PRODUCT_FROM_INVENTORY.value, store_name)
         ans = store_handler.remove_product_from_store_inventory(user_name, product_id, store_name)
         logging.info("remove_product_from_store_inventory: product ID: " + product_id)
         return [True, ans]
@@ -492,8 +478,8 @@ def edit_product_description(user_name: str, product_description: str, store_nam
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        store_handler.store_dict[store_name].check_permission_to_edit_store_inventory(user_name)
-        ans = store_handler.store_dict[store_name].edit_product(product_name, product_description)
+        permission_handler.is_permmited_to(user_name= user_name, action= Action.ADD_PRODUCT_TO_INVENTORY.value, store_name= store_name)
+        ans = store_handler.store_dict[store_name].edit_product(product_name, product_description) # TODO CHANGE THIS
         logging.info("edit_product_details")
         return [True, ans]
     except Exception as e:
@@ -511,17 +497,17 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
     :param store_name: store name
     :return: None
     """
-    global store_handler
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        ans = store_handler.assign_store_owner(user_name, new_store_owner_name, store_name)
-        user_handler.set_permissions(new_store_owner_name, 1 << Action.OWNER.value, store_name)
+        permission_handler.is_permmited_to(user_name, Action.ADD_OWNER.value, store_name)
+        permission_handler.assign_store_employee(action.OWNER_INITIAL_PERMISSSIONS, new_store_owner_name, store_name)
+        user_handler.assign_store_employee(user_name, new_store_owner_name, store_name)
         logging.info("assign_store_owner")
-        return True, ans
+        return [True, None]
     except Exception as e:
         logging.error("assign_store_owner fail: " + e.args[0])
-        return False, (user_name + " is not owner of " + store_name)
+        return [False, e.args[0]]
 
 
 # 4.5
@@ -537,14 +523,14 @@ def assign_store_manager(user_name: str, new_store_manager_name: str, store_name
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        ans = store_handler.assign_store_manager(user_name, new_store_manager_name, store_name)
-
-        user_handler.set_permissions(new_store_manager_name, 1, store_name)
+        permission_handler.is_permmited_to(user_name, Action.ADD_MANAGER.value, store_name)
+        permission_handler.assign_store_employee(action.MANAGER_INITIAL_PERMISSIONS, new_store_manager_name, store_name)
+        user_handler.assign_store_employee(user_name, new_store_manager_name, store_name)
         logging.info("assign_store_manager")
-        return True, ans
+        return True, None
     except Exception as e:
         logging.error("assign_store_manager " + e.args[0])
-        return False, (user_name + " is not owner of " + store_name)
+        return False, e.args[0]
 
 
 # 4.6
@@ -559,13 +545,13 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
     :return: None
     """
     global user_handler
-    global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        store_handler.is_manager_assigner(user_name, store_name, store_manager_name)
-        ans = user_handler.edit_store_manager_permissions(store_manager_name, new_permissions)
+        permission_handler.is_permmited_to(user_name, Action.SET_MANAGER_PERMISSIONS.value, store_name)
+        user_handler.is_assigned_by_me(user_name, store_manager_name, store_name)
+        permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS & new_permissions, store_manager_name, store_name)
         logging.info("edit_store_manager_permissions")
-        return [True, ans]
+        return [True, None]
     except Exception as e:
         logging.error("edit_store_manager_permissions " + e.args[0])
         return [False, e.args[0]]
@@ -581,12 +567,13 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     :param store_name: store name
     :return: None
     """
-    global store_handler
+    global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        ans = store_handler.remove_store_manager(user_name, store_manager_name, store_name)
+        permission_handler.is_permmited_to(user_name, Action.REMOVE_MANAGER.value, store_name)
+        user_handler.remove_employee(user_name, store_manager_name, store_name)
         logging.info("remove_store_manager")
-        return True, ans
+        return True, None
     except Exception as e:
         logging.error("remove_store_manager " + e.args[0])
         return False, e.args[0]
@@ -600,15 +587,16 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
     :param user_name: user name
     :param employee_name: employee name
     :param store_name: store name
-    :return: User
+    :return: UserDTO
     """
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO.value)
-        ans = user_handler.get_employee_information(employee_name, store_name)
+        permission_handler.is_permmited_to(user_name= user_name, action= Action.EMPLOYEE_INFO.value, store_name= store_name)
+        permission_handler.is_working_in_store(employee_name, store_name)
+        userdto = user_handler.get_employee_information(employee_name)
         logging.info("get_employee_information")
-        return [True, ans]
+        return [True, userdto]
     except Exception as e:
         logging.error("get_employee_information " + e.args[0])
         return [False, e.args[0]]
@@ -627,7 +615,8 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_PERMISSIONS.value)
+        permission_handler.is_permmited_to(user_name, Action.EMPLOYEE_PERMISSIONS, store_name)
+        permission_handler.is_working_in_store(employee_name, store_name)
         return [True, user_handler.get_employee_information(
             employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
     except Exception as e:
@@ -647,7 +636,7 @@ def get_store_purchase_history(user_name, store_name):
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.STORE_PURCHASE_HISTORY.value)
+        permission_handler.is_permmited_to(user_name, Action.STORE_PURCHASE_HISTORY.value, store_name)
         return [True, purchase_handler.get_store_purchases(store_name)]
     except Exception as e:
         return [False, e.args[0]]
@@ -670,7 +659,8 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     global user_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
-        user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
+        # user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
+        # check if admin
         return [True, purchase_handler.get_user_purchases(other_user_name)]
     except Exception as e:
         return [False, e.args[0]]
