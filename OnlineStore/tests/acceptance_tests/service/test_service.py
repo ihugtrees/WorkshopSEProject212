@@ -4,10 +4,11 @@ from unittest import TestCase
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
+from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.purchase_data as purchases
 import OnlineStore.src.data_layer.permissions_data as permissions
-from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
+import OnlineStore.src.data_layer.store_data as stores
 
 product_id: int = 0
 users_hash: dict = dict()
@@ -110,9 +111,10 @@ class TestService(TestCase):
 
     def test_get_store(self):  # 2.5
         store_name = "store0"
-        ans, store = service.get_store_info(store_name)
-        self.assertTrue(ans, "fail to get the store")
-        self.assertEqual(store["store_name"], store_name)
+        ans = service.get_store_info(store_name)
+        print(ans[1])
+        self.assertTrue(ans[0], ans[1])
+        self.assertEqual(ans[1].name, store_name)
         # {"store_name": store.name, "store_founder": store.store_founder,
         #  "buying_policy": store.buying_policy, "discount_policy": store.discount_policy}
     def test_find_product_by_id(self):  # 2.6
@@ -143,7 +145,7 @@ class TestService(TestCase):
         ans, result = service.search_product_by_name("not exist", filters)
         self.assertFalse(ans)
         ans2, result = service.search_product_by_name("product", filters)
-        self.assertTrue(ans2 and result[0].quantity == 10)
+        self.assertTrue(ans2 and result[0].quantity == 10, result)
 
     def test_search_product_by_keyword(self):  # 2.6.3
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
@@ -559,7 +561,7 @@ class TestService(TestCase):
     def tearDown(self):
         users.users = dict()
         purchases.purchases = dict()
-        service.store_handler.store_dict = dict()
+        stores.store_dict = dict()
         service.auth = Authentication()
         permissions.permissions = dict()
 

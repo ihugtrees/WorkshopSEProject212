@@ -12,6 +12,7 @@ from OnlineStore.src.domain.permissions.permission_handler import PermissionHand
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.domain.user.action as action
 import OnlineStore.src.data_layer.users_data as users
+import OnlineStore.src.data_layer.store_data as stores
 
 logging = Logger()
 #payment_adapter =
@@ -164,9 +165,9 @@ def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
     """
     global store_handler
     try:
-        for store in store_handler.store_dict:
-            if product_id in store_handler.store_dict[store].inventory.products_dict:
-                ans = store_handler.store_dict[store].inventory.products_dict[product_id]
+        for store in stores.get_all_stores().values():
+            if product_id in store.inventory.products_dict:
+                ans = store.inventory.products_dict[product_id]
                 logging.info("search_product_by_id" + product_id)
                 return [True, ans]
         logging.info("search_product_by_id product not found")
@@ -230,7 +231,7 @@ def search_product_by_name(name, filters):
         else:
             return [True, product_list]
     except Exception as e:
-        return [False, "bug, when searching by keyword " + e.args[0]]
+        return [False, "bug, when searching by name " + e.args[0]]
 
 
 # 2.6.3
@@ -491,7 +492,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
     try:
         user_name = auth.get_username_from_hash(user_name)
         permission_handler.is_permmited_to(user_name= user_name, action= Action.ADD_PRODUCT_TO_INVENTORY.value, store_name= store_name)
-        ans = store_handler.store_dict[store_name].edit_product(product_name, product_description) # TODO CHANGE THIS
+        ans = stores.get_store_by_name(store_name).edit_product(product_name, product_description) # TODO CHANGE THIS
         logging.info("edit_product_details")
         return [True, ans]
     except Exception as e:
@@ -684,7 +685,7 @@ def get_user_purchase_history_admin(user_name, other_user_name):
 def get_store_for_tests(store_id)->(bool,Store):
     global store_handler
     try:
-        store = store_handler.store_dict[store_id]
+        store = stores.get_store_by_name(store_id)
         return True, store
     except Exception as e:
         return False, e.args[0]
