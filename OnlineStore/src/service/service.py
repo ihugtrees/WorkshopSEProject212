@@ -138,21 +138,21 @@ def get_store_info(store_name: str):
 
 
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
-# def get_store(store_name: str):
-#     """
-#     Gets a specific store
-#
-#     :param store_name: store name
-#     :return: Store
-#     """
-#     global store_handler
-#     try:
-#         ans = store_handler.get_store(store_name)
-#         logging.info("get store " + store_name)
-#         return [True, ans]
-#     except Exception as e:
-#         logging.error("get_store faild " + e.args[0])
-#         return [False, e.args[0]]
+def get_store(store_name: str):
+    """
+    Gets a specific store
+
+    :param store_name: store name
+    :return: Store
+    """
+    global store_handler
+    try:
+        ans = store_handler.get_store(store_name)
+        logging.info("get store " + store_name)
+        return [True, ans]
+    except Exception as e:
+        logging.error("get_store faild " + e.args[0])
+        return [False, e.args[0]]
 
 
 def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
