@@ -17,7 +17,7 @@ def get_purchase_by_id(purchase_id: str) -> Purchase:
 def get_user_purchases(user_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
-        if purchase.user_name is user_name:
+        if purchase.user_name == user_name:
             purchase_list.append(purchase)
     return purchase_list
 
@@ -25,7 +25,7 @@ def get_user_purchases(user_name: str) -> list:
 def get_store_purchases(store_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
-        if purchase.store_name is store_name:
+        if purchase.store_name == store_name:
             purchase_list.append(purchase)
     return purchase_list
 
@@ -35,7 +35,6 @@ def add_purchase(purchase: Purchase) -> None:
     if purchase.purchase_id in purchases:
         purchase_lock.release()
         raise Exception("purchase id already exists")
-    print(purchase.store_name)
     purchases[purchase.purchase_id] = purchase
     purchase_lock.release()
 
