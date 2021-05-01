@@ -5,3 +5,6 @@ def address_payment_system(payment_details: dict, sum: int):
         raise Exception("Payment system rejected the card")
     else:
         return True
+
+def address_payment_system_return(payment_details: dict, sum: int):
+    pass

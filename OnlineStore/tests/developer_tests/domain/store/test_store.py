@@ -23,3 +23,4 @@ class TestStore(TestCase):
         self.assertRaises(Exception, self.store.edit_product, 2, 'details')
         self.store.edit_product(1, 'details')
         self.assertTrue(self.store.inventory.products_dict[1].description == 'details')
+

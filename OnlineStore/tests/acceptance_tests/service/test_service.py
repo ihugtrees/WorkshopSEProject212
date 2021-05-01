@@ -209,8 +209,11 @@ class TestService(TestCase):
         cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
 
         self.assertTrue(ans[0], ans[1])
+        store: Store = service.get_store_for_tests(store_name)[1]
+        quantity = store.inventory.products_dict.get(product_name).quantity
+
         self.assertTrue(
-            (service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 5),
+            (quantity == 5),
             "quntity didnt drop")
 
         service.add_product_to_cart(user_name, product_name, 50, store_name)
