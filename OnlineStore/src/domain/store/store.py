@@ -41,6 +41,8 @@ class Store:
     def check_permission_to_assign(self, user_name):
         if user_name != self.store_founder and user_name not in self.owners:
             raise Exception("permission denied")
+        else:
+            return True
 
     def assign_new_owner(self, new_owner, assigner):
         if new_owner in self.owners:

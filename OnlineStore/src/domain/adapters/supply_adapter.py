@@ -4,3 +4,4 @@ import OnlineStore.src.external.supply_system_mock as supply_system
 
 def supply_products_to_user(cart: CartDTO, des: str):
     return supply_system.address_supply_system(cart, des)
+

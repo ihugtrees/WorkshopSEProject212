@@ -30,8 +30,12 @@ class TestStore(TestCase):
         self.store.edit_product(1, 'details')
         self.assertTrue(self.store.inventory.products_dict[1].description == 'details')
 
-    def test_check_permission_to_assign(self):
-        self.assertFalse(self.store.check_permission_to_assign('spiderman'))
+    def test_check_permission_to_assign(self): #TODO igor
+        try:
+            self.store.check_permission_to_assign('spiderman')
+            self.assertTrue(False)
+        except Exception as e:
+            self.assertTrue(True)
         self.assertTrue(self.store.check_permission_to_assign('batman'))
         self.assertTrue(self.store.check_permission_to_assign('own'))
         self.assertFalse(self.store.check_permission_to_assign('mngr'))

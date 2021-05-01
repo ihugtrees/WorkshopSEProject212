@@ -111,6 +111,11 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             store.inventory.take_quantity(cart.basket_dict.get(store.name))
 
+    def return_quantity(self, cart: CartDTO):
+        for store in self.__get_stores_from_cart(cart):
+            store.inventory.return_quantity(cart.basket_dict.get(store.name))
+
+
     def calculate_cart_sum(self, cart: CartDTO) -> int:
         money_sum = 0
         for store in self.__get_stores_from_cart(cart):

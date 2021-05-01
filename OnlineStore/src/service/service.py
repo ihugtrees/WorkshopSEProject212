@@ -354,7 +354,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
     :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
     """
-    payment_done_delivery_done = {"payment_done": False, "delivery_done": False}
+    payment_done_delivery_done = {"payment_done": False, "delivery_done": False, "quantity_taken": False}
     global store_handler
     try:
         user_name = auth.get_username_from_hash(user_name)
@@ -362,6 +362,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         cart_dto = user_dto.cart
         store_handler.is_valid_for_purchase(cart_dto, user_dto)
         store_handler.take_quantity(cart_dto)
+        payment_done_delivery_done["quantity_taken"] = True
         cart_sum = store_handler.calculate_cart_sum(cart_dto)
 
         payment_adapter.pay_for_cart(payment_info, cart_sum)
@@ -373,6 +374,13 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         logging.info("purchase user name = " + user_name)
         return [True, date]
     except Exception as e:
+        if payment_done_delivery_done["quantity_taken"]:
+            store_handler.return_quantity(cart_dto)
+            payment_done_delivery_done["quantity_taken"] = False
+        if payment_done_delivery_done["payment_done"]:
+            payment_adapter.return_for_cart(payment_info, cart_sum)
+            payment_done_delivery_done["payment_done"] = False
+
         logging.error("purchase fail " + e.args[0])
         return [False, e.args[0], payment_done_delivery_done]
 
