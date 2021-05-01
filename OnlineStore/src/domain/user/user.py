@@ -1,16 +1,17 @@
 from OnlineStore.src.domain.user.action import Action
 from OnlineStore.src.domain.user.cart import Cart
+from OnlineStore.src.domain.user.appoint import *
 
 
 class User:
     def __init__(self, user_name: str, cart: Cart, is_admin=False,
-                 purchase_history=list()):  # change purchase history from none to empty list (yonatan)
+                 purchase_history=list(), appointed_to_store=None):  # change purchase history from none to empty list (yonatan)
         self.is_logged = False
         self.user_name = user_name
         self.cart = cart
         self.__is_admin = is_admin
         self.purchase_history = purchase_history
-        self.permissions = dict()  # {str(store_name): int}
+        self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
 
     def login(self):
         if self.is_logged:
@@ -31,26 +32,17 @@ class User:
     def remove_product_from_user(self, store, product_id: int, quantity: int):
         self.cart.remove_product_from_cart(store, product_id, quantity)
 
-    def edit_store_manager_permissions(self, store_name: str, new_permissions: int):
-        if self.permissions.get(store_name) is None:
-            raise Exception("The user is not a manager in the store")
-        self.permissions[store_name] = new_permissions
-
-    def is_permitted_to_do(self, action: int, store_name: str):
-        if (self.__is_admin is False) and ((action & self.permissions.get(store_name)) == 0)\
-                and ((1 << Action.OWNER.value & self.permissions.get(store_name)) == 0):
-            raise Exception("The User does not have the permission to do the action")
-        if self.__is_admin is True and (
-                action is not 1 << Action.STORE_PURCHASE_HISTORY.value or action is not 1 << Action.USER_HISTORY.value):
-            raise Exception("Admin doesnt have permission to do so")
-
     def empty_cart(self):
         self.cart = Cart()
+    
+    def is_assigned_by_me(self, store_manager_name: str, store_name: str)->None:
+        self.appointed_to_store.is_appointed_by_me(store_name, store_manager_name)
 
-    def set_permissions(self, permissions: int, store_name: str):
-        self.permissions[store_name] = permissions
+    def assign_store_employee(self, new_store_owner_name: str, store_name: str)->None:
+        self.appointed_to_store.assign_store_employee(new_store_owner_name, store_name)
 
-    def is_an_employee_in_store(self, store_name: str):
-        permissions = self.permissions.get(store_name)
-        if permissions is None:
-            raise Exception("not an employee in the store")
+    def remove_employee(self, store_employee: str, store_name: str)->None:
+        self.appointed_to_store.remove_appointed(store_employee, store_name)
+
+    def get_all_appointed(self, store_name: str)->list:
+        return self.appointed_to_store.get_all_appointed(store_name)
