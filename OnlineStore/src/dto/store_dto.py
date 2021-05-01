@@ -9,5 +9,4 @@ class StoreDTO:
         self.inventory = InventoryDTO(store.inventory)
         self.buying_policy = store.buying_policy
         self.discount_policy = store.discount_policy
-        self.purchase_history = store.purchase_history
         self.rating = store.rating

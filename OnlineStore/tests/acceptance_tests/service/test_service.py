@@ -112,7 +112,6 @@ class TestService(TestCase):
     def test_get_store(self):  # 2.5
         store_name = "store0"
         ans = service.get_store_info(store_name)
-        print(ans[1])
         self.assertTrue(ans[0], ans[1])
         self.assertEqual(ans[1].name, store_name)
         # {"store_name": store.name, "store_founder": store.store_founder,
@@ -339,8 +338,45 @@ class TestService(TestCase):
         self.assertTrue(quantity == 0)
         ans, store_history = service.get_store_purchase_history(user_name0, store_name)
         self.assertTrue(ans, store_history)
-        self.assertTrue(len(store_history) == 2)
+        self.assertTrue(len(store_history) == 2, str(len(store_history)))
 
+    def test_purchase_sync111(self):
+        user_name0 = users_hash["user_name0"]
+        user_name1 = users_hash["user_name1"]
+        user_name2 = users_hash["user_name2"]
+        user_name3 = users_hash["user_name3"]
+        store_name = "store0"
+        product_name = "product"
+        add_to_cart1 = service.add_product_to_cart(user_name1, product_name, 5, store_name)
+        self.assertTrue(add_to_cart1[0], add_to_cart1[1])
+        service.add_product_to_cart(user_name2, product_name, 5, store_name)
+        service.add_product_to_cart(user_name3, product_name, 5, store_name)
+
+        service.purchase(user_name0, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
+        service.purchase(user_name1, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
+        service.purchase(user_name2, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
+        service.purchase(user_name3, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva")
+
+        # t1 = threading.Thread(target=service.purchase, args=(user_name0, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        # t2 = threading.Thread(target=service.purchase, args=(user_name1, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        # t3 = threading.Thread(target=service.purchase, args=(user_name2, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        # t4 = threading.Thread(target=service.purchase, args=(user_name3, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        # t1.start()
+        # t2.start()
+        # t3.start()
+        # t4.start()
+
+        # t1.join()
+        # t2.join()
+        # t3.join()
+        # t4.join()
+        store = service.get_store_for_tests(store_name)[1]
+        quantity = store.inventory.products_dict[product_name].quantity
+
+        self.assertTrue(quantity == 0)
+        ans, store_history = service.get_store_purchase_history(user_name0, store_name)
+        self.assertTrue(ans, store_history)
+        self.assertTrue(len(store_history) == 2, str(len(store_history)))
 
     def test_logout(self):  # 3.1
         user_name = users_hash["user_name1"]
@@ -365,7 +401,7 @@ class TestService(TestCase):
         ans = service.get_user_purchases_history(user_name)
         self.assertTrue(ans[0] and (len(ans[1]) == 0), ans[1])
 
-        ans = service.purchase(user_name, {"TODO": 1}, "Beer Sheva")
+        ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
         self.assertTrue(ans[0], ans[1])
 
         ans = service.get_user_purchases_history(user_name)
@@ -508,7 +544,7 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
         store_name = "store1"
 
-        ans = service.purchase(user_name, {"payment info TODO": 1}, "Beer Sheva")
+        ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
         self.assertTrue(ans[0], ans[1])
 
         ans = service.get_store_purchase_history(user_name, store_name)

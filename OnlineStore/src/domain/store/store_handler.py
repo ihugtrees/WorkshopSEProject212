@@ -1,7 +1,6 @@
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
-import OnlineStore.src.data_layer.purchase_data as purchase_handler
 from OnlineStore.src.domain.store.purchase import Purchase
 import random
 import string
@@ -72,10 +71,6 @@ class StoreHandler:
             raise Exception("Product does not exist in the store")
         return product
 
-    def get_store_purchase_history(self, store_name):
-        store: Store = stores.get_store_by_name(store_name)
-        return store.purchase_history
-
     def __get_stores_from_cart(self, cart: Cart):
         stores = list()
         for store_name in cart.basket_dict.keys():
@@ -100,15 +95,6 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
-
-    def add_all_basket_purchases_to_history(self, cart: CartDTO, user_name):
-        for store_name in cart.basket_dict.keys():
-            while True:
-                try:
-                    purchase_handler.add_purchase(Purchase(self.get_random_string(20), user_name, store_name))
-                    break
-                except:
-                    continue
 
     
     ########## Search related functions ##########

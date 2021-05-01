@@ -352,7 +352,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         payment_adapter.pay_for_cart(payment_info, cart_sum)
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
-        store_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
+        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
         logging.info("purchase user name = " + user_name)
         return [True, date]
     except Exception as e:
