@@ -1,8 +1,8 @@
-from OnlineStore.src.domain.store.purchase import Purchase
+from OnlineStore.src.domain.store.receipt import Receipt
 
 
-class PurchaseDTO:
-    def __init__(self, purchase: Purchase):  # change purchase history from none to empty list (yonatan)
-        self.purchase_id = purchase.purchase_id
-        self.user_name = purchase.user_name
-        self.store_name = purchase.store_name
+class ReceiptDTO:
+    def __init__(self, receipt: Receipt):  # change purchase history from none to empty list (yonatan)
+        self.purchase_id = receipt.receipt_id
+        self.user_name = receipt.user_name
+        self.store_name = receipt.store_name

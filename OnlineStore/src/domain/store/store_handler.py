@@ -1,7 +1,7 @@
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
-from OnlineStore.src.domain.store.purchase import Purchase
+from OnlineStore.src.domain.store.receipt import Receipt
 import random
 import string
 
@@ -143,6 +143,8 @@ class StoreHandler:
             for product in self.get_products_with_filters(store.name, filters):
                 if product.category.find(category) != -1:
                     product_list.append(ProductDTO(product))
+        if len(product_list) == 0:
+            raise Exception("Product does not exist in the store")
         return product_list
 
     def search_product_by_name(self, name, filters):
@@ -151,6 +153,8 @@ class StoreHandler:
             for product in self.get_products_with_filters(store.name, filters):
                 if product.product_name.find(name) != -1:
                     product_list.append(ProductDTO(product))
+        if len(product_list) == 0:
+            raise Exception("Product not found")
         return product_list
 
     def search_product_by_keyword(self, keyword, filters):

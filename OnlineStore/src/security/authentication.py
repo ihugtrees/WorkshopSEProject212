@@ -9,7 +9,7 @@ class Authentication:
         self._hash_to_name = hash_to_name if hash_to_name is not None else dict()
         self.lock = Lock()
 
-    def register(self, username, password) -> str:
+    def register(self, username, password) -> None:
         self.lock.acquire()
         if username in self.passwords:
             self.lock.release()
@@ -20,7 +20,6 @@ class Authentication:
             username_hash = hashlib.sha256(username.encode()).hexdigest()
             self.users[username_hash] = False
             self._hash_to_name[username_hash] = username
-            return username_hash
 
 
     def login(self, username, password) -> str:

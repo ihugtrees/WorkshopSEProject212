@@ -8,6 +8,7 @@ def get_store_by_name(store_name: str)->Store:
     return store
 
 def add_store(new_store: Store)->None:
+    global store_dict
     store: Store = store_dict.get(new_store.name)
     if store is not None:
         raise Exception("The store {new_store} already exist in the system!")

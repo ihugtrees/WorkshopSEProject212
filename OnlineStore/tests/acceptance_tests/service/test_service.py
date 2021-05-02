@@ -1,6 +1,6 @@
 import threading
 from unittest import TestCase
-
+import OnlineStore.src.domain.domain_handler as domain_handler
 from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
@@ -12,6 +12,13 @@ import OnlineStore.src.data_layer.store_data as stores
 
 product_id: int = 0
 users_hash: dict = dict()
+
+
+def take_info(user_name, store_name):
+    cart = service.get_cart_info(user_name)[1]
+    store_history = service.get_store_purchase_history(user_name, store_name)[1]
+    user_history = service.get_user_purchases_history(user_name)[1]
+    return cart, store_history, user_history
 
 
 class TestService(TestCase):
@@ -128,9 +135,10 @@ class TestService(TestCase):
         product_name = "product"
         ans = service.search_product_by_id("notExist")[0]
         self.assertFalse(ans, "test: not exist name")
-        ans2, product = service.search_product_by_id(product_name)
-        quantity = product.quantity
-        self.assertTrue(ans2 and quantity == 10)
+        ans = service.search_product_by_id(product_name)
+        self.assertTrue(ans[0], ans[1])
+        quantity = ans[1].quantity
+        self.assertTrue(quantity == 10, quantity)
 
     def test_search_product_by_category(self):  # 2.6.1
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
@@ -148,10 +156,10 @@ class TestService(TestCase):
 
     def test_search_product_by_keyword(self):  # 2.6.3
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
-        ans, result = service.search_product_by_keyword("not exist", filters)
-        self.assertFalse(ans)
-        ans2, result = service.search_product_by_name("", filters)
-        self.assertTrue(ans2 and result[0].quantity == 10)
+        ans = service.search_product_by_keyword("not exist", filters)
+        self.assertFalse(ans[0], ans[1])
+        ans = service.search_product_by_name("", filters)
+        self.assertTrue(ans[0] and ans[1][0].quantity == 10)
 
     def test_add_product_to_cart(self):  # 2.7
         store_name = "store0"
@@ -203,11 +211,11 @@ class TestService(TestCase):
         store_name = "store0"
         product_name = "product"
 
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "123123"}, "Ziso 5/3, Beer Sheva")
 
-        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
         self.assertTrue(ans[0], ans[1])
         store: Store = service.get_store_for_tests(store_name)[1]
@@ -219,11 +227,11 @@ class TestService(TestCase):
 
         service.add_product_to_cart(user_name, product_name, 50, store_name)
 
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "123123"}, "Ziso 5/3, Beer Sheva")
 
-        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
         self.assertTrue(ans[0] == False and ans[1].find("There are only") >= 0, ans[1])
         self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
@@ -238,11 +246,11 @@ class TestService(TestCase):
         store_name = "store0"
         product_name = "product"
 
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "123"}, "haifa")
 
-        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
         self.assertTrue(ans[0] == False and ans[1] == "Delivery system rejected the delivery", ans[1])
         self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
@@ -253,7 +261,7 @@ class TestService(TestCase):
         self.assertTrue(len(store_history_before) == len(store_history_after))
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         for store_name, basket in cart_before.basket_dict.items():
             self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
@@ -265,11 +273,11 @@ class TestService(TestCase):
         store_name = "store0"
         product_name = "product"
 
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "0000"}, "Tel Aviv")
 
-        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
         self.assertTrue(ans[0] == False and ans[1] == "Payment system rejected the card" , ans[1])
         self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
@@ -293,11 +301,11 @@ class TestService(TestCase):
 
         anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
         self.assertTrue(anst[0], anst[1])
-        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "312312"}, "Noga Hakalanit 26")
 
-        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
         self.assertTrue(((ans[0] == False) and (ans[1] == "buying policy fails")),ans[1])
         self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
@@ -560,12 +568,5 @@ class TestService(TestCase):
         users.users = dict()
         purchases.purchases = dict()
         stores.store_dict = dict()
-        service.auth = Authentication()
+        domain_handler.auth = Authentication()
         permissions.permissions = dict()
-
-
-    def take_info(self, user_name, store_name):
-        cart = service.get_cart_info(user_name)[1]
-        store_history = service.get_store_purchase_history(user_name, store_name)[1]
-        user_history = service.get_user_purchases_history(user_name)[1]
-        return cart, store_history, user_history
