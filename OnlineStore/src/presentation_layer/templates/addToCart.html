@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add To Cart</title>
+    <p>Add To Cart</p>
+</head>
+<body>
+    <form action="/addToCart" method="POST">
+        <p>Enter product id:</p>
+        <p><input type="text" name="productID" /></p>
+        <p>Enter quantity:</p>
+        <p><input type="text" name="quantity" /></p>
+        <p><input type="submit" value="submit" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="return to dashboard" /></p>
+    </form>
+</body>
+</html>

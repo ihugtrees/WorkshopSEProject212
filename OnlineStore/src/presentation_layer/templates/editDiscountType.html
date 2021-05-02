@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Discount Type</title>
+    <p>Edit Discount Type</p>
+</head>
+<body>
+    <form action="/editDiscountType" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeID" /></p>
+        <p>Enter Discount Type:</p>
+        <p><input type="text" name="discountType" /></p>
+        <p>Enter Discount Type details:</p>
+        <p><input type="text" name="details" /></p>
+        <p><input type="submit" value="Edit Discount Type" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

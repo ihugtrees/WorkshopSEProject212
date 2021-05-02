@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Info</title>
+    <p>Product Multi Filter</p>
+</head>
+<body>
+    <form action="/prodMultiFilter" method="POST">
+        <p>Enter priceRange:</p>
+        <p><input type="text" name="priceRange" /></p>
+        <p>Enter rating:</p>
+        <p><input type="text" name="rating" /></p>
+        <p>Enter category:</p>
+        <p><input type="text" name="category" /></p>
+        <p>Enter storeRating:</p>
+        <p><input type="text" name="storeRating" /></p>
+        <p><input type="submit" value="submit" /></p>
+        <p>Products : {{products}}</p>
+        <p>{{warning}}</p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="return to dashboard" /></p>
+    </form>
+</body>
+</html>

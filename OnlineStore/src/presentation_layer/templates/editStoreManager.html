@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Store Manager</title>
+    <p>Edit Store Manager</p>
+</head>
+<body>
+    <form action="/editStoreManager" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeid" /></p>
+        <p>Enter User ID:</p>
+        <p><input type="text" name="userid" /></p>
+        <p>Enter Permission Update:</p>
+        <p><input type="text" name="permissionUpdate" /></p>
+        <p><input type="submit" value="Edit Store Manager" /></p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back to Dashboard" /></p>
+    </form>
+    <p>{{message}}</p>
+
+
+</body>
+</html>

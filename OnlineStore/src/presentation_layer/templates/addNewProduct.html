@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>addNewProduct</title>
+    <p>Add Product</p>
+</head>
+<body>
+    <form action="/addNewProduct" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeID" /></p>
+        <p>Enter Product ID:</p>
+        <p><input type="text" name="productID" /></p>
+        <p>Enter Product Name:</p>
+        <p><input type="text" name="productName" /></p>
+        <p>Enter Prodect Price:</p>
+        <p><input type="text" name="productPrice" /></p>
+        <p>Enter Prodect Amout:</p>
+        <p><input type="text" name="productAmout" /></p>
+        <p>Enter Prodect Description:</p>
+        <p><input type="text" name="productDescription" /></p>
+        <p><input type="submit" value="Add Product" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

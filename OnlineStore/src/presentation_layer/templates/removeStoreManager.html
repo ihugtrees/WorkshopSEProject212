@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove Store Manager</title>
+    <p>Remove Store Manager</p>
+</head>
+<body>
+    <form action="/removeStoreManager" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeid" /></p>
+        <p>Enter User ID:</p>
+        <p><input type="text" name="userid" /></p>
+        <p><input type="submit" value="Remove Store Manager" /></p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back to Dashboard" /></p>
+    </form>
+    <p>{{message}}</p>
+
+
+</body>
+</html>
