@@ -7,13 +7,16 @@ import random
 import string
 
 from OnlineStore.src.dto.cart_dto import CartDTO
+from OnlineStore.src.dto.product_dto import ProductDTO
 from OnlineStore.src.dto.user_dto import UserDTO
+from threading import Lock
 
 
 class StoreHandler:
 
     def __init__(self):
         self.store_dict = dict()  # key-store name, value-store
+        self.lock = Lock()
 
     def get_random_string(self, length):
         # choose from all lowercase letter
@@ -23,15 +26,17 @@ class StoreHandler:
         # print("Random string of length", length, "is:", result_str)
 
     def open_store(self, store_name, founder):
+        self.lock.acquire()
         if store_name in self.store_dict:
+            self.lock.release()
             raise Exception("store name already exists in the system")
         self.store_dict[store_name] = Store(store_name=store_name, store_founder=founder)
+        self.lock.release()
 
     def add_new_product_to_store_inventory(self, user_name, product_details, store_name):
         store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("store name does not exists in the system")
-        store.check_permission_to_edit_store_inventory(user_name)
         if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
         store.add_product_store(product_details)
@@ -40,7 +45,6 @@ class StoreHandler:
         store = self.store_dict.get(store_name)
         if store is None:
             raise Exception("The store does not exists in the system")
-        store.check_permission_to_edit_store_inventory(user_name)
         store.remove_product_store(product_id)
 
     def get_information_about_products(self, store_name):
@@ -79,12 +83,6 @@ class StoreHandler:
             raise Exception("Product does not exist in the store")
         return product
 
-    def is_manager_assigner(self, user_name: str, store_name: str, manager_name: str):
-        store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("The store does not exists in the system")
-        store.is_manager_owner(user_name, manager_name)
-
     def get_store_purchase_history(self, store_name):
         store = self.store_dict.get(store_name)
         if store is None:
@@ -105,6 +103,11 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             store.inventory.take_quantity(cart.basket_dict.get(store.name))
 
+    def return_quantity(self, cart: CartDTO):
+        for store in self.__get_stores_from_cart(cart):
+            store.inventory.return_quantity(cart.basket_dict.get(store.name))
+
+
     def calculate_cart_sum(self, cart: CartDTO) -> int:
         money_sum = 0
         for store in self.__get_stores_from_cart(cart):
@@ -119,30 +122,69 @@ class StoreHandler:
                     break
                 except:
                     continue
-            # print("end ")
-            # print(datetime.datetime.now())
 
-    def assign_store_owner(self, user_name, new_store_owner_name, store_name):
+    
+    ########## Search related functions ##########
+    def get_stores_with_rating(self, rating):
+        if rating is None:
+            rating = 0
+        store_list = list()
+        for key, store in self.store_dict.items():
+            if store.rating >= rating:
+                store_list.append(store)
+        return store_list
 
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
+    def get_products_with_filters(self, store, filters):
+        """
+        filters =
+        {min: int/none, max: int/none, prating: int/none, category: str/none, srating: int/none}
+        """
+        min_price = 0
+        rating = 0
+        cat = ''
 
-        store.check_permission_to_assign(user_name)
-        ans = store.assign_new_owner(new_store_owner_name, user_name)
-        return ans
+        if filters['min'] is not None:
+            min_price = filters['min']
+        if filters['prating'] is not None:
+            rating = filters['prating']
+        if filters['category'] is not None:
+            cat = filters['category']
 
-    def assign_store_manager(self, user_name, new_store_manager_name, store_name):
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
-        store.check_permission_to_assign(user_name)
-        return store.assign_new_manager(new_store_manager_name, user_name)
+        product_list = list()
+        if filters['max'] is not None:
+            for key, product in self.store_dict[store].inventory.products_dict.items():
+                if min_price <= product.price <= filters['max'] and rating <= product.rating and product.category.find(
+                        cat) != -1:
+                    product_list.append(product)
+        else:
+            for key, product in self.store_dict[store].inventory.products_dict.items():
+                if min_price <= product.price and rating <= product.rating and product.category.find(cat) != -1:
+                    product_list.append(product)
+        return product_list
 
-    def remove_store_manager(self, user_name, store_manager_name, store_name):
+    def search_product_by_category(self, category, filters):
+        if filters['category'] is not None and category.find(filters['category']) == -1:
+            return [False, "category doesnt match"]
+        product_list = list()
+        for store in self.get_stores_with_rating(filters['srating']):
+            for product in self.get_products_with_filters(store.name, filters):
+                if product.category.find(category) != -1:
+                    product_list.append(ProductDTO(product))
+        return product_list
 
-        store: Store = self.store_dict.get(store_name)
-        if store is None:
-            raise Exception("store does not exists")
+    def search_product_by_name(self, name, filters):
+        product_list = list()
+        for store in self.get_stores_with_rating(filters['srating']):
+            for product in self.get_products_with_filters(store.name, filters):
+                if product.product_name.find(name) != -1:
+                    product_list.append(ProductDTO(product))
+        return product_list
 
-        return store.delete_manager(store_manager_name, user_name)
+    def search_product_by_keyword(self, keyword, filters):
+        product_list = list()
+        for store in self.get_stores_with_rating(filters['srating']):
+            for product in self.get_products_with_filters(store.name, filters):
+                if product.description.find(keyword) != -1:
+                    product_list.append(ProductDTO(product))
+        return product_list
+    ########## Search related functions ##########

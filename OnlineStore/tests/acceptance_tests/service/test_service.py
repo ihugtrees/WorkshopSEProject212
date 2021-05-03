@@ -1,10 +1,13 @@
 import threading
 from unittest import TestCase
 
+from OnlineStore.src.domain.store.store import Store
 from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.purchase_data as purchases
+import OnlineStore.src.data_layer.permissions_data as permissions
+from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
 
 product_id: int = 0
 users_hash: dict = dict()
@@ -44,7 +47,9 @@ class TestService(TestCase):
         # for u in service.user_handler.users_dict.keys():
         # print(u)
 
-    def test_get_into_site(self):  # 2.1
+
+
+    def test_get_into_site(self): # 2.1
         ans, user_name = service.get_into_site()
         self.assertTrue(ans)
         ans = service.get_user_for_tests(user_name)[0]
@@ -100,14 +105,16 @@ class TestService(TestCase):
         store_name = "store0"
         ans, info = service.get_information_about_products(store_name)
         self.assertTrue(ans, "fail to get info")
-        self.assertEqual(info, service.get_store_for_tests(store_name)[1].inventory.products_dict, "the info is not mach")
+        self.assertEqual(info, service.get_store_for_tests(store_name)[1].inventory.products_dict,
+                         "the info is not mach")
 
     def test_get_store(self):  # 2.5
         store_name = "store0"
-        ans, store = service.get_store_for_tests(store_name)
+        ans, store = service.get_store_info(store_name)
         self.assertTrue(ans, "fail to get the store")
-        self.assertEqual(store.name, store_name)
-
+        self.assertEqual(store["store_name"], store_name)
+        # {"store_name": store.name, "store_founder": store.store_founder,
+        #  "buying_policy": store.buying_policy, "discount_policy": store.discount_policy}
     def test_find_product_by_id(self):  # 2.6
         store_name = "store0"
         product_name = "product"
@@ -135,7 +142,7 @@ class TestService(TestCase):
         filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans, result = service.search_product_by_name("not exist", filters)
         self.assertFalse(ans)
-        ans2, result = service.search_product_by_name("product" , filters)
+        ans2, result = service.search_product_by_name("product", filters)
         self.assertTrue(ans2 and result[0].quantity == 10)
 
     def test_search_product_by_keyword(self):  # 2.6.3
@@ -157,7 +164,8 @@ class TestService(TestCase):
 
         ans = service.add_product_to_cart(user_name, product_name, 5, store_name)[0]
         self.assertTrue(ans, "test: add product to cart")
-        self.assertTrue(service.get_user_for_tests(user_name)[1].cart.basket_dict[store_name].products_dict[product_name] == 10)
+        self.assertTrue(
+            service.get_user_for_tests(user_name)[1].cart.basket_dict[store_name].products_dict[product_name] == 10)
         store = service.get_store_for_tests(store_name)[1]
         product_dict = store.inventory.products_dict
         ans3 = product_dict[product_name].quantity
@@ -179,14 +187,14 @@ class TestService(TestCase):
         product_name = "product"
         user_name = users_hash["user_name0"]
 
-        ans1 = service.find_product_by_id(product_name, store_name)
-        self.assertTrue(ans1[0])
+        ans = service.find_product_by_id(product_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans2 = service.remove_product_from_store_inventory(user_name, product_name, store_name)
-        self.assertTrue(ans2)
+        ans = service.remove_product_from_store_inventory(user_name, product_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans3 = service.find_product_by_id(product_name, store_name)
-        self.assertFalse(ans3[0])
+        ans = service.find_product_by_id(product_name, store_name)
+        self.assertFalse(ans[0], ans[1])
 
     # 2.9.0
     def test_purchase(self):
@@ -194,14 +202,143 @@ class TestService(TestCase):
         store_name = "store0"
         product_name = "product"
 
-        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        ans = service.purchase(user_name, {"card_number": "123123"}, "Ziso 5/3, Beer Sheva")
+
+        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+
         self.assertTrue(ans[0], ans[1])
-        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity == 5),
-                        "quntity didnt drop")
+        store: Store = service.get_store_for_tests(store_name)[1]
+        quantity = store.inventory.products_dict.get(product_name).quantity
+
+        self.assertTrue(
+            (quantity == 5),
+            "quntity didnt drop")
 
         service.add_product_to_cart(user_name, product_name, 50, store_name)
-        ans = service.purchase(user_name, {}, "Ziso 5/3, Beer Sheva")
-        self.assertFalse(ans[0], ans[1])
+
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        ans = service.purchase(user_name, {"card_number": "123123"}, "Ziso 5/3, Beer Sheva")
+
+        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+
+        self.assertTrue(ans[0] == False and ans[1].find("There are only") >= 0, ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 5), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_delivery_fail(self):
+        user_name = users_hash["user_name0"]
+        store_name = "store0"
+        product_name = "product"
+
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        ans = service.purchase(user_name, {"card_number": "123"}, "haifa")
+
+        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+
+        self.assertTrue(ans[0] == False and ans[1] == "Delivery system rejected the delivery", ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_payment_fail(self):
+        user_name = users_hash["user_name0"]
+        store_name = "store0"
+        product_name = "product"
+
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        ans = service.purchase(user_name, {"card_number": "0000"}, "Tel Aviv")
+
+        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+
+        self.assertTrue(ans[0] == False and ans[1] == "Payment system rejected the card" , ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_buying_policy_fail(self):
+        user_name = users_hash["user_name9"]
+        store_name = "store9"
+        product_name = "product"
+        service.get_store_for_tests(store_name)[1].buying_policy = BuyingPolicyMock()
+
+        anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
+        self.assertTrue(anst[0], anst[1])
+        cart_before, store_history_before, user_history_before = self.take_info(user_name, store_name)
+
+        ans = service.purchase(user_name, {"card_number": "312312"}, "Noga Hakalanit 26")
+
+        cart_after, store_history_after, user_history_after = self.take_info(user_name, store_name)
+
+        self.assertTrue(((ans[0] == False) and (ans[1] == "buying policy fails")),ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
+    def test_purchase_sync(self):
+        user_name0 = users_hash["user_name0"]
+        user_name1 = users_hash["user_name1"]
+        user_name2 = users_hash["user_name2"]
+        user_name3 = users_hash["user_name3"]
+        store_name = "store0"
+        product_name = "product"
+        add_to_cart1 = service.add_product_to_cart(user_name1, product_name, 5, store_name)
+        self.assertTrue(add_to_cart1[0], add_to_cart1[1])
+        service.add_product_to_cart(user_name2, product_name, 5, store_name)
+        service.add_product_to_cart(user_name3, product_name, 5, store_name)
+
+        t1 = threading.Thread(target=service.purchase, args=(user_name0, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        t2 = threading.Thread(target=service.purchase, args=(user_name1, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        t3 = threading.Thread(target=service.purchase, args=(user_name2, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        t4 = threading.Thread(target=service.purchase, args=(user_name3, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+        t1.start()
+        t2.start()
+        t3.start()
+        t4.start()
+
+        t1.join()
+        t2.join()
+        t3.join()
+        t4.join()
+        store = service.get_store_for_tests(store_name)[1]
+        quantity = store.inventory.products_dict[product_name].quantity
+
+        self.assertTrue(quantity == 0)
+        ans, store_history = service.get_store_purchase_history(user_name0, store_name)
+        self.assertTrue(ans, store_history)
+        self.assertTrue(len(store_history) == 2)
+
 
     def test_logout(self):  # 3.1
         user_name = users_hash["user_name1"]
@@ -212,13 +349,13 @@ class TestService(TestCase):
         store_name = "new store"
         user_name = users_hash["user_name1"]
 
-        ans = service.open_store(store_name, user_name)[0]
-        self.assertTrue(ans, msg="failed to open store")
+        ans = service.open_store(store_name, user_name)
+        self.assertTrue(ans[0], msg=ans[1])
 
         ans, store = service.get_store_for_tests(store_name)
         self.assertTrue(ans)
-        ans = service.open_store(store_name, user_name)[0]
-        self.assertFalse(ans, "test: store name already exist")
+        ans = service.open_store(store_name, user_name)
+        self.assertFalse(ans[0], ans[1])
 
     def test_get_user_purchases_history(self):  # 3.7
         user_name = users_hash["user_name1"]
@@ -273,20 +410,20 @@ class TestService(TestCase):
         store_name = "store1"
         service.login("user_name0", "password0")
 
-        ans, result = service.assign_store_owner(user_name, assignee_user_name, store_name)
-        self.assertTrue(ans and (assignee_user_name in service.get_store_for_tests(store_name)[1].owners))
+        ans = service.assign_store_owner(user_name, assignee_user_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
-        ans2, result = service.assign_store_owner(user_name, assignee_user_name, store_name)
-        self.assertFalse(ans2, result)
+        ans = service.assign_store_owner(user_name, assignee_user_name, store_name)
+        self.assertFalse(ans[0], ans[1])
 
         not_owner_already_name = users_hash["user_name0"]
-        ans4, result = service.assign_store_owner(not_owner_already_name, users_hash["user_name4"], store_name)
-        self.assertFalse(ans4, result)
+        ans = service.assign_store_owner(not_owner_already_name, users_hash["user_name4"], store_name)
+        self.assertFalse(ans[0], ans[1])
 
         not_owner_already_name = "user_name0"
         assignee_user_name = users_hash["user_name2"]
-        ans3, result = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
-        self.assertTrue(ans3 and (not_owner_already_name in service.get_store_for_tests(store_name)[1].owners), result)
+        ans = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
+        self.assertTrue(ans[0], ans[1])
 
     def test_assign_store_manager(self):  # 4.3
         user_name = users_hash["user_name1"]
@@ -294,7 +431,7 @@ class TestService(TestCase):
         store_name = "store1"
 
         ans, result = service.assign_store_manager(user_name, new_store_manager_name, store_name)
-        self.assertTrue(ans and (new_store_manager_name in service.get_store_for_tests(store_name)[1].managers))
+        self.assertTrue(ans, result)
 
         ans2, result = service.assign_store_manager(user_name, new_store_manager_name, store_name)
         self.assertFalse(ans2, result)
@@ -306,6 +443,32 @@ class TestService(TestCase):
         not_user_manager = users_hash["user_name3"]
         ans4, result = service.assign_store_manager(not_user_manager, "user_name4", store_name)
         self.assertFalse(ans4, result)
+    def test_assign_store_manager_sync(self):
+        user_name0 = users_hash["user_name0"]
+        user_name1 = users_hash["user_name1"]
+        user_name2 = users_hash["user_name2"]
+        user_name3 = users_hash["user_name3"]
+        store_name = "store0"
+        product_name = "product"
+        store_before: Store = service.get_store_for_tests(store_name)[1]
+        # assign_list = store_before.managers
+        # self.assertTrue(len(assign_list) == 0) TODO
+        t1 = threading.Thread(target=service.assign_store_manager,
+                             args=(user_name0, user_name3, store_name,))
+        t2 = threading.Thread(target=service.assign_store_manager,
+                              args=(user_name1, user_name3, store_name,))
+        t3 = threading.Thread(target=service.assign_store_manager,
+                              args=(user_name2, user_name3, store_name,))
+        t1.start()
+        t2.start()
+        t3.start()
+        t1.join()
+        t2.join()
+        t3.join()
+        store: Store = service.get_store_for_tests(store_name)[1]
+        # assign_list = store.managers
+        # self.assertTrue(len(assign_list) == 1)
+
 
     def test_edit_manager_permissions(self):  # 4.6
         pass
@@ -316,10 +479,10 @@ class TestService(TestCase):
         removed_manager = "user_name2"
 
         ans, result = service.assign_store_manager(user_name, removed_manager, store_name)
-        self.assertTrue(ans and (removed_manager in service.get_store_for_tests(store_name)[1].managers), result)
+        self.assertTrue(ans, result)
 
         ans2, result = service.remove_store_manager(user_name, removed_manager, store_name)
-        self.assertTrue(ans2 and (not (removed_manager in service.get_store_for_tests(store_name)[1].managers)), result)
+        self.assertTrue(ans2, result)
 
         ans3, result = service.remove_store_manager(user_name, removed_manager, store_name)
         self.assertFalse(ans3, result)
@@ -398,3 +561,11 @@ class TestService(TestCase):
         purchases.purchases = dict()
         service.store_handler.store_dict = dict()
         service.auth = Authentication()
+        permissions.permissions = dict()
+
+
+    def take_info(self, user_name, store_name):
+        cart = service.get_cart_info(user_name)[1]
+        store_history = service.get_store_purchase_history(user_name, store_name)[1]
+        user_history = service.get_user_purchases_history(user_name)[1]
+        return cart, store_history, user_history

@@ -40,6 +40,16 @@ class Inventory:
             raise Exception(exception_string)
         self.lock.release()
 
+    def return_quantity(self, basket: Basket):
+        exception_string = ""
+        for product_name in basket.products_dict.keys():
+            try:
+                self.products_dict.get(product_name).return_quantity(
+                    basket.products_dict.get(product_name))
+            except Exception as e:
+                exception_string += e.args[0]
+
+
     def __rollback_from_take_quantity(self, basket):
         for product_name in basket.products_dict.keys():
             try:
