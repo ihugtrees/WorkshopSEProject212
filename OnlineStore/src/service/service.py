@@ -69,12 +69,11 @@ def register(user_name: str, password: str):
     global user_handler
     global auth
     try:
-        logging.info("register")
         user_name_hash = auth.register(user_name, password)
         user_handler.register(user_name)
+        logging.info("register: " + user_name)
         return [True, None]
     except Exception as e:
-        logging.info("register: user already exist")
         logging.error("fail in register: " + e.args[0])
         return [False, e.args[0]]
 
@@ -92,7 +91,7 @@ def login(user_name: str, password: str):
     try:
         user_name_hash = auth.login(user_name, password)
         user_handler.login(user_name)
-        logging.info("login " + user_name + ", " + password)
+        logging.info("login " + user_name)
         return [True, user_name_hash]
     except Exception as e:
         logging.error("fail in login: " + e.args[0])
@@ -166,7 +165,7 @@ def add_product_to_store(user_name, product_details, store_name):  # TODO
     try:
         user_name = auth.get_username_from_hash(user_name)
         ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
-        logging.info("add_product_to_store " + user_name + store_name)
+        logging.info("add_product_to_store " + user_name + store_name + product_details["product_id"])
         return [True, ans]
     except Exception as e:
         logging.error("add_product_to_store faild, " + e.args[0])
@@ -187,7 +186,7 @@ def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
                 ans = store_handler.store_dict[store].inventory.products_dict[product_id]
                 logging.info("search_product_by_id" + product_id)
                 return [True, ans]
-        logging.info("search_product_by_id " + "product not found")
+        logging.info("search_product_by_id: product not found")
         return [False, "product not found"]
     except Exception as e:
         logging.error("search_product_by_id fail " + e.args[0])
@@ -320,7 +319,7 @@ def search_product_by_name(name, filters):
         else:
             return [True, product_list]
     except Exception as e:
-        return [False, "bug, when searching by keyword"]
+        return [False, "bug, when searching by keyword " + e.args[0]]
 
 
 # 2.6.3
@@ -344,7 +343,7 @@ def search_product_by_keyword(keyword, filters):
         else:
             return [True, product_list]
     except Exception as e:
-        return [False, "bug, when searching by keyword"]
+        return [False, "bug, when searching by keyword" + e.args[0]]
 
 
 # TODO NEED THE CODE BELOW? IGOR/YONATAN
@@ -542,7 +541,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     try:
         user_name = auth.get_username_from_hash(user_name)
         ans = store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
-        logging.info("add_new_product_to_store_inventory: store name: " + store_name)
+        logging.info("add_new_product_to_store_inventory: store name: " + store_name +" product name: " + product_details["product_id"])
         return [True, ans]
     except Exception as e:
         logging.error("add_new_product_to_store_inventory fail: " + e.args[0])
@@ -610,7 +609,7 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
         user_name = auth.get_username_from_hash(user_name)
         ans = store_handler.assign_store_owner(user_name, new_store_owner_name, store_name)
         user_handler.set_permissions(new_store_owner_name, 1 << Action.OWNER.value, store_name)
-        logging.info("assign_store_owner")
+        logging.info("assign_store_owner: " + new_store_owner_name + "by: " + user_name + "for store: " + store_name)
         return True, ans
     except Exception as e:
         logging.error("assign_store_owner fail: " + e.args[0])
@@ -633,7 +632,7 @@ def assign_store_manager(user_name: str, new_store_manager_name: str, store_name
         ans = store_handler.assign_store_manager(user_name, new_store_manager_name, store_name)
 
         user_handler.set_permissions(new_store_manager_name, 1, store_name)
-        logging.info("assign_store_manager")
+        logging.info("assign_store_manager: " + new_store_manager_name + "by: " + user_name)
         return True, ans
     except Exception as e:
         logging.error("assign_store_manager " + e.args[0])
@@ -657,7 +656,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
         user_name = auth.get_username_from_hash(user_name)
         store_handler.is_manager_assigner(user_name, store_name, store_manager_name)
         ans = user_handler.edit_store_manager_permissions(store_manager_name, new_permissions)
-        logging.info("edit_store_manager_permissions")
+        logging.info("edit_store_manager_permissions: for "+ store_manager_name + "by: " + user_name)
         return [True, ans]
     except Exception as e:
         logging.error("edit_store_manager_permissions " + e.args[0])
@@ -678,7 +677,7 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     try:
         user_name = auth.get_username_from_hash(user_name)
         ans = store_handler.remove_store_manager(user_name, store_manager_name, store_name)
-        logging.info("remove_store_manager")
+        logging.info("remove_store_manager: " + store_manager_name + "by: " + user_name)
         return True, ans
     except Exception as e:
         logging.error("remove_store_manager " + e.args[0])
@@ -700,7 +699,7 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         user_name = auth.get_username_from_hash(user_name)
         user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_INFO.value)
         ans = user_handler.get_employee_information(employee_name, store_name)
-        logging.info("get_employee_information")
+        logging.info("get_employee_information: " + employee_name)
         return [True, ans]
     except Exception as e:
         logging.error("get_employee_information " + e.args[0])
@@ -721,9 +720,11 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
     try:
         user_name = auth.get_username_from_hash(user_name)
         user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.EMPLOYEE_PERMISSIONS.value)
+        logging.info("get_employee_permissions")
         return [True, user_handler.get_employee_information(
             employee_name)]  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
     except Exception as e:
+        logging.error("get_employee_permissions: " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -741,8 +742,10 @@ def get_store_purchase_history(user_name, store_name):
     try:
         user_name = auth.get_username_from_hash(user_name)
         user_handler.is_permitted_to_do(user_name, store_name, 1 << Action.STORE_PURCHASE_HISTORY.value)
+        logging.info("get_store_purchase_history")
         return [True, purchase_handler.get_store_purchases(store_name)]
     except Exception as e:
+        logging.error("get_store_purchase_history " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -764,8 +767,10 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     try:
         user_name = auth.get_username_from_hash(user_name)
         user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
+        logging.info("get_user_purchase_history_admin")
         return [True, purchase_handler.get_user_purchases(other_user_name)]
     except Exception as e:
+        logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
 
 
