@@ -4,6 +4,7 @@ from OnlineStore.src.service.logger import Logger
 logging = Logger()
 
 
+
 def get_into_site():
     try:
         logging.info("get_into_site")
