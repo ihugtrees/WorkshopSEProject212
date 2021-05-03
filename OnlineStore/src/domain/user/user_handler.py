@@ -51,7 +51,6 @@ class UserHandler:
 
     def logout(self, user_name):
         users.get_user_by_name(user_name).logout()
-        return True
 
     def exit_the_site(self, guest_name):
         users.remove_user(guest_name)

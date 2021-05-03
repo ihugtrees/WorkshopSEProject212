@@ -10,5 +10,6 @@
 __pycache__/
 .idea
 *.sh
+venv/
 
 

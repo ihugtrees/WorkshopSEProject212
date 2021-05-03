@@ -13,7 +13,6 @@ class Store:
         self.inventory = Inventory(dict())
         self.buying_policy = buying_policy if buying_policy is not None else BuyingPolicy()
         self.discount_policy = discount_policy
-        self.purchase_history = purchase_history
         self.rating = 0
 
     def remove_product_store(self, product_id):
