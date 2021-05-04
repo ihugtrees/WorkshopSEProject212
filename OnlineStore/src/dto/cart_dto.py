@@ -7,3 +7,4 @@ class CartDTO:
         self.basket_dict = dict()
         for store_name_key in cart.basket_dict.keys():
             self.basket_dict[store_name_key] = BasketDTO(cart.basket_dict[store_name_key])
+        self.sum = 0
