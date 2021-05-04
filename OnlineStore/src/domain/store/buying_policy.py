@@ -1,8 +1,8 @@
 from OnlineStore.src.dto.user_dto import UserDTO
 
-class BuyingPolicyMock:
+class BuyingPolicy:
     def __init__(self):
         pass
 
-    def elligible_for_buying(user: UserDTO)->None:
+    def elligible_for_buying(self, user: UserDTO)->None:
         pass

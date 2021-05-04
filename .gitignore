@@ -7,9 +7,9 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 *.log
-
 __pycache__/
 .idea
-
+*.sh
+venv/
 
 

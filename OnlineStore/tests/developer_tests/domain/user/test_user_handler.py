@@ -50,10 +50,10 @@ class TestUserHandler(TestCase):
         self.assertTrue(1 in users.get_user_by_name('admin').cart.basket_dict)
         self.assertFalse(1 in users.get_user_by_name('admin').cart.basket_dict[1].products_dict)
 
-    def test_get_cart(self):
+    def test_get_cart_info(self):
         self.assertTrue(len(users.get_user_by_name('admin').cart.basket_dict) == 0)
         user_handler.add_product("admin", "store", "product", 1)
         self.assertTrue(len(users.get_user_by_name('admin').cart.basket_dict) == 1)
-        self.assertTrue(1 == len(user_handler.get_cart("admin").basket_dict))
-        self.assertTrue("product" in user_handler.get_cart("admin").basket_dict["store"].products_dict)
-        self.assertTrue(1 == user_handler.get_cart("admin").basket_dict["store"].products_dict["product"])
+        self.assertTrue(1 == len(user_handler.get_cart_info("admin").basket_dict))
+        self.assertTrue("product" in user_handler.get_cart_info("admin").basket_dict["store"].products_dict)
+        self.assertTrue(1 == user_handler.get_cart_info("admin").basket_dict["store"].products_dict["product"])

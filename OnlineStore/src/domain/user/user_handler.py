@@ -1,5 +1,7 @@
 
 import OnlineStore.src.data_layer.users_data as users
+import OnlineStore.src.data_layer.permissions_data as permissions
+from OnlineStore.src.domain.user.action import *
 from OnlineStore.src.domain.user.cart import Cart
 from OnlineStore.src.domain.user.user import User
 from threading import Lock
@@ -16,7 +18,6 @@ def get_random_string(length):
     letters = string.ascii_lowercase
     result_str = ''.join(random.choice(letters) for i in range(length))
     return result_str
-    # print("Random string of length", length, "is:", result_str)
 
 
 GUEST_NAME_LENGTH = 20
@@ -35,6 +36,7 @@ class UserHandler:
         user = User(user_name, Cart())
         try:
             users.add_user(user)
+            permissions.add_permission(user_name, REGISTERED_PERMMISIONS)
             self.lock.release()
         except Exception as e:
             self.lock.release()
@@ -49,8 +51,6 @@ class UserHandler:
 
     def logout(self, user_name):
         users.get_user_by_name(user_name).logout()
-        # TODO SAVE ALL DATA
-        return True
 
     def exit_the_site(self, guest_name):
         users.remove_user(guest_name)
@@ -61,14 +61,9 @@ class UserHandler:
     def remove_product(self, user_name, store_id, product_id, quantity):
         users.get_user_by_name(user_name).remove_product_from_user(store_id, product_id, quantity)
 
-    # def load_users(self):
-    #     self.users_dict = data_access.load_users()
-
     def get_guest_unique_user_name(self):
         new_user_name = get_random_string(GUEST_NAME_LENGTH)
 
-        # print("start: ")
-        # print(datetime.datetime.now())
         while True:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
             try:
@@ -76,8 +71,6 @@ class UserHandler:
                 break
             except:
                 continue
-        # print("end: ")
-        # print(datetime.datetime.now())
         return new_user_name
 
     def check_permission_to_open_store(self, user_name):
@@ -89,24 +82,27 @@ class UserHandler:
         user = users.get_user_by_name(user_name)
         return user.purchase_history
 
-    def edit_store_manager_permissions(self, store_manager_name: str, new_permissions: int):
-        user = users.get_user_by_name(store_manager_name)
-        user.edit_store_manager_permissions(new_permissions)
-
-    def is_permitted_to_do(self, user_name: str, store_name: str, action: int):
-        user = users.get_user_by_name(user_name)
-        user.is_permitted_to_do(action, store_name)
-
-    def get_employee_information(self, employee_name: str, store_name: str):
-        user = users.get_user_by_name(employee_name)
-        user.is_an_employee_in_store(store_name)
-        return user
+    def get_employee_information(self, employee_name: str):
+        return self.get_user_dto_by_name(employee_name)
 
     def get_user_dto_by_name(self, user_name) -> UserDTO:
         return UserDTO(users.get_user_by_name(user_name))
 
-    def set_permissions(self, new_store_manager_name, permission, store_name):
-        users.get_user_by_name(new_store_manager_name).set_permissions(permission, store_name)
-
     def empty_cart(self, user_name):
         users.get_user_by_name(user_name).empty_cart()
+
+    def is_assigned_by_me(self, user_name: str, store_manager_name: str, store_name: str)->None:
+        users.get_user_by_name(user_name).is_assigned_by_me(store_manager_name, store_name)
+    
+    def assign_store_employee(self, user_name: str, new_store_owner_name: str, store_name: str)->None:
+        users.get_user_by_name(user_name).assign_store_employee(new_store_owner_name, store_name)
+    
+    def remove_employee(self, user_name: str, store_employee: str, store_name: str)-> None:
+        to_remove: list = users.get_user_by_name(store_employee).get_all_appointed(store_name)
+        users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
+        self.__remove_employee_rec(to_remove, store_name)
+
+    def __remove_employee_rec(self, store_employee_list: list, store_name)->None:
+        for employee_name in store_employee_list:
+            self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name), store_name)
+            users.get_user_by_name(user_name).remove_employee(employee_name, store_name)
