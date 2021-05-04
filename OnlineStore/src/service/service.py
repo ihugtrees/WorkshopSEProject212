@@ -4,7 +4,6 @@ from OnlineStore.src.service.logger import Logger
 logging = Logger()
 
 
-
 def get_into_site():
     try:
         logging.info("get_into_site")
@@ -378,7 +377,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
 
 
 # 4.1.3
-
+# maybe change to edit_product
 def edit_product_description(user_name: str, product_description: str, store_name: str, product_name: str):
     """
     Edit product description
@@ -397,6 +396,12 @@ def edit_product_description(user_name: str, product_description: str, store_nam
     except Exception as e:
         logging.error("edit_product_details fail: " + e.args[0])
         return [False, e.args[0]]
+
+
+# TODO check if need that function
+def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
+                 category, discount_type, buying_type):
+    pass
 
 
 # 4.3
@@ -518,7 +523,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
 
     try:
         logging.info("get employee permissions")
-        return [True, domain_handler.get_employee_permissions(user_name, store_name,employee_name)]
+        return [True, domain_handler.get_employee_permissions(user_name, store_name, employee_name)]
     except Exception as e:
         logging.error("get_employee_permissions " + e.args[0])
         return [False, e.args[0]]
@@ -546,12 +551,14 @@ def get_store_purchase_history(user_name, store_name):
 # 6.4.1
 
 def get_store_purchase_history_admin(user_name, store_name):
-    try:  
+    try:
         logging.info("Get Store purchase history admin: " + user_name + " from store: " + store_name)
         return [True, domain_handler.get_store_purchase_history_admin(user_name, store_name)]
     except Exception as e:
         logging.error("Get Store purchase history admin failed due: " + e.args[0])
         return [False, e.args[0]]
+
+
 # 6.4.2
 
 def get_user_purchase_history_admin(user_name, other_user_name):
@@ -563,12 +570,11 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     :return:
     """
     try:
-        logging.info("Get user purchase history admin: " + user_name +  " from user: " + other_user_name)
+        logging.info("Get user purchase history admin: " + user_name + " from user: " + other_user_name)
         return [True, domain_handler.get_user_purchase_history_admin(user_name, other_user_name)]
     except Exception as e:
         logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
-
 
 
 def get_store_for_tests(store_id):
@@ -578,9 +584,65 @@ def get_store_for_tests(store_id):
         return [False, e.args[0]]
 
 
-
 def get_user_for_tests(user_name):
     try:
         return [True, domain_handler.get_user_for_tests(user_name)]
     except Exception as e:
         return [False, e.args[0]]
+
+
+# we need to implement all those function (4.2)
+def get_buying_types(user_name, store_name):
+    return "dsadsadsa"
+
+
+def add_buying_types(user_name, store_name, details):
+    return True
+
+
+def edit_buying_types(user_name, store_name, buying_types, details):
+    return True
+
+
+def get_discount_types(user_name, store_name):
+    return "dsadsadsa"
+
+
+def add_discount_type(user_name, store_name, details):
+    return True
+
+
+def edit_discount_type(user_name, store_name, discount_type, details):
+    return True
+
+
+def get_buying_policy(user_name, store_name):
+    return "dsadsadsa"
+
+
+def add_buying_policy(user_name, store_name, details):
+    return True
+
+
+def edit_buying_policy(user_name, store_name, buying_policy, details):
+    return True
+
+
+def get_discount_policy(user_name, store_name):
+    return "dsadsadsa"
+
+
+def edit_discount_policy(user_name, store_name, discount_policy, details):
+    return True
+
+
+def add_discount_policy(user_name, store_name, details):
+    return True
+
+
+def get_employee_details(user_name, store_name, employeeid):
+    return "dsadsadsa"
+
+
+def get_employee_permissions(user_name, store_name, employeeid):
+    return "dsadsadsa"

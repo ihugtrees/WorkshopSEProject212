@@ -187,7 +187,9 @@ def get_cart_info(user_name):
     """
 
     user_name = auth.get_username_from_hash(user_name)
-    return user_handler.get_cart_info(user_name)
+    cartDTO = user_handler.get_cart_info(user_name)
+    cartDTO.sum = store_handler.calculate_cart_sum(cartDTO)
+    return cartDTO
 
 """EDIT THE CART FUNCTIONS"""
 
