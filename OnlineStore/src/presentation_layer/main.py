@@ -410,5 +410,5 @@ def getEmployeePermissions():
     return render_template("getEmployeePermissions.html")
 
 if __name__ == '__main__':
-    app.run(debug=True,host="localhost",port=8000,ssl_context='adhoc')
+    app.run(debug=True,host="localhost",port=8000,ssl_context=('cert.pem', 'key.pem'))
     # app.run(debug=True,host="localhost",port=8000)
