@@ -1,14 +1,13 @@
 import OnlineStore.src.service.service as service
 
-users = {"hilay": "hilay"}
-
-
 # logging in
 # def check_log_in(username, password):
 #     if (username in users and password == users[username]):
 #         return True
 #     return False
 
+def log_in(username, password):
+        return service.login(username,password)
 
 # return true for successful sign up
 def register(user_name, password):

@@ -26,7 +26,7 @@ def register(user_name: str, password: str):
     try:
         logging.info("register" + user_name)
         domain_handler.register(user_name, password)
-        return [True, None]
+        return [True, "New user has been added successfully"]
     except Exception as e:
         logging.error("fail in register: " + e.args[0])
         return [False, e.args[0]]
@@ -135,7 +135,7 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
         return [True, domain_handler.find_product_by_id(product_id, store_name)]
     except Exception as e:
         logging.error("find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name + " " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name + " " + e.args[0]]
 
 
 # 2.6.1
@@ -351,7 +351,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
         return [True, None]
     except Exception as e:
         logging.error("add_new_product_to_store_inventory fail: " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "Add new product to store inventory fail: " +e.args[0]]
 
 
 # 4.1.2
@@ -373,7 +373,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
         return [True, None]
     except Exception as e:
         logging.error("remove product from store inventory fail: " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "remove product from store inventory fail: " +e.args[0]]
 
 
 # 4.1.3
@@ -401,7 +401,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
 # TODO check if need that function
 def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
                  category, discount_type, buying_type):
-    pass
+    return [False,"Not implemented yet"]
 
 
 # 4.3
@@ -422,7 +422,7 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
         return [True, None]
     except Exception as e:
         logging.error("assign store owner fail: " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "assign store owner fail: " +e.args[0]]
 
 
 # 4.5
@@ -440,10 +440,10 @@ def assign_store_manager(user_name: str, new_store_manager_name: str, store_name
     try:
         logging.info("assign_store_manager")
         domain_handler.assign_store_manager(user_name, new_store_manager_name, store_name)
-        return [True, None]
+        return [True, "New store manager has been added"]
     except Exception as e:
-        logging.error("assign_store_manager " + e.args[0])
-        return [False, e.args[0]]
+        logging.error("assign store manager failed " + e.args[0])
+        return [False, "assign store manager failed " + e.args[0]]
 
 
 # 4.6
@@ -465,7 +465,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
         return [True, None]
     except Exception as e:
         logging.error("edit_store_manager_permissions " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "edit_store_manager_permissions failed " +e.args[0]]
 
 
 # 4.7
@@ -485,8 +485,8 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
         domain_handler.remove_store_manager(user_name, store_manager_name, store_name)
         return True, None
     except Exception as e:
-        logging.error("remove_store_manager " + e.args[0])
-        return False, e.args[0]
+        logging.error("remove store manager failed" + e.args[0])
+        return [False, "remove store manager failed" + e.args[0]]
 
 
 # 4.9.1
@@ -506,7 +506,7 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         return [True, domain_handler.get_employee_information(user_name, employee_name, store_name)]
     except Exception as e:
         logging.error("get_employee_information " + e.args[0])
-        return [False, e.args[0]]
+        return [False, "get employee information failed" +e.args[0]]
 
 
 # 4.9.2
@@ -593,56 +593,56 @@ def get_user_for_tests(user_name):
 
 # we need to implement all those function (4.2)
 def get_buying_types(user_name, store_name):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
 
 
 def add_buying_types(user_name, store_name, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def edit_buying_types(user_name, store_name, buying_types, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def get_discount_types(user_name, store_name):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
 
 
 def add_discount_type(user_name, store_name, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def edit_discount_type(user_name, store_name, discount_type, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def get_buying_policy(user_name, store_name):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
 
 
 def add_buying_policy(user_name, store_name, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def edit_buying_policy(user_name, store_name, buying_policy, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def get_discount_policy(user_name, store_name):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
 
 
 def edit_discount_policy(user_name, store_name, discount_policy, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def add_discount_policy(user_name, store_name, details):
-    return True
+    return [False,"Not implemented yet"]
 
 
 def get_employee_details(user_name, store_name, employeeid):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
 
 
 def get_employee_permissions(user_name, store_name, employeeid):
-    return "dsadsadsa"
+    return [False,"Not implemented yet"]
