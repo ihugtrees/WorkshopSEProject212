@@ -8,8 +8,9 @@ from OnlineStore.src.domain.store.store import Store
 class TestTermDiscount(TestCase):
     def setUp(self):
         self.basketDTO = basketDTO = {
-            "milk": (20, 20),  # key - product name value - (quantity, price)
-            "yogurt": (50, 10)
+            "milk": (20, 20, "milk"),  # key - product name value - (quantity, price)
+            "yogurt": (50, 10, "milk"),
+            "avocado": (32, 4, "veg")
         }
 
 
@@ -47,6 +48,16 @@ class TestTermDiscount(TestCase):
         self.assertTrue(t1.term.calc_term(self.basketDTO))
         t1: TermDiscount = TermDiscount("milk quantity = 20 AND milk price = 45 OR yogurt quantity = 50")
         self.assertTrue(t1.term.calc_term(self.basketDTO))
+
+    def test_calc_term_atomic_category(self):
+        t1: TermDiscount = TermDiscount("-C milk quantity = 20")
+        self.assertFalse(t1.term.calc_term(self.basketDTO))
+        t2: TermDiscount = TermDiscount("-C milk quantity = 70")
+        self.assertTrue(t2.term.calc_term(self.basketDTO))
+        t3: TermDiscount = TermDiscount("-C ALL quantity = 102")
+        self.assertTrue(t3.term.calc_term(self.basketDTO))
+
+
 
 
 
