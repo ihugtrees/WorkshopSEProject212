@@ -134,8 +134,8 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
         logging.info("find_product_by_id: id = " + product_id + "store name = " + store_name)
         return [True, domain_handler.find_product_by_id(product_id, store_name)]
     except Exception as e:
-        logging.error("find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name + " " + e.args[0])
-        return [False, "find_product_by_id FAIL:  + id = " + product_id + "store name = " + store_name + " " + e.args[0]]
+        logging.error("FAIL: id=" + product_id + "store name=" + store_name + " " + e.args[0])
+        return [False, "FAIL: id=" + product_id + "store name=" + store_name + " " + e.args[0]]
 
 
 # 2.6.1

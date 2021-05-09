@@ -73,7 +73,11 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 
 # get total cart price before checkout
 def get_cart_info(user_name):
-    return service.get_cart_info(user_name)
+    cart_info =  service.get_cart_info(user_name)
+    if(cart_info[0]==True):
+        return cart_info[1].get_cart_info()
+    else:
+        return cart_info[1]
     # return 10
 
 

@@ -134,7 +134,7 @@ def productInfo():
         productID = request.form.get('productID')
         product = find_product_by_id(productID, storeID)
         if(product[0]):
-            return render_template("productInfo.html",storeID=storeID,productID=productID,price=0)
+            return render_template("productInfo.html",storeID=storeID,productID=productID,price=product[1].price)
         return render_template("productInfo.html",storeID=storeID,productID=productID,warning=product[1])
     return render_template("productInfo.html")
 

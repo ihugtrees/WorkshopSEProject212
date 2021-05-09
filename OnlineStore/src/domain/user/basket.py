@@ -22,3 +22,8 @@ class Basket:
 
     def get_product_dict(self):
         return self.products_dict
+
+    def get_str_basket(self):
+        output = ""
+        for id in self.products_dict:
+            output=output+"Product id : "+id+" quantity : "+self.products_dict[id]+"\n"
