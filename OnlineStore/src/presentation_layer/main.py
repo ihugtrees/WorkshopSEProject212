@@ -95,12 +95,20 @@ def addstoremanager():
     return render_template("addstoremanager.html")
 
 @app.route('/removeStoreManager', methods=['POST', 'GET'])
-def removeStoraManager():
+def removeStoreManager():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
         storeid = request.form.get('storeid')
         return render_template("removeStoreManager.html", message=remove_store_manager(session["user"], userid, storeid)[1])
     return render_template("removeStoreManager.html")
+
+@app.route('/removeStoreOwner', methods=['POST', 'GET'])
+def removeStoreOwner():
+    if (request.method == 'POST'):
+        userid = request.form.get('userid')
+        storeid = request.form.get('storeid')
+        return render_template("removeStoreOwner.html", message=remove_store_owner(session["user"], userid, storeid)[1])
+    return render_template("removeStoreOwner.html")
 
 @app.route('/editStoreManager', methods=['POST', 'GET'])
 def editStoreManager():

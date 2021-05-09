@@ -25,6 +25,9 @@ def edit_store_manager_permissions(user_name, store_manager_name, new_permission
 def remove_store_manager(user_name, store_manager_name, store_name):
     return service.remove_store_manager(user_name, store_manager_name, store_name)
 
+def remove_store_owner(user_name, store_owner_name, store_name):
+    return service.remove_store_owner(user_name, store_owner_name, store_name)
+
 
 def assign_store_owner(user_name, new_store_owner_name, store_name):
     return service.assign_store_owner(user_name, new_store_owner_name, store_name)
