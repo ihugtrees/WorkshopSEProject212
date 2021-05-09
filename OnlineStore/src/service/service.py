@@ -1,9 +1,5 @@
 import OnlineStore.src.domain.domain_handler as domain_handler
 from OnlineStore.src.service.logger import Logger
-import OnlineStore.src.data_layer.users_data as usersdb
-
-
-
 
 logging = Logger()
 
@@ -521,7 +517,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
 
     try:
         logging.info("get employee permissions")
-        return [True, domain_handler.get_employee_permissions(user_name, store_name,employee_name)]
+        return [True, domain_handler.get_employee_permissions(user_name, store_name, employee_name)]
     except Exception as e:
         logging.error("get_employee_permissions " + e.args[0])
         return [False, e.args[0]]
@@ -549,12 +545,14 @@ def get_store_purchase_history(user_name, store_name):
 # 6.4.1
 
 def get_store_purchase_history_admin(user_name, store_name):
-    try:  
+    try:
         logging.info("Get Store purchase history admin: " + user_name + " from store: " + store_name)
         return [True, domain_handler.get_store_purchase_history_admin(user_name, store_name)]
     except Exception as e:
         logging.error("Get Store purchase history admin failed due: " + e.args[0])
         return [False, e.args[0]]
+
+
 # 6.4.2
 
 def get_user_purchase_history_admin(user_name, other_user_name):
@@ -566,12 +564,11 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     :return:
     """
     try:
-        logging.info("Get user purchase history admin: " + user_name +  " from user: " + other_user_name)
+        logging.info("Get user purchase history admin: " + user_name + " from user: " + other_user_name)
         return [True, domain_handler.get_user_purchase_history_admin(user_name, other_user_name)]
     except Exception as e:
         logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
-
 
 
 def get_store_for_tests(store_id):
@@ -581,15 +578,9 @@ def get_store_for_tests(store_id):
         return [False, e.args[0]]
 
 
-
 def get_user_for_tests(user_name):
     try:
         return [True, domain_handler.get_user_for_tests(user_name)]
     except Exception as e:
         return [False, e.args[0]]
 
-
-def initialize_system():
-    register("admin", "admin")
-    usersdb.get_user_by_name("admin").is_admin = True
-initialize_system()
