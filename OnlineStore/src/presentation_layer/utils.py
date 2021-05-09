@@ -38,26 +38,8 @@ def get_store_info(store_name):
     return service.get_store_info(store_name)
 
 
-# ====== we done need those functions, all the checks happened in the service. =======
-# return true if store exist
-# def storeExist(storeid):
-#     return service.get_store_info()
-# return True
-
-
-# return true if user have permissions to add another user as store manager
-# def userHasPermissions(storeid, user):
-#     return True
-
-
-# return true if the user is store manager (for the specific store)
-# def isStoreManager(storeid, userid):
-#     return False
-
-
-# return true id user exist
-# def userExist(userid):
-#     return True
+def get_user_type (user_name): #return admin/store_owner/store_manager/guest
+    return "admin"
 
 
 # return all prodect that match all the filters

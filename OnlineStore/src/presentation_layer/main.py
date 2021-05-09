@@ -38,7 +38,15 @@ def wronglogin():
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     if('user' in session and session['user'] != None):
-        return render_template("dashboard.html")
+        user_type = get_user_type(session['user'])
+        if(user_type == "admin"):
+            return render_template("dashboardAdmin.html")
+        elif(user_type == "store_owner"):
+            return render_template("dashboardStoreOwner.html")
+        elif(user_type == "store_manager"):
+            return render_template("dashboardStoreManager.html")
+        elif(user_type == "guest"):
+            return render_template("dashboardGuest.html")
     return '<h1>You are not logged in.</h1>'  #if the user is not in the session
 
 @app.route('/storesProducts', methods=['POST', 'GET'])
