@@ -4,7 +4,7 @@ from OnlineStore.src.domain.user.user_handler import UserHandler
 from OnlineStore.src.domain.store.store_handler import StoreHandler
 from OnlineStore.src.security.authentication import Authentication
 from OnlineStore.src.domain.permissions.permission_handler import PermissionHandler
-import OnlineStore.src.data_layer.purchase_data as purchase_handler
+import OnlineStore.src.domain.purchase as purchase_handler
 import OnlineStore.src.domain.user.action as action
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.store_data as stores

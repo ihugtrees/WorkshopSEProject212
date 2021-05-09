@@ -6,7 +6,7 @@ from OnlineStore.src.service import service
 from OnlineStore.src.security.authentication import Authentication
 from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
 import OnlineStore.src.data_layer.users_data as users
-import OnlineStore.src.data_layer.purchase_data as purchases
+import OnlineStore.src.domain.purchase as purchases
 import OnlineStore.src.data_layer.permissions_data as permissions
 import OnlineStore.src.data_layer.store_data as stores
 
