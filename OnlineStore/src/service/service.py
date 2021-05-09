@@ -423,7 +423,26 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
     except Exception as e:
         logging.error("assign store owner fail: " + e.args[0])
         return [False, "assign store owner fail: " +e.args[0]]
+        
+# 4.4
 
+def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
+    """
+    Removes specific store manager (needs to be assigned by you)
+
+    :param user_name: user name
+    :param store_manager_name: store manager name to be deleted
+    :param store_name: store name
+    :return: None
+    """
+
+    try:
+        logging.info("remove_store_manager")
+        domain_handler.remove_store_manager(user_name, store_manager_name, store_name)
+        return True, None
+    except Exception as e:
+        logging.error("remove_store_manager " + e.args[0])
+        return False, e.args[0]
 
 # 4.5
 

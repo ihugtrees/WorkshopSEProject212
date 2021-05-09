@@ -506,18 +506,24 @@ class TestService(TestCase):
     def test_edit_manager_permissions(self):  # 4.6
         pass
 
-    def test_remove_store_manager(self):  # 4.7
+    def test_remove_store_owner(self):  # 4.4
         user_name = users_hash["user_name1"]
         store_name = "store1"
         removed_manager = "user_name2"
 
-        ans, result = service.assign_store_manager(user_name, removed_manager, store_name)
+        ans, result = service.assign_store_owner(user_name, removed_manager, store_name)
         self.assertTrue(ans, result)
 
-        ans2, result = service.remove_store_manager(user_name, removed_manager, store_name)
+        ans, result = service.assign_store_owner(users_hash[removed_manager], "user_name3", store_name)
+        self.assertTrue(ans, result)
+
+        ans, result = service.assign_store_owner(users_hash["user_name3"], "user_name4", store_name)
+        self.assertTrue(ans, result)
+
+        ans2, result = service.remove_store_owner(user_name, removed_manager, store_name)
         self.assertTrue(ans2, result)
 
-        ans3, result = service.remove_store_manager(user_name, removed_manager, store_name)
+        ans3, result = service.remove_store_owner(user_name, removed_manager, store_name)
         self.assertFalse(ans3, result)
 
     def test_get_employee_information(self):  # 4.9.1

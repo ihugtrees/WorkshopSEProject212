@@ -97,12 +97,20 @@ class UserHandler:
     def assign_store_employee(self, user_name: str, new_store_owner_name: str, store_name: str)->None:
         users.get_user_by_name(user_name).assign_store_employee(new_store_owner_name, store_name)
     
-    def remove_employee(self, user_name: str, store_employee: str, store_name: str)-> None:
-        to_remove: list = users.get_user_by_name(store_employee).get_all_appointed(store_name)
+    def remove_employee(self, user_name: str, store_employee: str, store_name: str) -> list:
+        self.is_assigned_by_me(user_name, store_employee, store_name)
+        employee: User = users.get_user_by_name(store_employee)
+        to_remove: list = employee.get_all_appointed(store_name)
         users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
-        self.__remove_employee_rec(to_remove, store_name)
+        ls: list = self.__remove_employee_rec(to_remove, store_name)
+        employee.remove_store_from_appoint(store_name)
+        ls.append(store_employee)
+        return ls
 
-    def __remove_employee_rec(self, store_employee_list: list, store_name)->None:
+    def __remove_employee_rec(self, store_employee_list: list, store_name):
+        list_em: list = list()
+        list_em.extend(store_employee_list)
         for employee_name in store_employee_list:
-            self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name), store_name)
-            users.get_user_by_name(user_name).remove_employee(employee_name, store_name)
+            list_em.extend(self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name), store_name))
+            users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
+        return list_em

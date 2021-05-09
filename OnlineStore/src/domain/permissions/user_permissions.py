@@ -29,3 +29,6 @@ class UserPermissions:
     def is_working_in_store(self, store_name: str)->None:
         if store_name not in self.__permissions_in_store.keys():
             raise Exception("The user " + self.__user_name + " is not an employee in " + store_name)
+
+    def remove_employee(self, store_name):
+        self.__permissions_in_store.pop(store_name)

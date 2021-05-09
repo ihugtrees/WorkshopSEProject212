@@ -17,3 +17,10 @@ class Appoint:
 
     def get_all_appointed(self, store_name: str)->list:
         return self.__appointed_by_me[store_name] if store_name in self.__appointed_by_me.keys() else list()
+
+        
+    def remove_store_from_appoint(self, store_name):
+        try:
+            self.__appointed_by_me.pop(store_name)
+        except Exception as e:
+            return

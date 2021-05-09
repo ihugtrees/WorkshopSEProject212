@@ -46,3 +46,7 @@ class User:
 
     def get_all_appointed(self, store_name: str)->list:
         return self.appointed_to_store.get_all_appointed(store_name)
+
+        
+    def remove_store_from_appoint(self, store_name):
+        self.appointed_to_store.remove_store_from_appoint(store_name)

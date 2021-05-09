@@ -27,3 +27,7 @@ class PermissionHandler:
 
     def is_working_in_store(self, user_name: str, store_name: str) -> None:
         permissions.get_permissions_by_user_name(user_name).is_working_in_store(store_name)
+    
+    def remove_employee(self, to_remove: list, store_name: str):
+        for store_employee_name in to_remove:
+            permissions.get_permissions_by_user_name(store_employee_name).remove_employee(store_name)

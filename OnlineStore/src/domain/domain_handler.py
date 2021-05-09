@@ -436,7 +436,9 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.REMOVE_MANAGER.value, store_name)
-    user_handler.remove_employee(user_name, store_manager_name, store_name)
+    permission_handler.is_working_in_store(store_manager_name, store_name)
+    to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
+    permission_handler.remove_employee(to_remove, store_name)
 
 # 4.9.1
 
