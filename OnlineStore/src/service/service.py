@@ -1,8 +1,15 @@
 import OnlineStore.src.domain.domain_handler as domain_handler
 from OnlineStore.src.service.logger import Logger
+import OnlineStore.src.data_layer.users_data as usersdb
+
+
+def initialize_system():
+    register("admin", "admin")
+    usersdb.get_user_by_name("admin").is_admin = True
+
 
 logging = Logger()
-
+initialize_system()
 
 
 def get_into_site():
