@@ -3,17 +3,27 @@ from OnlineStore.src.domain.store.discont_policy.discount_value import DiscountV
 
 class AtomicDiscountValue(DiscountValue):
 
-    def __init__(self, dictP):
+    def __init__(self, dictP, category_flag=False):
         self.dictP = dictP
+        self.category_flag = category_flag
 
     def calc_discount(self, basketDTO):
         original_price = 0
         new_price = 0
-        for p in basketDTO:
-            origin = basketDTO[p][0] * basketDTO[p][1]
-            original_price += origin
-            if p in self.dictP:
-                new_price += (origin * basketDTO[p]) / 100
-            else:
-                new_price += origin
+        if not self.category_flag:
+            for p in basketDTO:
+                origin = basketDTO[p][0] * basketDTO[p][1]
+                original_price += origin
+                if p in self.dictP:
+                    new_price += (origin * (100-self.dictP[p])) / 100
+                else:
+                    new_price += origin
+        else:
+            for p in basketDTO:
+                origin = basketDTO[p][0] * basketDTO[p][1]
+                original_price += origin
+                if basketDTO[p][2] in self.dictP:
+                    new_price += (origin * (100-self.dictP[basketDTO[p][2]])) / 100
+                else:
+                    new_price += origin
         return new_price, original_price

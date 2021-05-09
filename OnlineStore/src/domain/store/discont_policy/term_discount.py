@@ -1,4 +1,5 @@
 from OnlineStore.src.domain.store.discont_policy.atomic_term import AtomicTerm
+from OnlineStore.src.domain.store.discont_policy.composite_discount_value import CompositeDiscountValue
 from OnlineStore.src.domain.store.discont_policy.composite_term import CompositeTerm
 from OnlineStore.src.domain.store.discont_policy.atomic_discount_value import DiscountValue, AtomicDiscountValue
 from OnlineStore.src.domain.store.discont_policy.term import Term
@@ -7,12 +8,12 @@ from OnlineStore.src.domain.store.discont_policy.term import Term
 class TermDiscount:
 
     def __init__(self, term_string: str = None, discount_description_products: str = None,
-                 discount_description_categories=None):
+                 discount_description_categories=False):
         term: Term = self.make_term_from_string(term_string)
         self.term = term
-        if discount_description_categories is not None or discount_description_products is not None:
-            self.products_discount = self.make_products_disc_from_str(discount_description_products)
-            self.category_discount = self.make_products_disc_from_str(discount_description_categories)
+        if discount_description_products is not None:
+            self.products_discount: AtomicDiscountValue = self.make_products_disc_from_str(
+                discount_description_products, discount_description_categories)
 
     def make_term_from_string(self, s_term: str):
         if s_term is None:
@@ -61,14 +62,14 @@ class TermDiscount:
             i = i + 1
         return AtomicTerm(product_name, q_or_p, operator, value, category=categort_flag)
 
-    def make_products_disc_from_str(self, str_d: str):
+    def make_products_disc_from_str(self, str_d: str, category_flag):
         dictP = dict()
         start_word = 0
         first_Word = ""
         is_fist = True
         for i in range(len(str_d)):
             if str_d[i] == " " and is_fist:
-                first_Word = start_word[start_word: i]
+                first_Word = str_d[start_word: i]
                 is_fist = False
                 start_word = i + 1
             elif str_d[i] == " " and (not is_fist):
@@ -77,4 +78,17 @@ class TermDiscount:
                 start_word = i + 1
             i = i + 1
         dictP[first_Word] = str_d[start_word: len(str_d)]
-        return AtomicDiscountValue(dictP)
+        return AtomicDiscountValue(dictP, category_flag)
+
+    def calc_term(self, basketDTO):
+        if self.term is None:
+            return Term
+        else:
+            return self.term.calc_term(basketDTO)
+
+    def calc_price(self, basketDTO):
+        new_price, original_price = self.products_discount.calc_discount(basketDTO)
+        if self.calc_term(basketDTO):
+            return new_price
+        else:
+            return original_price

@@ -17,21 +17,21 @@ class TestTermDiscount(TestCase):
 
     def test_calc_term_atomic(self):
         t1: TermDiscount = TermDiscount("milk quantity = 20")
-        self.assertTrue(t1.term.calc_term(self.basketDTO))
+        self.assertTrue(t1.calc_term(self.basketDTO))
         t2: TermDiscount = TermDiscount("milk quantity = 21")
-        self.assertFalse(t2.term.calc_term(self.basketDTO))
+        self.assertFalse(t2.calc_term(self.basketDTO))
         t3: TermDiscount = TermDiscount("milk quantity > 15")
-        self.assertTrue(t3.term.calc_term(self.basketDTO))
+        self.assertTrue(t3.calc_term(self.basketDTO))
         t4: TermDiscount = TermDiscount("milk quantity < 15")
-        self.assertFalse(t4.term.calc_term(self.basketDTO))
+        self.assertFalse(t4.calc_term(self.basketDTO))
         t5: TermDiscount = TermDiscount("milk price = 400")
-        self.assertTrue(t5.term.calc_term(self.basketDTO))
+        self.assertTrue(t5.calc_term(self.basketDTO))
         t6: TermDiscount = TermDiscount("milk price = 401")
-        self.assertFalse(t6.term.calc_term(self.basketDTO))
+        self.assertFalse(t6.calc_term(self.basketDTO))
         t7: TermDiscount = TermDiscount("milk price > 350")
-        self.assertTrue(t7.term.calc_term(self.basketDTO))
+        self.assertTrue(t7.calc_term(self.basketDTO))
         t8: TermDiscount = TermDiscount("milk price < 500")
-        self.assertTrue(t8.term.calc_term(self.basketDTO))
+        self.assertTrue(t8.calc_term(self.basketDTO))
 
     def test_calc_term_composite(self):
         t1: TermDiscount = TermDiscount("milk quantity = 20 AND milk price = 400")
@@ -51,11 +51,11 @@ class TestTermDiscount(TestCase):
 
     def test_calc_term_atomic_category(self):
         t1: TermDiscount = TermDiscount("-C milk quantity = 20")
-        self.assertFalse(t1.term.calc_term(self.basketDTO))
+        self.assertFalse(t1.calc_term(self.basketDTO))
         t2: TermDiscount = TermDiscount("-C milk quantity = 70")
-        self.assertTrue(t2.term.calc_term(self.basketDTO))
+        self.assertTrue(t2.calc_term(self.basketDTO))
         t3: TermDiscount = TermDiscount("-C ALL quantity = 102")
-        self.assertTrue(t3.term.calc_term(self.basketDTO))
+        self.assertTrue(t3.calc_term(self.basketDTO))
 
 
 

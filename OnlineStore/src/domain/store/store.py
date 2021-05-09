@@ -1,4 +1,5 @@
 from OnlineStore.src.domain.store.buying_policy import BuyingPolicy
+from OnlineStore.src.domain.store.discont_policy.discount_policy import DiscountPolicy
 from OnlineStore.src.domain.store.inventory import Inventory
 from OnlineStore.src.domain.user.basket import Basket
 from OnlineStore.src.domain.user.user import User
@@ -12,7 +13,10 @@ class Store:
         self.store_founder = store_founder
         self.inventory = Inventory(dict())
         self.buying_policy = buying_policy if buying_policy is not None else BuyingPolicy()
-        self.discount_policy = discount_policy
+        if discount_policy is not None:
+            self.discount_policy: DiscountPolicy = discount_policy
+        else:
+            self.discount_policy: DiscountPolicy = DiscountPolicy()
         self.rating = 0
 
     def remove_product_store(self, product_id):
@@ -31,9 +35,24 @@ class Store:
             self.buying_policy.elligible_for_buying(user)
 
     def calculate_basket_sum(self, basket: Basket) -> int:
+        if self.discount_policy is not None:
+            basketDTO = self.make_basketDTO_from_basket(basket)
+            price = self.discount_policy.calc_price(basketDTO)
+            if price != -1:
+                return price
+
         basket_sum = 0
         for product_name in basket.products_dict.keys():
-            basket_sum += self.inventory.products_dict.get(product_name).calculate_product_sum(
-                basket.products_dict.get(product_name))
-
+            basket_sum += self.inventory.products_dict.get(product_name)\
+                .calculate_product_sum(basket.products_dict.get(product_name))
         return basket_sum
+
+    def make_basketDTO_from_basket(self, basket: Basket):  # product_name -> (quantity, price ,category)
+        dict_ans = dict()
+        for p in basket.products_dict:
+            product = self.inventory.products_dict[p]
+            quantity = product.quantity
+            price = product.price
+            category = product.category
+            dict_ans[p] = (quantity,price,category)
+        return dict_ans

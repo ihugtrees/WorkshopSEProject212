@@ -515,3 +515,12 @@ def get_store_for_tests(store_id):
 def get_user_for_tests(user_name):
     user_name = auth.get_username_from_hash(user_name)
     return users.get_user_by_name(user_name)
+
+def add_term_discount(user_owner, store, discount_name, discount_value, discount_term):
+    pass
+
+def add_simple_discount(user_owner, store, discount_name, discount_value):
+    pass
+
+def combie_discount(user_owner, store, discount_name1, discount_name2, operstor):
+    pass
