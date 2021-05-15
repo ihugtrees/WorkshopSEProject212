@@ -2,13 +2,6 @@ import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
-
-def initialize_system():
-    register("admin", "admin")
-    usersdb.get_user_by_name("admin").is_admin = True
-
-
-initialize_system()
 logging = Logger()
 
 
@@ -675,3 +668,11 @@ def get_employee_details(user_name, store_name, employeeid):
 
 def get_employee_permissions(user_name, store_name, employeeid):
     return [False, "Not implemented yet"]
+
+
+def initialize_system():
+    register("admin", "admin")
+    usersdb.get_user_by_name("admin").is_admin = True
+
+
+initialize_system()
