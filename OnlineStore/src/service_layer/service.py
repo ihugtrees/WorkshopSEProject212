@@ -1,7 +1,16 @@
+import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
 logging = Logger()
+
+
+def initialize_system():
+    register("admin", "admin")
+    usersdb.get_user_by_name("admin").is_admin = True
+
+
+initialize_system()
 
 
 def get_into_site():
@@ -351,7 +360,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
         return [True, None]
     except Exception as e:
         logging.error("add_new_product_to_store_inventory fail: " + e.args[0])
-        return [False, "Add new product to store inventory fail: " +e.args[0]]
+        return [False, "Add new product to store inventory fail: " + e.args[0]]
 
 
 # 4.1.2
@@ -373,7 +382,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
         return [True, None]
     except Exception as e:
         logging.error("remove product from store inventory fail: " + e.args[0])
-        return [False, "remove product from store inventory fail: " +e.args[0]]
+        return [False, "remove product from store inventory fail: " + e.args[0]]
 
 
 # 4.1.3
@@ -401,7 +410,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
 # TODO check if need that function
 def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
                  category, discount_type, buying_type):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 # 4.3
@@ -422,8 +431,9 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
         return [True, None]
     except Exception as e:
         logging.error("assign store owner fail: " + e.args[0])
-        return [False, "assign store owner fail: " +e.args[0]]
-        
+        return [False, "assign store owner fail: " + e.args[0]]
+
+
 # 4.4
 
 def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
@@ -443,6 +453,7 @@ def remove_store_owner(user_name: str, store_manager_name: str, store_name: str)
     except Exception as e:
         logging.error("remove_store_manager " + e.args[0])
         return False, e.args[0]
+
 
 # 4.5
 
@@ -484,7 +495,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
         return [True, None]
     except Exception as e:
         logging.error("edit_store_manager_permissions " + e.args[0])
-        return [False, "edit_store_manager_permissions failed " +e.args[0]]
+        return [False, "edit_store_manager_permissions failed " + e.args[0]]
 
 
 # 4.7
@@ -525,7 +536,7 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
         return [True, domain_handler.get_employee_information(user_name, employee_name, store_name)]
     except Exception as e:
         logging.error("get_employee_information " + e.args[0])
-        return [False, "get employee information failed" +e.args[0]]
+        return [False, "get employee information failed" + e.args[0]]
 
 
 # 4.9.2
@@ -612,56 +623,56 @@ def get_user_for_tests(user_name):
 
 # we need to implement all those function (4.2)
 def get_buying_types(user_name, store_name):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def add_buying_types(user_name, store_name, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def edit_buying_types(user_name, store_name, buying_types, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def get_discount_types(user_name, store_name):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def add_discount_type(user_name, store_name, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def edit_discount_type(user_name, store_name, discount_type, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def get_buying_policy(user_name, store_name):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def add_buying_policy(user_name, store_name, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def edit_buying_policy(user_name, store_name, buying_policy, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def get_discount_policy(user_name, store_name):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def edit_discount_policy(user_name, store_name, discount_policy, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def add_discount_policy(user_name, store_name, details):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def get_employee_details(user_name, store_name, employeeid):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
 
 
 def get_employee_permissions(user_name, store_name, employeeid):
-    return [False,"Not implemented yet"]
+    return [False, "Not implemented yet"]
