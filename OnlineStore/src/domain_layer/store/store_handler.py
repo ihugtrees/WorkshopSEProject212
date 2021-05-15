@@ -1,16 +1,14 @@
-from OnlineStore.src.domain_layer.store.store import Store
-from OnlineStore.src.domain_layer.user.cart import Cart
-from OnlineStore.src.domain_layer.user.user import User
-from OnlineStore.src.domain_layer.store.receipt import Receipt
 import random
 import string
+from threading import Lock
 
+import OnlineStore.src.data_layer.store_data as stores
+from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.dto.product_dto import ProductDTO
-from OnlineStore.src.dto.user_dto import UserDTO
-from threading import Lock
 from OnlineStore.src.dto.store_dto import StoreDTO
-import OnlineStore.src.data_layer.store_data as stores
+from OnlineStore.src.dto.user_dto import UserDTO
 
 
 class StoreHandler:
@@ -89,14 +87,12 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             store.inventory.return_quantity(cart.basket_dict.get(store.name))
 
-
     def calculate_cart_sum(self, cart: CartDTO) -> int:
         money_sum = 0
         for store in self.__get_stores_from_cart(cart):
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
 
-    
     ########## Search related functions ##########
     def get_stores_with_rating(self, rating):
         if rating is None:

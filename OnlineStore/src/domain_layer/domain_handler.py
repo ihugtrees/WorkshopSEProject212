@@ -1,20 +1,19 @@
+import OnlineStore.src.data_layer.purchase_data as purchase_handler
+import OnlineStore.src.data_layer.store_data as stores
+import OnlineStore.src.data_layer.users_data as users
+import OnlineStore.src.domain_layer.user.action as action
 from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
+from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
+from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
-from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
-import OnlineStore.src.data_layer.purchase_data as purchase_handler
-import OnlineStore.src.domain_layer.user.action as action
-import OnlineStore.src.data_layer.users_data as users
-import OnlineStore.src.data_layer.store_data as stores
 from OnlineStore.src.service_layer.logger import Logger
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
 permission_handler = PermissionHandler()
 auth = Authentication()
-logging = Logger()
 
 
 # 2.1
@@ -31,6 +30,7 @@ def get_into_site():
     auth.guest_registering(ans)
     return ans
 
+
 # 2.2
 
 def exit_the_site(guest_name):
@@ -42,6 +42,7 @@ def exit_the_site(guest_name):
     """
 
     return user_handler.exit_the_site(guest_name)
+
 
 # 2.3
 
@@ -56,6 +57,7 @@ def register(user_name: str, password: str):
 
     auth.register(user_name, password)
     user_handler.register(user_name)
+
 
 # 2.4
 
@@ -72,6 +74,7 @@ def login(user_name: str, password: str):
     user_handler.login(user_name)
     return user_name_hash
 
+
 # 2.5.0
 
 def get_information_about_products(store_name: str):
@@ -84,6 +87,7 @@ def get_information_about_products(store_name: str):
 
     return store_handler.get_information_about_products(store_name)
 
+
 # 2.5.1
 
 def get_store_info(store_name: str):
@@ -95,6 +99,7 @@ def get_store_info(store_name: str):
     """
 
     return store_handler.get_store_info(store_name)
+
 
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
 
@@ -134,6 +139,7 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
 
     return store_handler.find_product_by_id(product_id, store_name)
 
+
 # 2.6.1
 
 def search_product_by_category(category, filters):
@@ -144,6 +150,7 @@ def search_product_by_category(category, filters):
     """
 
     return store_handler.search_product_by_category(category, filters)
+
 
 # 2.6.2
 
@@ -156,6 +163,7 @@ def search_product_by_name(name, filters):
     :return: product list
     """
     return store_handler.search_product_by_name(name, filters)
+
 
 # 2.6.3
 
@@ -170,11 +178,13 @@ def search_product_by_keyword(keyword, filters):
         raise Exception("Product not found")
     return product_list
 
+
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
 # 2.7
 
 def save_cart(user_name):
     pass
+
 
 # 2.8.1
 
@@ -191,7 +201,9 @@ def get_cart_info(user_name):
     cartDTO.sum = store_handler.calculate_cart_sum(cartDTO)
     return cartDTO
 
+
 """EDIT THE CART FUNCTIONS"""
+
 
 # 2.8.2
 
@@ -210,6 +222,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
     store_handler.check_product_exists_in_store(product_id, store_name)
     return user_handler.add_product(user_name, store_name, product_id, quantity)
 
+
 # 2.8.3
 
 def remove_product_from_cart(user_name, product_id, quantity, store_name):
@@ -224,6 +237,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
     """
     user_name = auth.get_username_from_hash(user_name)
     return user_handler.remove_product(user_name, product_id, quantity, store_name)
+
 
 # 2.9.0
 
@@ -262,6 +276,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
             payment_done_delivery_done["payment_done"] = False
         raise Exception(e.args[0])
 
+
 # 3.1
 
 def logout(user_name):
@@ -277,6 +292,7 @@ def logout(user_name):
     permission_handler.is_permmited_to(user_name=user_name, action=Action.LOGOUT.value)
     auth.logout(hash_user_name)
     user_handler.logout(user_name)
+
 
 # 3.2, think about arguments and preconditions
 
@@ -295,6 +311,7 @@ def open_store(store_name, user_name):
     store_handler.open_store(store_name, user_name)
     permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS, user_name, store_name)
 
+
 # 3.7
 
 def get_user_purchases_history(user_name):
@@ -307,6 +324,7 @@ def get_user_purchases_history(user_name):
 
     user_name = auth.get_username_from_hash(user_name)
     return purchase_handler.get_user_purchases(user_name)
+
 
 # 4.1.1
 
@@ -322,8 +340,9 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_PRODUCT_TO_INVENTORY.value,
-                                                        store_name)
+                                       store_name)
     store_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
+
 
 # 4.1.2
 
@@ -340,7 +359,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.REMOVE_PRODUCT_FROM_INVENTORY.value,
-                                                        store_name)
+                                       store_name)
     store_handler.remove_product_from_store_inventory(user_name, product_id, store_name)
 
 
@@ -359,10 +378,11 @@ def edit_product_description(user_name: str, product_description: str, store_nam
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name=user_name,
-                                                        action=Action.ADD_PRODUCT_TO_INVENTORY.value,
-                                                        store_name=store_name)
+                                       action=Action.ADD_PRODUCT_TO_INVENTORY.value,
+                                       store_name=store_name)
     stores.get_store_by_name(store_name).edit_product(product_name,
-                                                            product_description)  # TODO CHANGE THIS
+                                                      product_description)  # TODO CHANGE THIS
+
 
 # 4.3
 
@@ -379,9 +399,11 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_OWNER.value, store_name)
     permission_handler.assign_store_employee(action.OWNER_INITIAL_PERMISSSIONS,
-                                                            new_store_owner_name,
-                                                            store_name)
+                                             new_store_owner_name,
+                                             store_name)
     user_handler.assign_store_employee(user_name, new_store_owner_name, store_name)
+
+
 # 4.5
 
 def assign_store_manager(user_name: str, new_store_manager_name: str, store_name: str):
@@ -397,9 +419,10 @@ def assign_store_manager(user_name: str, new_store_manager_name: str, store_name
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_MANAGER.value, store_name)
     permission_handler.assign_store_employee(action.MANAGER_INITIAL_PERMISSIONS,
-                                                            new_store_manager_name,
-                                                            store_name)
+                                             new_store_manager_name,
+                                             store_name)
     user_handler.assign_store_employee(user_name, new_store_manager_name, store_name)
+
 
 # 4.6
 
@@ -416,11 +439,12 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.SET_MANAGER_PERMISSIONS.value,
-                                                        store_name)
+                                       store_name)
     user_handler.is_assigned_by_me(user_name, store_manager_name, store_name)
     permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS & new_permissions,
-                                                        store_manager_name,
-                                                        store_name)
+                                       store_manager_name,
+                                       store_name)
+
 
 # 4.7
 
@@ -440,6 +464,7 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
 
+
 # 4.9.1
 
 def get_employee_information(user_name: str, employee_name: str, store_name: str):
@@ -454,9 +479,10 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name=user_name, action=Action.EMPLOYEE_INFO.value,
-                                                        store_name=store_name)
+                                       store_name=store_name)
     permission_handler.is_working_in_store(employee_name, store_name)
     return user_handler.get_employee_information(employee_name)
+
 
 # 4.9.2
 
@@ -475,6 +501,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
     return user_handler.get_employee_information(
         employee_name)  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
 
+
 # 4.11
 
 def get_store_purchase_history(user_name, store_name):
@@ -490,10 +517,12 @@ def get_store_purchase_history(user_name, store_name):
     permission_handler.is_permmited_to(user_name, Action.STORE_PURCHASE_HISTORY.value, store_name)
     return purchase_handler.get_store_purchases(store_name)
 
+
 # 6.4.1
 
 def get_store_purchase_history_admin(user_name, store_name):
     return get_store_purchase_history(user_name, store_name)
+
 
 # 6.4.2
 

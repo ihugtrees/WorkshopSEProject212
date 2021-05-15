@@ -21,7 +21,6 @@ class Authentication:
             self.users[username_hash] = False
             self._hash_to_name[username_hash] = username
 
-
     def login(self, username, password) -> str:
         if username not in self.passwords:
             raise Exception("User not in the system")

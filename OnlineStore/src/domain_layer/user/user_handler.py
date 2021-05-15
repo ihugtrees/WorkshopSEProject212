@@ -1,14 +1,12 @@
+import random
+import string
+from threading import Lock
 
-import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.permissions_data as permissions
+import OnlineStore.src.data_layer.users_data as users
 from OnlineStore.src.domain_layer.user.action import *
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.domain_layer.user.user import User
-from threading import Lock
-
-import random
-import string
-
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.dto.user_dto import UserDTO
 
@@ -91,12 +89,12 @@ class UserHandler:
     def empty_cart(self, user_name):
         users.get_user_by_name(user_name).empty_cart()
 
-    def is_assigned_by_me(self, user_name: str, store_manager_name: str, store_name: str)->None:
+    def is_assigned_by_me(self, user_name: str, store_manager_name: str, store_name: str) -> None:
         users.get_user_by_name(user_name).is_assigned_by_me(store_manager_name, store_name)
-    
-    def assign_store_employee(self, user_name: str, new_store_owner_name: str, store_name: str)->None:
+
+    def assign_store_employee(self, user_name: str, new_store_owner_name: str, store_name: str) -> None:
         users.get_user_by_name(user_name).assign_store_employee(new_store_owner_name, store_name)
-    
+
     def remove_employee(self, user_name: str, store_employee: str, store_name: str) -> list:
         self.is_assigned_by_me(user_name, store_employee, store_name)
         employee: User = users.get_user_by_name(store_employee)
@@ -111,6 +109,8 @@ class UserHandler:
         list_em: list = list()
         list_em.extend(store_employee_list)
         for employee_name in store_employee_list:
-            list_em.extend(self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name), store_name))
+            list_em.extend(
+                self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name),
+                                           store_name))
             users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
         return list_em
