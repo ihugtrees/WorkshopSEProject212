@@ -1,10 +1,10 @@
 import threading
 from unittest import TestCase
-import OnlineStore.src.domain.domain_handler as domain_handler
-from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.service import service
+import OnlineStore.src.domain_layer.domain_handler as domain_handler
+from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.service_layer import service
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
+from OnlineStore.src.domain_layer.store.buying_policy_mock import BuyingPolicyMock
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.purchase_data as purchases
 import OnlineStore.src.data_layer.permissions_data as permissions
@@ -52,7 +52,7 @@ class TestService(TestCase):
 
         service.logout(users_hash["user_name0"])
 
-        # for u in service.user_handler.users_dict.keys():
+        # for u in service_layer.user_handler.users_dict.keys():
         # print(u)
 
     def test_get_into_site(self):  # 2.1
@@ -110,8 +110,8 @@ class TestService(TestCase):
         self.assertFalse(ans5, "test: bad name")
 
     # def test_test_login_sync(self):
-    #     t1 = threading.Thread(service.login, ("user_name5", "5",))
-    #     t2 = threading.Thread(service.login, ("user_name5", "5"))
+    #     t1 = threading.Thread(service_layer.login, ("user_name5", "5",))
+    #     t2 = threading.Thread(service_layer.login, ("user_name5", "5"))
 
     def test_get_information_about_products(self):  # 2.5
         store_name = "store0"

@@ -1,14 +1,14 @@
-from OnlineStore.src.domain.adapters import payment_adapter, supply_adapter
-from OnlineStore.src.domain.user.action import Action
-from OnlineStore.src.domain.user.user_handler import UserHandler
-from OnlineStore.src.domain.store.store_handler import StoreHandler
+from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
+from OnlineStore.src.domain_layer.user.action import Action
+from OnlineStore.src.domain_layer.user.user_handler import UserHandler
+from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.domain.permissions.permission_handler import PermissionHandler
+from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
-import OnlineStore.src.domain.user.action as action
+import OnlineStore.src.domain_layer.user.action as action
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.store_data as stores
-from OnlineStore.src.service.logger import Logger
+from OnlineStore.src.service_layer.logger import Logger
 
 user_handler = UserHandler()
 store_handler = StoreHandler()

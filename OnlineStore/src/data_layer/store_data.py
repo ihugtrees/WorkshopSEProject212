@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain_layer.store.store import Store
 store_dict = dict()  # key-store name, value-store
 
 def get_store_by_name(store_name: str)->Store:

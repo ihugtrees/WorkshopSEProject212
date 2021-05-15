@@ -1,9 +1,9 @@
 
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.permissions_data as permissions
-from OnlineStore.src.domain.user.action import *
-from OnlineStore.src.domain.user.cart import Cart
-from OnlineStore.src.domain.user.user import User
+from OnlineStore.src.domain_layer.user.action import *
+from OnlineStore.src.domain_layer.user.cart import Cart
+from OnlineStore.src.domain_layer.user.user import User
 from threading import Lock
 
 import random

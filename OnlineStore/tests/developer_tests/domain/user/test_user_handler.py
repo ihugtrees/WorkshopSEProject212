@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.user.user_handler import UserHandler
+from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 import OnlineStore.src.data_layer.users_data as users
 
 user_handler = UserHandler()

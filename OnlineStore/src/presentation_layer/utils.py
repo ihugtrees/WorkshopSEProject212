@@ -1,4 +1,5 @@
-import OnlineStore.src.service.service as service
+import OnlineStore.src.service_layer.service as service
+
 
 # logging in
 # def check_log_in(username, password):
@@ -7,7 +8,8 @@ import OnlineStore.src.service.service as service
 #     return False
 
 def log_in(username, password):
-        return service.login(username,password)
+    return service.login(username, password)
+
 
 # return true for successful sign up
 def register(user_name, password):
@@ -25,6 +27,7 @@ def edit_store_manager_permissions(user_name, store_manager_name, new_permission
 def remove_store_manager(user_name, store_manager_name, store_name):
     return service.remove_store_manager(user_name, store_manager_name, store_name)
 
+
 def remove_store_owner(user_name, store_owner_name, store_name):
     return service.remove_store_owner(user_name, store_owner_name, store_name)
 
@@ -41,16 +44,16 @@ def get_store_info(store_name):
     return service.get_store_info(store_name)
 
 
-def get_user_type (user_name): #return admin/store_owner/store_manager/guest
+def get_user_type(user_name):  # return admin/store_owner/store_manager/guest
     return "admin"
 
 
 # return all prodect that match all the filters
 def getProductsByFilter(name=None, priceRange=None, rating=None, category=None, storeRating=None, key=None):
-    # return service.search_product_by_category(category,filters=)
-    # retrun service.search_product_by_name(name, filters=)
-    # return service.search_product_by_id(product_id=)
-    # return service.search_product_by_keyword(keyword, filters=)
+    # return service_layer.search_product_by_category(category,filters=)
+    # retrun service_layer.search_product_by_name(name, filters=)
+    # return service_layer.search_product_by_id(product_id=)
+    # return service_layer.search_product_by_keyword(keyword, filters=)
     return "a\nb\nc"
 
 
@@ -73,8 +76,8 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 
 # get total cart price before checkout
 def get_cart_info(user_name):
-    cart_info =  service.get_cart_info(user_name)
-    if(cart_info[0]==True):
+    cart_info = service.get_cart_info(user_name)
+    if cart_info[0]:
         return cart_info[1].get_cart_info()
     else:
         return cart_info[1]
@@ -135,7 +138,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
     return service.remove_product_from_store_inventory(user_name, product_id, store_name)
 
 
-# TODO implement this func in service
+# TODO implement this func in service_layer
 def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
                  category, discount_type, buying_type):
     return service.edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
@@ -143,7 +146,7 @@ def edit_product(user_name, product_id, product_name, price, quantity, descripti
     # return True
 
 
-# TODO we need to implement all those functions in service
+# TODO we need to implement all those functions in service_layer
 def get_buying_types(user_name, store_name):
     return service.get_buying_types(user_name, store_name)
 

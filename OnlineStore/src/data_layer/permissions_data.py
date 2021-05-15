@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.permissions.user_permissions import UserPermissions
+from OnlineStore.src.domain_layer.permissions.user_permissions import UserPermissions
 
 permissions =  dict()  #{user_name: UserPermissions}
 

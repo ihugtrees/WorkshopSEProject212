@@ -1,5 +1,5 @@
 import OnlineStore.src.data_layer.users_data as usersdb
-import OnlineStore.src.service.service as service
+import OnlineStore.src.service_layer.service as service
 
 def initialize_system():
     service.register("admin", "admin")

@@ -1,6 +1,6 @@
-from OnlineStore.src.domain.user.action import Action
-from OnlineStore.src.domain.user.cart import Cart
-from OnlineStore.src.domain.user.appoint import *
+from OnlineStore.src.domain_layer.user.action import Action
+from OnlineStore.src.domain_layer.user.cart import Cart
+from OnlineStore.src.domain_layer.user.appoint import *
 
 
 class User:

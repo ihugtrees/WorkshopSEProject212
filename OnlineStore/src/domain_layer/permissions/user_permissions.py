@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.user.action import *
+from OnlineStore.src.domain_layer.user.action import *
 
 class UserPermissions:
     def __init__(self, user_name: str, permissions: int, permissions_in_store=None):

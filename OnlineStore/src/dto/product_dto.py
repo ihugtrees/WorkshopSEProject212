@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.store.product import Product
+from OnlineStore.src.domain_layer.store.product import Product
 
 
 class ProductDTO:

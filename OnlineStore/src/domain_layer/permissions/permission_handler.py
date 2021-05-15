@@ -1,5 +1,5 @@
 from OnlineStore.src.dto.user_dto import UserDTO
-from OnlineStore.src.domain.permissions.user_permissions import UserPermissions
+from OnlineStore.src.domain_layer.permissions.user_permissions import UserPermissions
 import OnlineStore.src.data_layer.permissions_data as permissions
 
 

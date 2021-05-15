@@ -1,7 +1,7 @@
-from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.domain.user.cart import Cart
-from OnlineStore.src.domain.user.user import User
-from OnlineStore.src.domain.store.receipt import Receipt
+from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.domain_layer.user.cart import Cart
+from OnlineStore.src.domain_layer.user.user import User
+from OnlineStore.src.domain_layer.store.receipt import Receipt
 import random
 import string
 

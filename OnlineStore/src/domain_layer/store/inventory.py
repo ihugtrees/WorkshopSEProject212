@@ -1,5 +1,5 @@
-from OnlineStore.src.domain.store.product import Product
-from OnlineStore.src.domain.user.basket import Basket
+from OnlineStore.src.domain_layer.store.product import Product
+from OnlineStore.src.domain_layer.user.basket import Basket
 from threading import Lock
 
 

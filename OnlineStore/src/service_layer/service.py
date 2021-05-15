@@ -1,5 +1,5 @@
-import OnlineStore.src.domain.domain_handler as domain_handler
-from OnlineStore.src.service.logger import Logger
+import OnlineStore.src.domain_layer.domain_handler as domain_handler
+from OnlineStore.src.service_layer.logger import Logger
 
 logging = Logger()
 

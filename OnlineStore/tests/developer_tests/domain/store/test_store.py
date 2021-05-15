@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain_layer.store.store import Store
 
 
 class TestStore(TestCase):

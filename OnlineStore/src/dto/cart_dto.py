@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.user.cart import Cart
+from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.dto.basket_dto import BasketDTO
 
 

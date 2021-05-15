@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.store.product import Product
-from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.domain.store.store_handler import StoreHandler
+from OnlineStore.src.domain_layer.store.product import Product
+from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 import OnlineStore.src.data_layer.store_data as stores
 
 
