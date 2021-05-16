@@ -12,6 +12,7 @@ class User:
         self.__is_admin = is_admin
         self.purchase_history = purchase_history
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
+        self.msgs = None
 
     def login(self):
         if self.is_logged:
