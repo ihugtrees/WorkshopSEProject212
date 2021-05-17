@@ -14,8 +14,8 @@ class CompositeTerm(Term):
             return self.left_term.calc_term(basketDTO) or self.right_term.calc_term(basketDTO)
         if self.operator == "AND":
             return self.left_term.calc_term(basketDTO) and self.right_term.calc_term(basketDTO)
-        # if self.operator == "XOR":
-        #     return self.left_term.calc_term()  self.right_term.calc_term()
+        if self.operator == "XOR":
+            return self.left_term.calc_term(basketDTO) != self.right_term.calc_term(basketDTO)
 
 
 

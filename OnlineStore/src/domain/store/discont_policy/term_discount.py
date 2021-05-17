@@ -28,6 +28,11 @@ class TermDiscount:
                 left_term = self.make_term_from_string(s_term[0:i])
                 right_term = self.make_term_from_string(s_term[i + 4: len(s_term)])
                 return CompositeTerm("AND", left_term, right_term)
+            elif s_term[i] == "X" and s_term[i + 1] == "O" and s_term[i + 2] == "R":
+                left_term = self.make_term_from_string(s_term[0:i])
+                right_term = self.make_term_from_string(s_term[i + 4: len(s_term)])
+                return CompositeTerm("XOR", left_term, right_term)
+
             i = i + 1
         return self.make_atomic_term_from_string(s_term)
 
@@ -82,7 +87,7 @@ class TermDiscount:
 
     def calc_term(self, basketDTO):
         if self.term is None:
-            return Term
+            return Term # supose to be return true
         else:
             return self.term.calc_term(basketDTO)
 

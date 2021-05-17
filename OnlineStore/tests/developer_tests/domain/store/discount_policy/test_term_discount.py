@@ -36,8 +36,12 @@ class TestTermDiscount(TestCase):
     def test_calc_term_composite(self):
         t1: TermDiscount = TermDiscount("milk quantity = 20 AND milk price = 400")
         self.assertTrue(t1.term.calc_term(self.basketDTO))
+        t1: TermDiscount = TermDiscount("milk quantity = 20 XOR milk price = 400")
+        self.assertFalse(t1.term.calc_term(self.basketDTO))
         t1: TermDiscount = TermDiscount("milk quantity = 20 AND milk price = 500")
         self.assertFalse(t1.term.calc_term(self.basketDTO))
+        t1: TermDiscount = TermDiscount("milk quantity = 20 XOR milk price = 500")
+        self.assertTrue(t1.term.calc_term(self.basketDTO))
         t1: TermDiscount = TermDiscount("milk quantity = 20 OR milk price = 17")
         self.assertTrue(t1.term.calc_term(self.basketDTO))
         t1: TermDiscount = TermDiscount("milk quantity = 22 OR milk price = 450")

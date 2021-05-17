@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.store.buying_policy import BuyingPolicy
+from OnlineStore.src.domain.store.buying_policy.buying_policy import BuyingPolicy
 from OnlineStore.src.domain.store.discont_policy.discount_policy import DiscountPolicy
 from OnlineStore.src.domain.store.inventory import Inventory
 from OnlineStore.src.domain.user.basket import Basket
@@ -12,7 +12,7 @@ class Store:
         self.name = store_name
         self.store_founder = store_founder
         self.inventory = Inventory(dict())
-        self.buying_policy = buying_policy if buying_policy is not None else BuyingPolicy()
+        self.buying_policy: BuyingPolicy = buying_policy if buying_policy is not None else BuyingPolicy()
         if discount_policy is not None:
             self.discount_policy: DiscountPolicy = discount_policy
         else:
@@ -32,12 +32,14 @@ class Store:
 
     def is_policies_eligible(self, user: UserDTO)->None:
         if self.buying_policy is not None:
-            self.buying_policy.elligible_for_buying(user)
+            user_data = self.make_user_data_from_userDTO(user)
+            basket_data = self.make_basketDTO_from_basket(user.cart.basket_dict[self.name])
+            self.buying_policy.elligible_for_buying(basket_data, user_data)
 
-    def calculate_basket_sum(self, basket: Basket) -> int:
+    def calculate_basket_sum(self, basket: Basket) -> int: # basketDTO???
         if self.discount_policy is not None:
-            basketDTO = self.make_basketDTO_from_basket(basket)
-            price = self.discount_policy.calc_price(basketDTO)
+            basket_data = self.make_basketDTO_from_basket(basket)
+            price = self.discount_policy.calc_price(basket_data)
             if price != -1:
                 return price
 
@@ -56,3 +58,18 @@ class Store:
             category = product.category
             dict_ans[p] = (quantity,price,category)
         return dict_ans
+
+    def add_discount(self, discount_name: str, discount_value: str, discount_term: str = None,
+                     discount_value_type: str = False):
+        self.discount_policy.add_discount(discount_name, discount_value, discount_term= discount_term, discount_value_type=discount_value_type)
+
+    def add_buying_policy(self, policy_name: str, s_term: str, no_flag=False):
+        self.buying_policy.add_buying_term(policy_name,s_term,no_flag=no_flag)
+
+    def make_user_data_from_userDTO(self, userDTO: UserDTO):
+        ans = dict()
+        ans["age"] = userDTO.age
+        ans["user_name"] = userDTO.user_name
+        return ans
+
+

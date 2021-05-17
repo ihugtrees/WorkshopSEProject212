@@ -4,8 +4,8 @@ class BuyingPolicyMock:
     def __init__(self):
         pass
 
-    def elligible_for_buying(self, user: UserDTO)->None:
-        if user.user_name == "user_name9":
+    def elligible_for_buying(self,basketDTO, user: UserDTO)->None:
+        if user["user_name"] == "user_name9":
             raise Exception("buying policy fails")
         else:
             return True

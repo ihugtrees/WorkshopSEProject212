@@ -15,7 +15,7 @@ class AtomicDiscountValue(DiscountValue):
                 origin = basketDTO[p][0] * basketDTO[p][1]
                 original_price += origin
                 if p in self.dictP:
-                    new_price += (origin * (100-self.dictP[p])) / 100
+                    new_price += (origin * (100-int(self.dictP[p]))) / 100
                 else:
                     new_price += origin
         else:
@@ -23,7 +23,7 @@ class AtomicDiscountValue(DiscountValue):
                 origin = basketDTO[p][0] * basketDTO[p][1]
                 original_price += origin
                 if basketDTO[p][2] in self.dictP:
-                    new_price += (origin * (100-self.dictP[basketDTO[p][2]])) / 100
+                    new_price += (origin * (100-int(self.dictP[basketDTO[p][2]]))) / 100
                 else:
                     new_price += origin
         return new_price, original_price

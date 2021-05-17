@@ -4,7 +4,7 @@ from OnlineStore.src.domain.user.appoint import *
 
 
 class User:
-    def __init__(self, user_name: str, cart: Cart, is_admin=False,
+    def __init__(self, user_name: str, age: int, cart: Cart, is_admin=False,
                  purchase_history=list(), appointed_to_store=None):  # change purchase history from none to empty list (yonatan)
         self.is_logged = False
         self.user_name = user_name
@@ -12,6 +12,7 @@ class User:
         self.__is_admin = is_admin
         self.purchase_history = purchase_history
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
+        self.age = age
 
     def login(self):
         if self.is_logged:

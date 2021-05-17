@@ -6,8 +6,8 @@ from OnlineStore.src.domain.user.user import User
 
 class TestUser(TestCase):
     def setUp(self):
-        self.admin = User('admin', Cart(), True)
-        self.user = User('admin', Cart())
+        self.admin = User('admin', 30, Cart(), True)
+        self.user = User('admin', 30, Cart())
         self.user.add_product_to_user(1, 1, 1)
 
     def test_login(self):

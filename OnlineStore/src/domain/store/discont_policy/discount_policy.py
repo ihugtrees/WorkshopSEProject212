@@ -14,7 +14,8 @@ class DiscountPolicy:
         if discount_name in self.discount_dict:
             raise Exception("discount name already exist")
         self.discount_dict[discount_name] = TermDiscount(term_string=discount_term,
-                                                          discount_description_products=discount_value, discount_description_categories = discount_value_type)
+         discount_description_products=discount_value, discount_description_categories = discount_value_type)
+        print(self.discount_dict)
 
     def combine_discount(self, d1_name, d2_name, operator: str, new_name):
         if new_name in self.discount_dict:
@@ -22,6 +23,8 @@ class DiscountPolicy:
         t1 = self.discount_dict[d1_name]
         t2 = self.discount_dict[d2_name]
         self.discount_dict[new_name] = self.combine_discount_private(t1, t2, operator)
+        self.discount_dict.pop(d1_name)
+        self.discount_dict.pop(d2_name)
 
     def combine_discount_private(self, term_d1: TermDiscount, term_d2: TermDiscount, operator):
         term1 = term_d1.term
@@ -38,7 +41,7 @@ class DiscountPolicy:
     def calc_price(self, basketDTO):
         min_price = -1
         for d in self.discount_dict:
-            price_after_discount = self.discount_dict[d].calc_price(basketDTO)[0]
-            if price_after_discount == -1 or price_after_discount < min_price:
+            price_after_discount = self.discount_dict[d].calc_price(basketDTO)
+            if min_price == -1 or price_after_discount < min_price:
                 min_price = price_after_discount
         return min_price
