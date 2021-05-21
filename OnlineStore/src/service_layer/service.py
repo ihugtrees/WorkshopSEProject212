@@ -676,3 +676,10 @@ def initialize_system():
 
 
 initialize_system()
+
+
+def is_user_guest(user_name):
+    try:
+        return [True, domain_handler.is_user_guest(user_name)]
+    except Exception as e:
+        return [False, e.args[0]]

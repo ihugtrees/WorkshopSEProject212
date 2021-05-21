@@ -1,29 +1,25 @@
 from flask import (Flask, render_template, request, redirect, session)
 
 # from OnlineStore.src.presentation_layer.utils import *
-from OnlineStore.src.communication_layer.message_systems import *
+from OnlineStore.src.communication_layer.publisher import *
 
 app = Flask(__name__)
 store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
 
-# dictionary to store information about users)
-# user = {"username": "abc", "password": "xyz"}
-
 # creating route for login
 @app.route('/', methods=['POST', 'GET'])
-def login():
+def web_login():
     if request.method == 'POST':
         if 'user' in session and session['user'] is not None:
-            return redirect('/userloggedin')
+            return redirect('/wronglogin')
         username = request.form.get('username')
         password = request.form.get('password')
         if username is not None and password is not None:
-            usernameHash = log_in(username, password)
-            if usernameHash[0]:
-                session['user'] = usernameHash[1]
-                print(session['user'])
+            ans = log_in(username, password)
+            if ans[0]:
+                session['user'] = ans[1]
                 return redirect('/dashboard')
             else:
                 return redirect('/wronglogin')
@@ -40,16 +36,18 @@ def wronglogin():
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     if 'user' in session and session['user'] is not None:
-        user_type = get_user_type(session['user'])
-        if user_type == "admin":
-            return render_template("dashboardAdmin.html")
-        elif user_type == "store_owner":
-            return render_template("dashboardStoreOwner.html")
-        elif user_type == "store_manager":
-            return render_template("dashboardStoreManager.html")
-        elif user_type == "guest":
-            return render_template("dashboardGuest.html")
+        return render_template("dashboardAdmin.html")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
+
+
+@app.route('/guest_dashboard', methods=['POST', 'GET'])
+def guest_dashboard():
+    ans = get_into_site()
+    if ans[0]:
+        session['user'] = ans[1]
+        return render_template("dashboardGuest.html")
+    else:
+        return redirect('/wronglogin')
 
 
 @app.route('/storesProducts', methods=['POST', 'GET'])
@@ -74,15 +72,16 @@ def manageStore():
 
 
 @app.route('/logout', methods=['POST', 'GET'])
-def logout():
+def web_logout():  # TODO fix logout
+    log_out(session['user'])
     session['user'] = None
     return render_template("logout.html")
 
 
-@app.route('/userloggedin', methods=['POST', 'GET'])
-def userloggedin():
-    if request.method == 'GET':
-        return render_template("userloggedin.html")
+# @app.route('/userloggedin', methods=['POST', 'GET'])
+# def userloggedin():
+#     if request.method == 'GET':
+#         return render_template("userloggedin.html")
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -492,5 +491,4 @@ def getEmployeePermissions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
-    # app.run(debug=True,host="localhost",port=8000)
+    app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))

@@ -9,10 +9,18 @@ import OnlineStore.src.service_layer.service as service
 #         return True
 #     return False
 
+def get_into_site():
+    return service.get_into_site()
+
+
 def log_in(username, password):
     socket = socketio.AsyncServer()
     socket.send(data="hello socket")
     return service.login(username, password)
+
+
+def log_out(username):
+    return service.logout(username)
 
 
 # return true for successful sign up
@@ -48,8 +56,8 @@ def get_store_info(store_name):
     return service.get_store_info(store_name)
 
 
-def get_user_type(user_name):  # return admin/store_owner/store_manager/guest
-    return "admin"
+def is_user_guest(user_name):  # TODO return admin/store_owner/store_manager/guest
+    return service.is_user_guest(user_name)
 
 
 # return all prodect that match all the filters

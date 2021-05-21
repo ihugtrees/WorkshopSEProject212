@@ -8,7 +8,6 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.service_layer.logger import Logger
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -548,3 +547,7 @@ def get_store_for_tests(store_id):
 def get_user_for_tests(user_name):
     user_name = auth.get_username_from_hash(user_name)
     return users.get_user_by_name(user_name)
+
+
+def is_user_guest(user_name):
+    return user_handler.is_user_guest(user_name)

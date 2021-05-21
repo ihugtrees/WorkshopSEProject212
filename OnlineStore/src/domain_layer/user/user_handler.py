@@ -31,7 +31,7 @@ class UserHandler:
 
     def register(self, user_name):
         self.lock.acquire()
-        user = User(user_name, Cart())
+        user = User(user_name, Cart(), guest=False)
         try:
             users.add_user(user)
             permissions.add_permission(user_name, REGISTERED_PERMMISIONS)
@@ -61,7 +61,6 @@ class UserHandler:
 
     def get_guest_unique_user_name(self):
         new_user_name = get_random_string(GUEST_NAME_LENGTH)
-
         while True:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
             try:
@@ -114,3 +113,6 @@ class UserHandler:
                                            store_name))
             users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
         return list_em
+
+    def is_user_guest(self, user_name):
+        return users.get_user_by_name(user_name).is_guest()
