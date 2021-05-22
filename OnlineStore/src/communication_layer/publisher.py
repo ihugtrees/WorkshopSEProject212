@@ -1,4 +1,4 @@
-import socketio
+#import socketio
 
 import OnlineStore.src.service_layer.service as service
 
@@ -14,8 +14,6 @@ def get_into_site():
 
 
 def log_in(username, password):
-    socket = socketio.AsyncServer()
-    socket.send(data="hello socket")
     return service.login(username, password)
 
 
@@ -203,8 +201,12 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
     return service.edit_discount_policy(user_name, store_name, discount_policy, details)
 
 
-def add_discount_policy(user_name, store_name, details):
-    return service.add_discount_policy(user_name, store_name, details)
+def add_term_discount(user_name, store_name,discount_name, discount_value,  discount_term):
+    return service.add_discount_policy(user_name, store_name, discount_name, discount_value, discount_term)
+
+
+def add_simple_discount(user_name, store_name,discount_name, discount_value):
+    return service.add_simple_discount(user_name, store_name, discount_name, discount_value)
 
 
 def get_employee_details(user_name, store_name, employeeid):

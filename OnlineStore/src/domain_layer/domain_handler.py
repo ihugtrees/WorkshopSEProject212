@@ -13,7 +13,7 @@ user_handler = UserHandler()
 store_handler = StoreHandler()
 permission_handler = PermissionHandler()
 auth = Authentication()
-logging = Logger()
+
 
 
 # 2.1
@@ -552,7 +552,7 @@ def get_user_for_tests(user_name):
 def is_user_guest(user_name):
     return user_handler.is_user_guest(user_name)
   
-def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
+def add_term_discount(user_name, store, discount_name, discount_value, discount_term=None):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
     store_handler.add_discount(store, discount_name, discount_value, discount_term)

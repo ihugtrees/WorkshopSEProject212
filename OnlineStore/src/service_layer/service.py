@@ -675,6 +675,7 @@ def is_user_guest(user_name):
     try:
         return [True, domain_handler.is_user_guest(user_name)]
     except Exception as e:
+        return [False, "why this line was disappear?!?!?!?!?"]
       
 #4.2
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term):

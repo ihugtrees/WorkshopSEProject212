@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Simple Discount</title>
+    <p>Add Simple Discnout</p>
+</head>
+<body>
+    <form action="/addSimpleDiscount" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeID" /></p>
+         <p>Enter Discount Name:</p>
+        <p><input type="text" name="discount_name" /></p>
+         <p>Enter Discount value:</p>
+        <p><input type="text" name="discount_value" /></p>
+        <p><input type="submit" value="Add Simple Discount" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

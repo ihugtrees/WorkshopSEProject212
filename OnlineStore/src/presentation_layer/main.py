@@ -454,6 +454,17 @@ def addDiscountPolicy():
                                                          discount_name, discount_value, discount_term)[1])
     return render_template("addDiscountPolicy.html")
 
+@app.route('/addSimpleDiscount', methods=['POST', 'GET'])
+def addSimpleDiscount():
+    if (request.method == 'POST'):
+        storeID = request.form.get('storeID')
+        discount_name = request.form.get('discount_name')
+        discount_value = request.form.get('discount_value')
+        return render_template("addDiscountPolicy.html",
+                               message=add_simple_discount(session["user"], storeID,
+                                                         discount_name, discount_value)[1])
+    return render_template("addDiscountPolicy.html")
+
 
 @app.route('/editDiscountPolicy', methods=['POST', 'GET'])
 def editDiscountPolicy():
