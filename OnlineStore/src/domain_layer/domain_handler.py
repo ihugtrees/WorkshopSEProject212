@@ -13,7 +13,6 @@ user_handler = UserHandler()
 store_handler = StoreHandler()
 permission_handler = PermissionHandler()
 auth = Authentication()
-logging = Logger()
 
 
 # 2.1

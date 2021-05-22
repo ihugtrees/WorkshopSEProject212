@@ -1,12 +1,11 @@
-import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
 
 def initialize_system():
     pass
-    #register("admin", "admin")
-    #usersdb.get_user_by_name("admin").is_admin = True
+    # register("admin", "admin")
+    # usersdb.get_user_by_name("admin").is_admin = True
 
 
 initialize_system()
@@ -680,10 +679,15 @@ def get_employee_permissions(user_name, store_name, employeeid):
 
 def is_user_guest(user_name):
     try:
+        # logging.info("add new discount")
         return [True, domain_handler.is_user_guest(user_name)]
     except Exception as e:
-      
-#4.2
+        logging.error("is_user_guest " + e.args[0])
+        return [False, e.args[0]]
+
+
+
+# 4.2
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
     try:
         logging.info("add new discount")
