@@ -45,7 +45,7 @@ def exit_the_site(guest_name):
 
 # 2.3
 
-def register(user_name: str, password: str):
+def register(user_name: str, password: str, age=20):
     """
     Registeres new user to the system
 
@@ -55,7 +55,7 @@ def register(user_name: str, password: str):
     """
 
     auth.register(user_name, password)
-    user_handler.register(user_name)
+    user_handler.register(user_name, age)
 
 # 2.4
 
@@ -515,3 +515,27 @@ def get_store_for_tests(store_id):
 def get_user_for_tests(user_name):
     user_name = auth.get_username_from_hash(user_name)
     return users.get_user_by_name(user_name)
+
+def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
+    store_handler.add_discount(store, discount_name, discount_value, discount_term)
+
+
+
+def add_simple_discount(user_name, store, discount_name, discount_value):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
+    store_handler.add_discount(store, discount_name, discount_value)
+
+
+
+# def combie_discount(user_owner, store, discount_name1, discount_name2, operstor):
+#     pass
+
+def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)  # TODO ask niv gadol for permissions
+    store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
+
+

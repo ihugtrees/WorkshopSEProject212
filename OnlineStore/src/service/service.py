@@ -4,7 +4,6 @@ from OnlineStore.src.service.logger import Logger
 logging = Logger()
 
 
-
 def get_into_site():
     try:
         logging.info("get_into_site")
@@ -399,6 +398,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
         return [False, e.args[0]]
 
 
+
 # 4.3
 
 def assign_store_owner(user_name, new_store_owner_name, store_name):
@@ -518,7 +518,7 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
 
     try:
         logging.info("get employee permissions")
-        return [True, domain_handler.get_employee_permissions(user_name, store_name,employee_name)]
+        return [True, domain_handler.get_employee_permissions(user_name, store_name, employee_name)]
     except Exception as e:
         logging.error("get_employee_permissions " + e.args[0])
         return [False, e.args[0]]
@@ -546,12 +546,14 @@ def get_store_purchase_history(user_name, store_name):
 # 6.4.1
 
 def get_store_purchase_history_admin(user_name, store_name):
-    try:  
+    try:
         logging.info("Get Store purchase history admin: " + user_name + " from store: " + store_name)
         return [True, domain_handler.get_store_purchase_history_admin(user_name, store_name)]
     except Exception as e:
         logging.error("Get Store purchase history admin failed due: " + e.args[0])
         return [False, e.args[0]]
+
+
 # 6.4.2
 
 def get_user_purchase_history_admin(user_name, other_user_name):
@@ -563,12 +565,11 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     :return:
     """
     try:
-        logging.info("Get user purchase history admin: " + user_name +  " from user: " + other_user_name)
+        logging.info("Get user purchase history admin: " + user_name + " from user: " + other_user_name)
         return [True, domain_handler.get_user_purchase_history_admin(user_name, other_user_name)]
     except Exception as e:
         logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
-
 
 
 def get_store_for_tests(store_id):
@@ -578,9 +579,35 @@ def get_store_for_tests(store_id):
         return [False, e.args[0]]
 
 
-
 def get_user_for_tests(user_name):
     try:
         return [True, domain_handler.get_user_for_tests(user_name)]
     except Exception as e:
+        return [False, e.args[0]]
+
+#4.2
+def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
+    try:
+        logging.info("add new discount")
+        return [True, domain_handler.add_term_discount(user_name, store, discount_name, discount_value, discount_term)]
+    except Exception as e:
+        logging.error("add new discount " + e.args[0])
+        return [False, e.args[0]]
+
+
+def add_simple_discount(user_name, store, discount_name, discount_value):
+    try:
+        logging.info("add new discount")
+        return [True, domain_handler.add_term_discount(user_name, store, discount_name, discount_value)]
+    except Exception as e:
+        logging.error("add new discount " + e.args[0])
+        return [False, e.args[0]]
+
+
+def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
+    try:
+        logging.info("add new policy to :" + store + " buy " + user_name)
+        return [True, domain_handler.add_policy(user_name, store, policy_name, s_term, no_flag=no_flag)]
+    except Exception as e:
+        logging.error("add new policy " + e.args[0])
         return [False, e.args[0]]
