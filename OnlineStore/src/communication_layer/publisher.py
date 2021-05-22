@@ -1,4 +1,3 @@
-import socketio
 
 import OnlineStore.src.service_layer.service as service
 
@@ -14,8 +13,6 @@ def get_into_site():
 
 
 def log_in(username, password):
-    socket = socketio.AsyncServer()
-    socket.send(data="hello socket")
     return service.login(username, password)
 
 

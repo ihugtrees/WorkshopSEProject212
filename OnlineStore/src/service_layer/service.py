@@ -686,7 +686,6 @@ def is_user_guest(user_name):
         return [False, e.args[0]]
 
 
-
 # 4.2
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
     try:
