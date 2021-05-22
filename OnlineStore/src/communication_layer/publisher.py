@@ -1,4 +1,3 @@
-
 import OnlineStore.src.service_layer.service as service
 
 
@@ -200,11 +199,11 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
     return service.edit_discount_policy(user_name, store_name, discount_policy, details)
 
 
-def add_term_discount(user_name, store_name,discount_name, discount_value,  discount_term):
+def add_term_discount(user_name, store_name, discount_name, discount_value, discount_term):
     return service.add_discount_policy(user_name, store_name, discount_name, discount_value, discount_term)
 
 
-def add_simple_discount(user_name, store_name,discount_name, discount_value):
+def add_simple_discount(user_name, store_name, discount_name, discount_value):
     return service.add_simple_discount(user_name, store_name, discount_name, discount_value)
 
 

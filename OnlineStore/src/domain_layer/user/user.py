@@ -5,7 +5,8 @@ from OnlineStore.src.domain_layer.user.cart import Cart
 class User:
     def __init__(self, user_name: str, cart: Cart, is_admin=False,
                  purchase_history=list(),
-                 appointed_to_store=None, guest=True, age=20):  # change purchase history from none to empty list (yonatan)
+                 appointed_to_store=None, guest=True,
+                 age=20):  # change purchase history from none to empty list (yonatan)
         self.is_logged = False
         self.user_name = user_name
         self.is_guest = guest

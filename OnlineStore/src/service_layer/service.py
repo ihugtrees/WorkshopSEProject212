@@ -658,7 +658,6 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
     return [False, "Not implemented yet"]
 
 
-
 def get_employee_details(user_name, store_name, employeeid):
     return [False, "Not implemented yet"]
 
