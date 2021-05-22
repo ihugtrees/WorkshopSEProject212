@@ -175,8 +175,8 @@ def get_buying_policy(user_name, store_name):
     return service.get_buying_policy(user_name, store_name)
 
 
-def add_buying_policy(user_name, store_name, details):
-    return service.add_buying_policy(user_name, store_name, details)
+def add_buying_policy(user_name, store_name,policy_name, details):
+    return service.add_buying_policy(user_name, store_name, policy_name, details)
 
 
 def edit_buying_policy(user_name, store_name, buying_policy, details):
@@ -191,8 +191,8 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
     return service.edit_discount_policy(user_name, store_name, discount_policy, details)
 
 
-def add_discount_policy(user_name, store_name, details):
-    return service.add_discount_policy(user_name, store_name, details)
+def add_term_discount(user_name, store_name,discount_name,discount_value, discount_term):
+    return service.add_term_discount(user_name, store_name, discount_name, discount_value, discount_term)
 
 
 def get_employee_details(user_name, store_name, employeeid):

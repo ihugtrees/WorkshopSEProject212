@@ -416,9 +416,10 @@ def discountTypes():
 def addPurchasePolicy():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
+        policy_name = request.form.get("Add Purchase Policy")
         details = request.form.get('details')
         return render_template("addPurchasePolicy.html",
-                               message=add_buying_policy(session["user"], storeID, details)[1])
+                               message=add_buying_policy(session["user"], storeID, policy_name, details)[1])
     return render_template("addPurchasePolicy.html")
 
 
@@ -445,9 +446,12 @@ def purchasePolicy():
 def addDiscountPolicy():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
-        details = request.form.get('details')
+        discount_name = request.form.get('discount_name')
+        discount_term = request.form.get('discount_term')
+        discount_value = request.form.get('discount_value')
         return render_template("addDiscountPolicy.html",
-                               message=add_discount_policy(session["user"], storeID, details)[1])
+                               message=add_term_discount(session["user"], storeID,
+                                                         discount_name, discount_value, discount_term)[1])
     return render_template("addDiscountPolicy.html")
 
 

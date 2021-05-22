@@ -20,6 +20,7 @@ class Action(Enum):
     CLOSE_STORE = 17
     SET_MANAGER_PERMISSIONS = 18
     ADD_DISCOUNT = 19
+    ADD_BUYING_POLICY = 20
 
 
 REGISTERED_PERMMISIONS = (1 << Action.USER_PURCHASE_HISTORY.value | 1 << Action.COMPLAINT.value | 1 << Action.MESSAGE.value |

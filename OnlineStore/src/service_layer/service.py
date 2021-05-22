@@ -646,10 +646,6 @@ def edit_discount_type(user_name, store_name, discount_type, details):
     return [False, "Not implemented yet"]
 
 
-def get_buying_policy(user_name, store_name):
-    return [False, "Not implemented yet"]
-
-
 def add_buying_policy(user_name, store_name, details):
     return [False, "Not implemented yet"]
 
@@ -665,9 +661,6 @@ def get_discount_policy(user_name, store_name):
 def edit_discount_policy(user_name, store_name, discount_policy, details):
     return [False, "Not implemented yet"]
 
-
-def add_discount_policy(user_name, store_name, details):
-    return [False, "Not implemented yet"]
 
 
 def get_employee_details(user_name, store_name, employeeid):
@@ -696,7 +689,7 @@ def add_simple_discount(user_name, store, discount_name, discount_value):
         return [False, e.args[0]]
 
 
-def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
+def add_buying_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
     try:
         logging.info("add new policy to :" + store + " buy " + user_name)
         return [True, domain_handler.add_policy(user_name, store, policy_name, s_term, no_flag=no_flag)]
