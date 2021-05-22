@@ -670,6 +670,12 @@ def get_employee_details(user_name, store_name, employeeid):
 def get_employee_permissions(user_name, store_name, employeeid):
     return [False, "Not implemented yet"]
 
+
+def is_user_guest(user_name):
+    try:
+        return [True, domain_handler.is_user_guest(user_name)]
+    except Exception as e:
+      
 #4.2
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
     try:
