@@ -22,8 +22,8 @@ def log_out(username):
 
 
 # return true for successful sign up
-def register(user_name, password):
-    return service.register(user_name, password)
+def register(user_name, password, age):
+    return service.register(user_name, password, age)
 
 
 def assign_store_manager(user_name, new_store_manager_name, store_name):

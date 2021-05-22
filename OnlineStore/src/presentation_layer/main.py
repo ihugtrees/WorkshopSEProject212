@@ -88,9 +88,10 @@ def web_logout():  # TODO fix logout
 def signup():
     if (request.method == 'POST'):
         username = request.form.get('username')
+        age = request.form.get('age')
         password = request.form.get('password')
         if username is not None and password is not None:
-            return render_template("signup.html", message=register(username, password)[1])
+            return render_template("signup.html", message=register(username, password, age)[1])
     return render_template("signup.html")
 
 

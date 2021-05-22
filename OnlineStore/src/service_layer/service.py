@@ -30,10 +30,10 @@ def exit_the_site(guest_name):
         return [False, e.args[0]]
 
 
-def register(user_name: str, password: str):
+def register(user_name: str, password: str, age):
     try:
         logging.info("register" + user_name)
-        domain_handler.register(user_name, password)
+        domain_handler.register(user_name, password, age)
         return [True, "New user has been added successfully"]
     except Exception as e:
         logging.error("fail in register: " + e.args[0])
