@@ -72,7 +72,7 @@ def manageStore():
 
 
 @app.route('/logout', methods=['POST', 'GET'])
-def web_logout():  # TODO fix logout
+def web_logout():
     log_out(session['user'])
     session['user'] = None
     return render_template("logout.html")
@@ -455,6 +455,7 @@ def addDiscountPolicy():
                                                          discount_name, discount_value, discount_term)[1])
     return render_template("addDiscountPolicy.html")
 
+
 @app.route('/addSimpleDiscount', methods=['POST', 'GET'])
 def addSimpleDiscount():
     if (request.method == 'POST'):
@@ -463,7 +464,7 @@ def addSimpleDiscount():
         discount_value = request.form.get('discount_value')
         return render_template("addDiscountPolicy.html",
                                message=add_simple_discount(session["user"], storeID,
-                                                         discount_name, discount_value)[1])
+                                                           discount_name, discount_value)[1])
     return render_template("addDiscountPolicy.html")
 
 
@@ -507,4 +508,4 @@ def getEmployeePermissions():
 
 
 if __name__ == '__main__':
-    app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
+    app.run(debug=True, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))

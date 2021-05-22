@@ -704,8 +704,8 @@ def add_buying_policy(user_name, store, policy_name: str, s_term: str, no_flag=F
 
 
 def initialize_system():
-    pass
-    register("admin", "admin")
+    # pass
+    register("admin", "admin", age=69)
     usersdb.get_user_by_name("admin").is_admin = True
 
 
