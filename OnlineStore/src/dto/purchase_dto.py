@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.store.receipt import Receipt
+from OnlineStore.src.domain_layer.store.receipt import Receipt
 
 
 class ReceiptDTO:

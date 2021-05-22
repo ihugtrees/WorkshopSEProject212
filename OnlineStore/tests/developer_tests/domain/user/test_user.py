@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.user.cart import Cart
-from OnlineStore.src.domain.user.user import User
+from OnlineStore.src.domain_layer.user.cart import Cart
+from OnlineStore.src.domain_layer.user.user import User
 
 
 class TestUser(TestCase):

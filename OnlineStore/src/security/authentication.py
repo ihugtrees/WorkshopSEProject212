@@ -21,7 +21,6 @@ class Authentication:
             self.users[username_hash] = False
             self._hash_to_name[username_hash] = username
 
-
     def login(self, username, password) -> str:
         if username not in self.passwords:
             raise Exception("User not in the system")
@@ -38,9 +37,11 @@ class Authentication:
             raise Exception("Not Logged In")
 
     def get_username_from_hash(self, username_hash):
+        self.authenticate_session(username_hash)
         return self._hash_to_name[username_hash]
 
     def logout(self, username_hash):  # TODO MAYBE CHANGE
+        self.authenticate_session(username_hash)
         self.users[username_hash] = False
 
     def guest_registering(self, user_name) -> None:  # TODO MAYBE CHANGE

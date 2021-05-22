@@ -1,6 +1,6 @@
-from OnlineStore.src.domain.store.receipt import Receipt
+from OnlineStore.src.domain_layer.store.receipt import Receipt
 from OnlineStore.src.dto.cart_dto import CartDTO
-from OnlineStore.src.domain.user.user_handler import get_random_string
+from OnlineStore.src.domain_layer.user.user_handler import get_random_string
 from threading import Lock
 
 purchases: dict = dict()

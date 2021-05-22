@@ -1,11 +1,11 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.store.buying_policy.atomic_buying_term import AtomicBuyingTerm
-from OnlineStore.src.domain.store.buying_policy.atomic_buying_user_term import AtomicBuyingUserTerm
-from OnlineStore.src.domain.store.buying_policy.composite_buying_term import CompositeBuyingTerm
-from OnlineStore.src.domain.store.discont_policy.atomic_term import AtomicTerm
-from OnlineStore.src.domain.store.discont_policy.composite_term import CompositeTerm
-from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain_layer.store.buying_policy.atomic_buying_term import AtomicBuyingTerm
+from OnlineStore.src.domain_layer.store.buying_policy.atomic_buying_user_term import AtomicBuyingUserTerm
+from OnlineStore.src.domain_layer.store.buying_policy.composite_buying_term import CompositeBuyingTerm
+from OnlineStore.src.domain_layer.store.discont_policy.atomic_term import AtomicTerm
+from OnlineStore.src.domain_layer.store.discont_policy.composite_term import CompositeTerm
+from OnlineStore.src.domain_layer.store.store import Store
 
 
 class TestCompositeBuyingTerm(TestCase):

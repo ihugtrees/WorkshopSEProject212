@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.store.buying_policy.create_buying_term import CreateBuyingTerm
-from OnlineStore.src.domain.store.discont_policy.atomic_term import AtomicTerm
-from OnlineStore.src.domain.store.discont_policy.term_discount import TermDiscount
-from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain_layer.store.buying_policy.create_buying_term import CreateBuyingTerm
+from OnlineStore.src.domain_layer.store.discont_policy.atomic_term import AtomicTerm
+from OnlineStore.src.domain_layer.store.discont_policy.term_discount import TermDiscount
+from OnlineStore.src.domain_layer.store.store import Store
 
 
 class TestCreateBuyingTerm(TestCase):

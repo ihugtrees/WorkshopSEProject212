@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from OnlineStore.src.domain.store.discont_policy.atomic_discount_value import AtomicDiscountValue
-from OnlineStore.src.domain.store.discont_policy.atomic_term import AtomicTerm
-from OnlineStore.src.domain.store.discont_policy.composite_discount_value import CompositeDiscountValue
-from OnlineStore.src.domain.store.store import Store
+from OnlineStore.src.domain_layer.store.discont_policy.atomic_discount_value import AtomicDiscountValue
+from OnlineStore.src.domain_layer.store.discont_policy.atomic_term import AtomicTerm
+from OnlineStore.src.domain_layer.store.discont_policy.composite_discount_value import CompositeDiscountValue
+from OnlineStore.src.domain_layer.store.store import Store
 
 
 class TestCompositeDiscountValue(TestCase):
