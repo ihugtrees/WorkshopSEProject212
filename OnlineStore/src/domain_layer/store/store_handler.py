@@ -161,3 +161,9 @@ class StoreHandler:
                     product_list.append(ProductDTO(product))
         return product_list
     ########## Search related functions ##########
+
+    def add_discount(self, store, discount_name, discount_value, discount_term = None):
+        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term= discount_term)
+
+    def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
+        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag= no_flag)

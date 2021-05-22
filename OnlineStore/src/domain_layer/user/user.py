@@ -14,6 +14,7 @@ class User:
         self.purchase_history = purchase_history
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
         self.msgs = None
+        self.age = age
 
     def login(self):
         if self.is_logged:

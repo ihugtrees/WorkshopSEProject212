@@ -2,6 +2,14 @@ import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
+
+def initialize_system():
+    pass
+    #register("admin", "admin")
+    #usersdb.get_user_by_name("admin").is_admin = True
+
+
+initialize_system()
 logging = Logger()
 
 
@@ -670,16 +678,34 @@ def get_employee_permissions(user_name, store_name, employeeid):
     return [False, "Not implemented yet"]
 
 
-def initialize_system():
-    register("admin", "admin")
-    usersdb.get_user_by_name("admin").is_admin = True
-
-
-initialize_system()
-
-
 def is_user_guest(user_name):
     try:
         return [True, domain_handler.is_user_guest(user_name)]
     except Exception as e:
+      
+#4.2
+def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
+    try:
+        logging.info("add new discount")
+        return [True, domain_handler.add_term_discount(user_name, store, discount_name, discount_value, discount_term)]
+    except Exception as e:
+        logging.error("add new discount " + e.args[0])
+        return [False, e.args[0]]
+
+
+def add_simple_discount(user_name, store, discount_name, discount_value):
+    try:
+        logging.info("add new discount")
+        return [True, domain_handler.add_term_discount(user_name, store, discount_name, discount_value)]
+    except Exception as e:
+        logging.error("add new discount " + e.args[0])
+        return [False, e.args[0]]
+
+
+def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
+    try:
+        logging.info("add new policy to :" + store + " buy " + user_name)
+        return [True, domain_handler.add_policy(user_name, store, policy_name, s_term, no_flag=no_flag)]
+    except Exception as e:
+        logging.error("add new policy " + e.args[0])
         return [False, e.args[0]]

@@ -29,7 +29,7 @@ class UserHandler:
     def print_users(self):
         print(self.users_dict)
 
-    def register(self, user_name):
+    def register(self, user_name, age):
         self.lock.acquire()
         user = User(user_name, Cart(), guest=False)
         try:
@@ -64,7 +64,7 @@ class UserHandler:
         while True:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
             try:
-                users.add_user(User(new_user_name, Cart()))
+                users.add_user(User(new_user_name, 0, Cart()))
                 break
             except:
                 continue
