@@ -8,7 +8,6 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.service_layer.logger import Logger
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -550,6 +549,9 @@ def get_user_for_tests(user_name):
     user_name = auth.get_username_from_hash(user_name)
     return users.get_user_by_name(user_name)
 
+def is_user_guest(user_name):
+    return user_handler.is_user_guest(user_name)
+  
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
@@ -571,5 +573,4 @@ def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)  # TODO ask niv gadol for permissions
     store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
-
 
