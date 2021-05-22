@@ -4,8 +4,9 @@ from OnlineStore.src.service_layer.logger import Logger
 
 
 def initialize_system():
-    register("admin", "admin")
-    usersdb.get_user_by_name("admin").is_admin = True
+    pass
+    # register("admin", "admin")
+    # usersdb.get_user_by_name("admin").is_admin = True
 
 
 initialize_system()

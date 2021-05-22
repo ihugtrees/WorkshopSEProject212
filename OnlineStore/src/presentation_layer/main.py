@@ -1,15 +1,21 @@
 from flask import (Flask, render_template, request, redirect, session)
+from flask_socketio import SocketIO, send, emit
 
 from OnlineStore.src.presentation_layer.utils import *
 
 app = Flask(__name__)
 store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
+socketio = SocketIO(app)
+# app.config['SECRET_KEY'] = 'secret!'
 
 
 # dictionary to store information about users)
 # user = {"username": "abc", "password": "xyz"}
 
+@socketio.on('my event')
+def handle_my_custom_event(json):
+    print('received json: ' + str(json))
 # creating route for login
 @app.route('/', methods=['POST', 'GET'])
 def login():
@@ -491,5 +497,4 @@ def getEmployeePermissions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
-    # app.run(debug=True,host="localhost",port=8000)
+    socketio.run(app=app, debug=True)
