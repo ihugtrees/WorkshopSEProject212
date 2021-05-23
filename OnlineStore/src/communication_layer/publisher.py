@@ -183,9 +183,20 @@ def get_buying_policy(user_name, store_name):
     return service.get_buying_policy(user_name, store_name)
 
 
-def add_buying_policy(user_name, store_name, details):
-    return service.add_buying_policy(user_name, store_name, details)
+def add_buying_policy(user_name, store_name, policy_name, details):
+    return service.add_buying_policy(user_name, store_name, policy_name, details)
 
+def delete_buying_policy(user_name, store_name, policy_name):
+    return service.delete_buying_policy(user_name, store_name, policy_name)
+
+def delete_discount_policy(user_name, store_name, discount_name):
+    return service.delete_discount_policy(user_name, store_name, discount_name)
+
+def show_buying_policy(user_name, store):
+    return service.show_buying_policy(user_name, store)
+
+def show_discount_policy(user_name, store):
+    return service.show_discount_policy(user_name, store)
 
 def edit_buying_policy(user_name, store_name, buying_policy, details):
     return edit_buying_policy(user_name, store_name, buying_policy, details)
@@ -200,7 +211,7 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
 
 
 def add_term_discount(user_name, store_name, discount_name, discount_value, discount_term):
-    return service.add_discount_policy(user_name, store_name, discount_name, discount_value, discount_term)
+    return service.add_term_discount(user_name, store_name, discount_name, discount_value, discount_term)
 
 
 def add_simple_discount(user_name, store_name, discount_name, discount_value):

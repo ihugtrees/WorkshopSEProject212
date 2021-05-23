@@ -165,5 +165,17 @@ class StoreHandler:
     def add_discount(self, store, discount_name, discount_value, discount_term = None):
         return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term= discount_term)
 
+    def show_discount_policy(self, store):
+        return stores.get_store_by_name(store).show_discount()
+
+    def delete_discount(self, store, discount_name):
+        return stores.get_store_by_name(store).delete_discount(discount_name)
+
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
         return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag= no_flag)
+
+    def delete_buying_policy(self, store, policy_name):
+        return stores.get_store_by_name(store).delete_buying_policy(policy_name)
+
+    def show_buying_policy(self, store):
+        return stores.get_store_by_name(store).show_buying_policy()

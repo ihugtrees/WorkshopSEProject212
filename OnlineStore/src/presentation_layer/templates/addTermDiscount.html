@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Discount Policy</title>
-    <p>Add Discnout Policy</p>
+    <title>Add Term Discount</title>
+    <p>Add Term Discount</p>
 </head>
 <body>
-    <form action="/addDiscountPolicy" method="POST">
+    <form action="/addTermDiscount" method="POST">
         <p>Enter Store ID:</p>
         <p><input type="text" name="storeID" /></p>
          <p>Enter Discount Name:</p>
@@ -14,7 +14,7 @@
         <p><input type="text" name="discount_term" /></p>
          <p>Enter Discount value:</p>
         <p><input type="text" name="discount_value" /></p>
-        <p><input type="submit" value="Add Discount Policy" /></p>
+        <p><input type="submit" value="Add Term Discount" /></p>
         <p>{{message}}</p>
     </form>
     <form action="/dashboard" method="POST">
