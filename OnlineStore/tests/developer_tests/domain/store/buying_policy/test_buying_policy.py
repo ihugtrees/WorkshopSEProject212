@@ -24,6 +24,7 @@ class TestBuyingPolicy(TestCase):
         self.buying_policy.add_buying_term("d4",  "milk quantity = 20")
         length = len(self.buying_policy.terms_dict)
         self.assertTrue(length == 4)
+        self.assertTrue(self.buying_policy.terms_dict["d1"][1] == "milk quantity > 20")
 
 
 

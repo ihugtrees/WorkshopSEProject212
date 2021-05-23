@@ -573,3 +573,27 @@ def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
+
+def delete_policy(user_name, store, policy_name: str):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
+                                       store)  # TODO ask niv gadol for permissions
+    store_handler.delete_buying_policy(store, policy_name)
+
+def show_buying_policy(user_name, store):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
+                                       store)  # TODO ask niv gadol for permissions
+    return store_handler.show_buying_policy(store)
+
+def show_discount_policy(user_name, store):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
+                                       store)  # TODO ask niv gadol for permissions
+    return store_handler.show_discount_policy(store)
+
+def delete_discount_policy(user_name, store, discount_name):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
+                                       store)  # TODO ask niv gadol for permissions
+    return store_handler.delete_discount(store, discount_name)

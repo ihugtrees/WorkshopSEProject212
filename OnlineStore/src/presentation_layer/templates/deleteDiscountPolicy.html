@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Discount Policy</title>
+    <p>Delete Discount Policy</p>
+</head>
+<body>
+    <form action="/deleteDiscountPolicy" method="POST">
+        <p>Enter Store ID:</p>
+        <p><input type="text" name="storeID" /></p>
+        <p>enter discount policy name:</p>
+        <p><input type="text" name="discount policy name" /></p>
+        <p><input type="submit" value="Delete Discount Policy" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="POST">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

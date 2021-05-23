@@ -13,7 +13,8 @@ app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but
 def web_login():
     if request.method == 'POST':
         if 'user' in session and session['user'] is not None:
-            return redirect('/wronglogin')
+            print("buuuuuug")
+            # return redirect('/wronglogin')
         username = request.form.get('username')
         password = request.form.get('password')
         if username is not None and password is not None:
@@ -72,7 +73,7 @@ def manageStore():
 
 
 @app.route('/logout', methods=['POST', 'GET'])
-def web_logout():
+def web_logout():  # TODO fix logout
     log_out(session['user'])
     session['user'] = None
     return render_template("logout.html")
@@ -90,7 +91,7 @@ def signup():
         username = request.form.get('username')
         age = request.form.get('age')
         password = request.form.get('password')
-        if username is not None and password is not None:
+        if username is not None and password is not None and age is not None:
             return render_template("signup.html", message=register(username, password, age)[1])
     return render_template("signup.html")
 
@@ -417,11 +418,47 @@ def discountTypes():
 def addPurchasePolicy():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
-        policy_name = request.form.get("Add Purchase Policy")
+        policy_name = request.form.get("buying policy name")
         details = request.form.get('details')
         return render_template("addPurchasePolicy.html",
                                message=add_buying_policy(session["user"], storeID, policy_name, details)[1])
     return render_template("addPurchasePolicy.html")
+
+
+@app.route('/deletePurchasePolicy', methods=['POST', 'GET'])
+def deletePurchasePolicy():
+    if (request.method == 'POST'):
+        storeID = request.form.get('storeID')
+        policy_name = request.form.get("buying policy name")
+        return render_template("deletePurchasePolicy.html",
+                               message=delete_buying_policy(session["user"], storeID, policy_name)[1])
+    return render_template("deletePurchasePolicy.html")
+
+@app.route('/deleteDiscountPolicy', methods=['POST', 'GET'])
+def deleteDiscountPolicy():
+    if (request.method == 'POST'):
+        storeID = request.form.get('storeID')
+        policy_name = request.form.get("discount policy name")
+        return render_template("deleteDiscountPolicy.html",
+                               message=delete_discount_policy(session["user"], storeID, policy_name)[1])
+    return render_template("deleteDiscountPolicy.html")
+
+
+@app.route('/showPurchasePolicy', methods=['POST', 'GET'])
+def showPurchasePolicy():
+    if (request.method == 'POST'):
+        storeID = request.form.get('storeID')
+        return render_template("showPurchasePolicy.html",
+                               message=show_buying_policy(session["user"], storeID)[1])
+    return render_template("showPurchasePolicy.html")
+
+@app.route('/showDiscountPolicy', methods=['POST', 'GET'])
+def showDiscountPolicy():
+    if (request.method == 'POST'):
+        storeID = request.form.get('storeID')
+        return render_template("showDiscountPolicy.html",
+                               message=show_discount_policy(session["user"], storeID)[1])
+    return render_template("showDiscountPolicy.html")
 
 
 @app.route('/editPurchasePolicy', methods=['POST', 'GET'])
@@ -443,17 +480,17 @@ def purchasePolicy():
     return render_template("purchasePolicy.html")
 
 
-@app.route('/addDiscountPolicy', methods=['POST', 'GET'])
-def addDiscountPolicy():
+@app.route('/addTermDiscount', methods=['POST', 'GET'])
+def addTermDiscount():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
         discount_name = request.form.get('discount_name')
         discount_term = request.form.get('discount_term')
         discount_value = request.form.get('discount_value')
-        return render_template("addDiscountPolicy.html",
+        return render_template("addTermDiscount.html",
                                message=add_term_discount(session["user"], storeID,
                                                          discount_name, discount_value, discount_term)[1])
-    return render_template("addDiscountPolicy.html")
+    return render_template("addTermDiscount.html")
 
 
 @app.route('/addSimpleDiscount', methods=['POST', 'GET'])
@@ -462,10 +499,10 @@ def addSimpleDiscount():
         storeID = request.form.get('storeID')
         discount_name = request.form.get('discount_name')
         discount_value = request.form.get('discount_value')
-        return render_template("addDiscountPolicy.html",
+        return render_template("addSimpleDiscount.html",
                                message=add_simple_discount(session["user"], storeID,
                                                            discount_name, discount_value)[1])
-    return render_template("addDiscountPolicy.html")
+    return render_template("addSimpleDiscount.html")
 
 
 @app.route('/editDiscountPolicy', methods=['POST', 'GET'])
@@ -508,4 +545,22 @@ def getEmployeePermissions():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
+
+    # store_name = "store"
+    # admin = "admin"
+    # niv = "niv"
+    # register(admin, admin, 20)
+    # register(niv, niv, 20)
+    # username_hash = log_in(admin, admin)[1]
+    # niv_hash = log_in(niv, niv)[1]
+    #
+    # open_store("store1", username_hash)
+    # add_new_product_to_store_inventory(username_hash, "1", "1", 1, 50, "no description", "store1", "dairy",
+    #                                    None, None)
+    # add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+    #
+    # # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    #
+    # log_out(username_hash)
+    # log_out(niv_hash)
+    app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))

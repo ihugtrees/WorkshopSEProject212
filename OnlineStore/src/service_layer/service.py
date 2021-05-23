@@ -402,7 +402,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
 # TODO check if need that function
 def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
                  category, discount_type, buying_type):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet1"]
 
 
 # 4.3
@@ -615,55 +615,55 @@ def get_user_for_tests(user_name):
 
 # we need to implement all those function (4.2)
 def get_buying_types(user_name, store_name):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet2"]
 
 
 def add_buying_types(user_name, store_name, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet3"]
 
 
 def edit_buying_types(user_name, store_name, buying_types, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet4"]
 
 
 def get_discount_types(user_name, store_name):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet5"]
 
 
 def add_discount_type(user_name, store_name, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet6"]
 
 
 def edit_discount_type(user_name, store_name, discount_type, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet7"]
 
 
 def get_buying_policy(user_name, store_name):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet8"]
 
 
 def add_buying_policy(user_name, store_name, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet9"]
 
 
 def edit_buying_policy(user_name, store_name, buying_policy, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet10"]
 
 
 def get_discount_policy(user_name, store_name):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet11"]
 
 
 def edit_discount_policy(user_name, store_name, discount_policy, details):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet12"]
 
 
 def get_employee_details(user_name, store_name, employeeid):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet13"]
 
 
 def get_employee_permissions(user_name, store_name, employeeid):
-    return [False, "Not implemented yet"]
+    return [False, "Not implemented yet14"]
 
 
 def is_user_guest(user_name):
@@ -703,10 +703,37 @@ def add_buying_policy(user_name, store, policy_name: str, s_term: str, no_flag=F
         return [False, e.args[0]]
 
 
-def initialize_system():
-    # pass
-    register("admin", "admin", age=69)
-    usersdb.get_user_by_name("admin").is_admin = True
+def delete_buying_policy(user_name, store, policy_name: str):
+    try:
+        logging.info("delete buying policy")
+        return [True, domain_handler.delete_policy(user_name, store, policy_name)]
+    except Exception as e:
+        logging.error("delete policy " + e.args[0])
+        return [False, e.args[0]]
 
 
-initialize_system()
+def show_buying_policy(user_name, store):
+    try:
+        logging.info("show buying policy")
+        return [True, domain_handler.show_buying_policy(user_name, store)]
+    except Exception as e:
+        logging.error("show buying policy " + e.args[0])
+        return [False, e.args[0]]
+
+
+def show_discount_policy(user_name, store):
+    try:
+        logging.info("show discount policy")
+        return [True, domain_handler.show_discount_policy(user_name, store)]
+    except Exception as e:
+        logging.error("show discount policy " + e.args[0])
+        return [False, e.args[0]]
+
+
+def delete_discount_policy(user_name, store, discount_name):
+    try:
+        logging.info("delete discount policy")
+        return [True, domain_handler.delete_discount_policy(user_name, store, discount_name)]
+    except Exception as e:
+        logging.error("delete discount policy " + e.args[0])
+        return [False, e.args[0]]

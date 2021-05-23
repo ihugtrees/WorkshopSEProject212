@@ -68,8 +68,20 @@ class Store:
                      discount_value_type: str = False):
         self.discount_policy.add_discount(discount_name, discount_value, discount_term= discount_term, discount_value_type=discount_value_type)
 
+    def show_discount(self):
+        return self.discount_policy.show_discount_policy()
+
+    def delete_discount(self, discount_name):
+        return self.discount_policy.delete_discount(discount_name)
+
     def add_buying_policy(self, policy_name: str, s_term: str, no_flag=False):
         self.buying_policy.add_buying_term(policy_name,s_term,no_flag=no_flag)
+
+    def delete_buying_policy(self, term_name):
+        self.buying_policy.delete_buying_term(term_name)
+
+    def show_buying_policy(self):
+        return self.buying_policy.show_buying_policy()
 
     def make_user_data_from_userDTO(self, userDTO: UserDTO):
         ans = dict()
