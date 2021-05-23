@@ -260,9 +260,6 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
-
-    :param delivery_success:
-    :param payment_success:
     :param destination: the address of the customer
     :param user_name: user name
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}

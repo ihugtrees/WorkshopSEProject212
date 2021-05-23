@@ -1,6 +1,7 @@
+from threading import Lock
+
 from OnlineStore.src.domain_layer.store.product import Product
 from OnlineStore.src.domain_layer.user.basket import Basket
-from threading import Lock
 
 
 class Inventory:
@@ -48,7 +49,6 @@ class Inventory:
                     basket.products_dict.get(product_name))
             except Exception as e:
                 exception_string += e.args[0]
-
 
     def __rollback_from_take_quantity(self, basket):
         for product_name in basket.products_dict.keys():
