@@ -13,17 +13,17 @@ app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but
 def web_login():
     if request.method == 'POST':
         if 'user' in session and session['user'] is not None:
-            print("buuuuuug")
-            # return redirect('/wronglogin')
+            return redirect('/wronglogin')
         username = request.form.get('username')
         password = request.form.get('password')
         if username is not None and password is not None:
             ans = log_in(username, password)
-            if ans[0] and session['user'] is None:
+            if ans[0]:
                 session['user'] = ans[1]
                 return redirect('/dashboard')
             else:
                 return redirect('/wronglogin')
+    session['user'] = None
     return render_template("login.html")
 
 
@@ -147,7 +147,7 @@ def addStoreOwner():
 
 @app.route('/productInfo', methods=['POST', 'GET'])
 def productInfo():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeID = request.form.get('storeID')
         productID = request.form.get('productID')
         product = find_product_by_id(productID, storeID)
@@ -162,19 +162,10 @@ def storeInfo():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
         storeInfo = get_store_info(storeID)
-        if storeInfo is None:
-            return render_template("storeInfo.html", storeID=storeID, warning="Something went wrong...")
-        return render_template("storeInfo.html", storeID=storeID, storeInfo=storeInfo)
+        if storeInfo[0]:
+            return render_template("storeInfo.html", storeID=storeID, storeInfo=storeInfo[1])
+        return render_template("storeInfo.html", storeID=storeID, warning="Something went wrong...")
     return render_template("storeInfo.html")
-
-
-@app.route('/prodByCategory', methods=['POST', 'GET'])
-def prodByCategory():
-    if (request.method == 'POST'):
-        category = request.form.get('category')
-        products = getProductsByFilter(category=category)
-        return render_template("prodByCategory.html", category=category, products=products)
-    return render_template("prodByCategory.html")
 
 
 @app.route('/prodByName', methods=['POST', 'GET'])
@@ -184,6 +175,15 @@ def prodByName():
         products = getProductsByFilter(name=name)
         return render_template("prodByName.html", name=name, products=products)
     return render_template("prodByName.html")
+
+
+@app.route('/prodByCategory', methods=['POST', 'GET'])
+def prodByCategory():
+    if (request.method == 'POST'):
+        category = request.form.get('category')
+        products = getProductsByFilter(category=category)
+        return render_template("prodByCategory.html", category=category, products=products)
+    return render_template("prodByCategory.html")
 
 
 @app.route('/prodByKeyword', methods=['POST', 'GET'])
@@ -547,19 +547,18 @@ def getEmployeePermissions():
 
 
 if __name__ == '__main__':
-    store_name = "store"
+    store_name = "store1"
     admin = "admin"
     niv = "niv"
     register(admin, admin, 20)
     register(niv, niv, 20)
-    username_hash = log_in(admin, admin)[1]
+    admin_hash = log_in(admin, admin)[1]
     niv_hash = log_in(niv, niv)[1]
-
-    open_store("store1", username_hash)
-    add_new_product_to_store_inventory(username_hash, "1", "1", 1, 50, "no description", "store1", "dairy",
-                                       None, None)
-    add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+    open_store("store1", admin_hash)
+    add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy", None, None)
+    add_product_to_cart(user_name=niv_hash, product_id="1", quantity=1, store_name=store_name)
     purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
-    log_out(username_hash)
+    log_out(admin_hash)
     log_out(niv_hash)
+
     app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))

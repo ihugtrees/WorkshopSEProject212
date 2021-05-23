@@ -44,22 +44,20 @@ def exit_the_site(guest_name):
 
 
 # 2.3
-
 def register(user_name: str, password: str, age=20):
     """
-    Registeres new user to the system
+    Registers new user to the system
 
+    :param age:
     :param user_name: user name
     :param password: password
     :return: None
     """
-
     auth.register(user_name, password)
     user_handler.register(user_name, age)
 
 
 # 2.4
-
 def login(user_name: str, password: str):
     """
     Login registered user to the system
@@ -68,14 +66,12 @@ def login(user_name: str, password: str):
     :param password: password
     :return: hashed user name (function as a session key)
     """
-
     user_name_hash = auth.login(user_name, password)
     user_handler.login(user_name)
     return user_name_hash
 
 
 # 2.5.0
-
 def get_information_about_products(store_name: str):
     """
     Gets all the products of a specific store
@@ -96,12 +92,10 @@ def get_store_info(store_name: str):
     :param store_name: store name
     :return: Store
     """
-
     return store_handler.get_store_info(store_name)
 
 
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
-
 def get_store(store_name: str):
     """
     Gets a specific store
@@ -275,18 +269,16 @@ def purchase(user_name: str, payment_info: dict, destination: str):
 
 # 3.1
 
-def logout(user_name):
+def logout(user_name_hash):
     """
     Logouts the registered user from the system
 
-    :param user_name: user name
+    :param user_name_hash: user name
     :return: None
     """
-
-    hash_user_name = user_name
-    user_name = auth.get_username_from_hash(user_name)
+    user_name = auth.get_username_from_hash(user_name_hash)
     permission_handler.is_permmited_to(user_name=user_name, action=Action.LOGOUT.value)
-    auth.logout(hash_user_name)
+    auth.logout(user_name_hash)
     user_handler.logout(user_name)
 
 

@@ -52,17 +52,20 @@ def get_store_info(store_name):
     return service.get_store_info(store_name)
 
 
-def is_user_guest(user_name):  # TODO return admin/store_owner/store_manager/guest
+def is_user_guest(user_name):
     return service.is_user_guest(user_name)
 
 
-# return all prodect that match all the filters
-def getProductsByFilter(name=None, priceRange=None, rating=None, category=None, storeRating=None, key=None):
-    # return service_layer.search_product_by_category(category,filters=)
-    # retrun service_layer.search_product_by_name(name, filters=)
-    # return service_layer.search_product_by_id(product_id=)
-    # return service_layer.search_product_by_keyword(keyword, filters=)
-    return "a\nb\nc"
+def search_product_by_category(category, filters):
+    return [True, service.search_product_by_category(category, filters)]
+
+
+def search_product_by_name(name, filters):
+    return [True, service.search_product_by_name(name, filters)]
+
+
+def search_product_by_keyword(keyword, filters):
+    return [True, service.search_product_by_keyword(keyword, filters)]
 
 
 # save user's cart

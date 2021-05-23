@@ -7,7 +7,6 @@ from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.dto.product_dto import ProductDTO
-from OnlineStore.src.dto.store_dto import StoreDTO
 from OnlineStore.src.dto.user_dto import UserDTO
 
 
@@ -49,7 +48,8 @@ class StoreHandler:
 
     def get_store_info(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        return StoreDTO(store)
+        store_info = {"Store name: ": store.name, "Founder": store.store_founder, "Rating:": store.rating}
+        return store_info
 
     def get_store(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
@@ -160,10 +160,11 @@ class StoreHandler:
                 if product.description.find(keyword) != -1:
                     product_list.append(ProductDTO(product))
         return product_list
+
     ########## Search related functions ##########
 
-    def add_discount(self, store, discount_name, discount_value, discount_term = None):
-        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term= discount_term)
+    def add_discount(self, store, discount_name, discount_value, discount_term=None):
+        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)
 
     def show_discount_policy(self, store):
         return stores.get_store_by_name(store).show_discount()
@@ -172,7 +173,7 @@ class StoreHandler:
         return stores.get_store_by_name(store).delete_discount(discount_name)
 
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
-        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag= no_flag)
+        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
 
     def delete_buying_policy(self, store, policy_name):
         return stores.get_store_by_name(store).delete_buying_policy(policy_name)

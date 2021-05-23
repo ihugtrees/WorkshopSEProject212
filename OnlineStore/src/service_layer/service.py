@@ -1,4 +1,3 @@
-import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
@@ -42,7 +41,6 @@ def login(user_name: str, password: str):
     :param password: password
     :return: hashed user name (function as a session key)
     """
-
     try:
         logging.info("login " + user_name)
         user_name_hash = domain_handler.login(user_name, password)
@@ -74,11 +72,9 @@ def get_information_about_products(store_name: str):
 def get_store_info(store_name: str):
     """
     Get information about specific store (who are the owners contacts and more..)
-
     :param store_name: store name
     :return: Store
     """
-
     try:
         logging.info("get_store_info " + store_name)
         ans = domain_handler.get_store_info(store_name)
@@ -299,12 +295,10 @@ def logout(user_name):
 # 3.2, think about arguments and preconditions
 def open_store(store_name, user_name):
     """
-
     :param store_name:
     :param user_name:
     :return:
     """
-
     try:
         logging.info("open_store user name: " + user_name + " store name: " + store_name)
         domain_handler.open_store(store_name, user_name)
