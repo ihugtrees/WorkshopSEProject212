@@ -55,6 +55,6 @@ class DiscountPolicy:
         return ans
 
     def delete_discount(self, term_name: str):
-        if term_name in self.discount_dict:
-            return self.discount_dict.pop(term_name)
-        raise Exception(term_name + "not exist")
+        if term_name not in self.discount_dict:
+            raise Exception(term_name + "not exist")
+        self.discount_dict.pop(term_name)
