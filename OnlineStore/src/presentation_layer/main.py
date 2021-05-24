@@ -36,8 +36,18 @@ def wronglogin():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    if (request.method == 'POST' and 'user' in session and session['user'] is not None and request.form.get('storeID') is not None):
+        user = session['user']
+        storeID = request.form.get('storeID')
+        if(userIsStoreOwner(user,storeID)):
+            session["store"] = storeID
+            return render_template("manageStoreOwner.html")
+        if(userIsStoreManager(user,storeID)):
+            session["store"] = storeID
+            return render_template("manageStoreManager.html")
+        return render_template("signup.html")
     if 'user' in session and session['user'] is not None:
-        return render_template("dashboardAdmin.html")
+        return render_template("dashboard.html")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
@@ -65,10 +75,16 @@ def manageCart():
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
-@app.route('/manageStore', methods=['POST', 'GET'])
-def manageStore():
+@app.route('/manageStoreOwner', methods=['POST', 'GET'])
+def manageStoreOwner():
     if 'user' in session and session['user'] is not None:
-        return render_template("manageStore.html")
+        return render_template("manageStoreOwner.html")
+    return '<h1>You are not logged in.</h1>'  # if the user is not in the session
+
+@app.route('/manageStoreManager', methods=['POST', 'GET'])
+def manageStoreManager():
+    if 'user' in session and session['user'] is not None:
+        return render_template("manageStoreManager.html")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
@@ -100,7 +116,7 @@ def signup():
 def addstoremanager():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         return render_template("addstoremanager.html",
                                message=assign_store_manager(session["user"], userid, storeid)[1])
     return render_template("addstoremanager.html")
@@ -110,7 +126,7 @@ def addstoremanager():
 def removeStoreManager():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         return render_template("removeStoreManager.html",
                                message=remove_store_manager(session["user"], userid, storeid)[1])
     return render_template("removeStoreManager.html")
@@ -120,7 +136,7 @@ def removeStoreManager():
 def removeStoreOwner():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         return render_template("removeStoreOwner.html", message=remove_store_owner(session["user"], userid, storeid)[1])
     return render_template("removeStoreOwner.html")
 
@@ -129,7 +145,7 @@ def removeStoreOwner():
 def editStoreManager():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         permissionUpdate = request.form.get('permissionUpdate')
         return render_template("editStoreManager.html", message=
         edit_store_manager_permissions(session["user"], userid, permissionUpdate, storeid)[1])
@@ -140,7 +156,7 @@ def editStoreManager():
 def addStoreOwner():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         return render_template("addStoreOwner.html", message=assign_store_owner(session["user"], userid, storeid)[1])
     return render_template("addStoreOwner.html")
 
@@ -225,13 +241,14 @@ def addToCart():
     if (request.method == 'POST'):
         productID = request.form.get('productID')
         quantity = request.form.get('quantity')
+        storeID = request.form.get('storeID')
         try:
             quantity = int(quantity)
         except:
             return render_template("addToCart.html", message="Quantity must be integer")
         if int(quantity) < 1:
             return render_template("addToCart.html", message="Quantity must be positive")
-        addToCartOutput = add_product_to_cart(session['user'], productID=productID, quantity=quantity, store_name=None)
+        addToCartOutput = add_product_to_cart(session['user'], productID=productID, quantity=quantity, store_name=storeID)
         if addToCartOutput:
             return render_template("addToCart.html", message="Item has been added to cart")
         else:
@@ -308,7 +325,7 @@ def pastStorePurchases():
 @app.route('/addNewProduct', methods=['POST', 'GET'])
 def addNewProduct():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         productID = request.form.get('productID')
         productName = request.form.get('productName')
         productPrice = request.form.get('productPrice')
@@ -329,7 +346,7 @@ def addNewProduct():
 @app.route('/removeProduct', methods=['POST', 'GET'])
 def removeProduct():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         productID = request.form.get('productID')
         return render_template("removeProduct.html",
                                message=remove_product_from_store_inventory(session["user"], productID, storeID)[1])
@@ -339,7 +356,7 @@ def removeProduct():
 @app.route('/editProduct', methods=['POST', 'GET'])
 def editProduct():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         productID = request.form.get('productID')
         productName = request.form.get('productName')
         productPrice = request.form.get('productPrice')
@@ -417,7 +434,7 @@ def discountTypes():
 @app.route('/addPurchasePolicy', methods=['POST', 'GET'])
 def addPurchasePolicy():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         policy_name = request.form.get("buying policy name")
         details = request.form.get('details')
         return render_template("addPurchasePolicy.html",
@@ -428,7 +445,7 @@ def addPurchasePolicy():
 @app.route('/deletePurchasePolicy', methods=['POST', 'GET'])
 def deletePurchasePolicy():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         policy_name = request.form.get("buying policy name")
         return render_template("deletePurchasePolicy.html",
                                message=delete_buying_policy(session["user"], storeID, policy_name)[1])
@@ -438,7 +455,7 @@ def deletePurchasePolicy():
 @app.route('/deleteDiscountPolicy', methods=['POST', 'GET'])
 def deleteDiscountPolicy():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         policy_name = request.form.get("discount policy name")
         return render_template("deleteDiscountPolicy.html",
                                message=delete_discount_policy(session["user"], storeID, policy_name)[1])
@@ -448,7 +465,7 @@ def deleteDiscountPolicy():
 @app.route('/showPurchasePolicy', methods=['POST', 'GET'])
 def showPurchasePolicy():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         return render_template("showPurchasePolicy.html",
                                message=show_buying_policy(session["user"], storeID)[1])
     return render_template("showPurchasePolicy.html")
@@ -457,7 +474,7 @@ def showPurchasePolicy():
 @app.route('/showDiscountPolicy', methods=['POST', 'GET'])
 def showDiscountPolicy():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         return render_template("showDiscountPolicy.html",
                                message=show_discount_policy(session["user"], storeID)[1])
     return render_template("showDiscountPolicy.html")
@@ -485,7 +502,7 @@ def purchasePolicy():
 @app.route('/addTermDiscount', methods=['POST', 'GET'])
 def addTermDiscount():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         discount_name = request.form.get('discount_name')
         discount_term = request.form.get('discount_term')
         discount_value = request.form.get('discount_value')
@@ -498,7 +515,7 @@ def addTermDiscount():
 @app.route('/addSimpleDiscount', methods=['POST', 'GET'])
 def addSimpleDiscount():
     if (request.method == 'POST'):
-        storeID = request.form.get('storeID')
+        storeID = session["store"]
         discount_name = request.form.get('discount_name')
         discount_value = request.form.get('discount_value')
         return render_template("addSimpleDiscount.html",
@@ -529,7 +546,7 @@ def discountPolicy():
 @app.route('/getEmployeeDetails', methods=['POST', 'GET'])
 def getEmployeeDetails():
     if (request.method == 'POST'):
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         employeeid = request.form.get('employeeid')
         return render_template("getEmployeeDetails.html",
                                message=get_employee_details(session["user"], storeid, employeeid)[1])
@@ -539,12 +556,11 @@ def getEmployeeDetails():
 @app.route('/getEmployeePermissions', methods=['POST', 'GET'])
 def getEmployeePermissions():
     if (request.method == 'POST'):
-        storeid = request.form.get('storeid')
+        storeid = session["store"]
         employeeid = request.form.get('employeeid')
         return render_template("getEmployeePermissions.html",
                                message=get_employee_permissions(session["user"], storeid, employeeid)[1])
     return render_template("getEmployeePermissions.html")
-
 
 if __name__ == '__main__':
     store_name = "store"
@@ -562,4 +578,4 @@ if __name__ == '__main__':
     purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
     log_out(username_hash)
     log_out(niv_hash)
-    app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
+    app.run(debug=True, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))

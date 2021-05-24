@@ -229,3 +229,9 @@ def get_employee_details(user_name, store_name, employeeid):
 
 def get_employee_permissions(user_name, store_name, employeeid):
     return service.get_employee_permissions(user_name, store_name, employeeid)
+
+def userIsStoreOwner(user,storeID):
+    return True
+
+def userIsStoreManager(user,storeID):
+    return True
