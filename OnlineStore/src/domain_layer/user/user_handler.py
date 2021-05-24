@@ -44,6 +44,11 @@ class UserHandler:
         user = users.get_user_by_name(user_name)
         return CartDTO(user.cart)
 
+    # def get_cart_info_for_gui(self, user_name) -> CartDTO:
+    #     user = users.get_user_by_name(user_name)
+    #     ans = self.convert_cartDTO_to_string(CartDTO(user.cart))
+    #     return ans
+
     def login(self, user_name):
         users.get_user_by_name(user_name).login()
 
@@ -116,3 +121,4 @@ class UserHandler:
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
+

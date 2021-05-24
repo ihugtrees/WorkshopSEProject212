@@ -39,7 +39,7 @@ class Store:
         if self.buying_policy is not None:
             user_data = self.make_user_data_from_userDTO(user)
             basket_data = self.make_basketDTO_from_basket(user.cart.basket_dict[self.name])
-            self.buying_policy.elligible_for_buying(basket_data, user_data)
+            self.buying_policy.elligible_for_buying(user_data, basket_data)
 
     def calculate_basket_sum(self, basket: Basket) -> int: # basketDTO???
         if self.discount_policy is not None:
@@ -58,7 +58,7 @@ class Store:
         dict_ans = dict()
         for p in basket.products_dict:
             product = self.inventory.products_dict[p]
-            quantity = product.quantity
+            quantity = basket.products_dict[p]
             price = product.price
             category = product.category
             dict_ans[p] = (quantity,price,category)

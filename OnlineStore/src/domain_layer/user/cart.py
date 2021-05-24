@@ -14,6 +14,8 @@ class Cart:
         if store_name not in self.basket_dict:
             raise Exception("wrong store name")
         self.basket_dict[store_name].remove_product_from_basket(product_id, quantity)
+        if len(self.basket_dict[store_name].products_dict) == 0:
+            self.basket_dict.pop(store_name)
 
     def get_str_cart(self):
         output = ""

@@ -32,7 +32,7 @@ class TestService(TestCase):
             user_name = "user_name" + str(i)
             password = "password" + str(i)
             store_name = "store" + str(i)
-            service.register(user_name, password)[0]
+            service.register(user_name, password, 20)[0]
 
             user_name_hash = service.login(user_name, password)[1]
             users_hash[user_name] = user_name_hash
@@ -74,7 +74,7 @@ class TestService(TestCase):
         user_name = "user_name10000"
         password = "1"
 
-        ans = service.register(user_name, password)
+        ans = service.register(user_name, password, 20)
         self.assertTrue(ans[0], ans[1])
         service.login(user_name, password)[1]
 
@@ -84,7 +84,7 @@ class TestService(TestCase):
             self.fail(e.args[0])
         self.assertTrue(user2.user_name == "user_name10000")
 
-        ans = service.register("user_name10000", password)
+        ans = service.register("user_name10000", password, 20)
         self.assertFalse(ans[0], ans[1])
 
     def test_login(self):  # 2.4

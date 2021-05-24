@@ -76,8 +76,10 @@ class StoreHandler:
         return stores
 
     def is_valid_for_purchase(self, cart: CartDTO, user: UserDTO):
+        ans = True
         for store in self.__get_stores_from_cart(cart):
-            store.is_policies_eligible(user)
+            ans = ans and store.is_policies_eligible(user)
+        return ans
 
     def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):

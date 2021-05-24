@@ -71,9 +71,9 @@ def save_cart(user_name):
     # return True
 
 
-def get_cart_info(user_name):
-    return service.get_cart_info(user_name)
-    # return "a b c"
+# def get_cart_info(user_name):
+#     return service.get_cart_info(user_name)
+#     # return "a b c"
 
 
 # add product to cart
@@ -86,7 +86,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 def get_cart_info(user_name):
     cart_info = service.get_cart_info(user_name)
     if cart_info[0]:
-        return cart_info[1].get_cart_info()
+        return cart_info[1]
     else:
         return cart_info[1]
     # return 10
@@ -135,7 +135,7 @@ def get_store_purchase_history(user_name, store_name):
 
 
 def add_new_product_to_store_inventory(user_name, product_id, product_name, price, quantity, description, store_name,
-                                       category, discount_type, buying_type):
+                                       category, discount_type = None, buying_type = None):
     return service.add_new_product_to_store_inventory(user_name, {"product_id": product_id, "product_name": product_name
         , "quantity": quantity, "description": description, "price": price, "category": category,
                                                                   "discount_type": discount_type,

@@ -13,8 +13,14 @@ class DiscountPolicy:
                      discount_value_type: str = False):
         if discount_name in self.discount_dict:
             raise Exception("discount name already exist")
-        self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
-         discount_description_products=discount_value, discount_description_categories = discount_value_type),
+        if discount_term is None:
+            self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
+                                                              discount_description_products=discount_value,
+                                                              discount_description_categories=discount_value_type),
+                                                 "term: " + "None" + ", value: " + discount_value)
+        else:
+            self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
+            discount_description_products=discount_value, discount_description_categories = discount_value_type),
                                              "term: " + discount_term+ ", value: " + discount_value)
 
 
