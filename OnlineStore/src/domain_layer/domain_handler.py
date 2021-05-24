@@ -134,19 +134,16 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
 
 
 # 2.6.1
-
 def search_product_by_category(category, filters):
     """
     :param category: product category
     :param filters: filters
     :return: product list
     """
-
     return store_handler.search_product_by_category(category, filters)
 
 
 # 2.6.2
-
 def search_product_by_name(name, filters):
     """
     Search specific product of a specific store
@@ -159,28 +156,22 @@ def search_product_by_name(name, filters):
 
 
 # 2.6.3
-
 def search_product_by_keyword(keyword, filters):
     """
     :param keyword: product keyword
     :param filters: filters
     :return: product list
     """
-    product_list = store_handler.search_product_by_keyword(keyword, filters)
-    if len(product_list) == 0:
-        raise Exception("Product not found")
-    return product_list
+    return store_handler.search_product_by_keyword(keyword, filters)
 
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
 # 2.7
-
 def save_cart(user_name):
     pass
 
 
 # 2.8.1
-
 def get_cart_info(user_name):
     """
     Get information about the user cart
@@ -319,13 +310,11 @@ def get_user_purchases_history(user_name):
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
     Add new product to specific store's inventory
-
     :param user_name: user name
     :param product_details: (dict) all the relevant data about the product
     :param store_name: store name
     :return: None
     """
-
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_PRODUCT_TO_INVENTORY.value,
                                        store_name)
@@ -333,7 +322,6 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
 
 
 # 4.1.2
-
 def remove_product_from_store_inventory(user_name, product_id, store_name):
     """
     removes a @product_id from a store named @store_name

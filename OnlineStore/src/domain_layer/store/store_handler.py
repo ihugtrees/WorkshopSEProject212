@@ -93,7 +93,6 @@ class StoreHandler:
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
 
-    ########## Search related functions ##########
     def get_stores_with_rating(self, rating):
         if rating is None:
             rating = 0
@@ -138,9 +137,9 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.category.find(category) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            raise Exception("Product does not exist in the store")
+            return "no product found"
         return product_list
 
     def search_product_by_name(self, name, filters):
@@ -148,9 +147,9 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.product_name.find(name) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            raise Exception("Product not found")
+            return "no product found"
         return product_list
 
     def search_product_by_keyword(self, keyword, filters):
@@ -158,10 +157,10 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.description.find(keyword) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
+        if len(product_list) == 0:
+            return "no product found"
         return product_list
-
-    ########## Search related functions ##########
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):
         return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)

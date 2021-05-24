@@ -57,15 +57,15 @@ def is_user_guest(user_name):
 
 
 def search_product_by_category(category, filters):
-    return [True, service.search_product_by_category(category, filters)]
+    return service.search_product_by_category(category, filters)
 
 
 def search_product_by_name(name, filters):
-    return [True, service.search_product_by_name(name, filters)]
+    return service.search_product_by_name(name, filters)
 
 
 def search_product_by_keyword(keyword, filters):
-    return [True, service.search_product_by_keyword(keyword, filters)]
+    return service.search_product_by_keyword(keyword, filters)
 
 
 # save user's cart

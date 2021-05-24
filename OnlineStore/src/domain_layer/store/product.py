@@ -1,4 +1,6 @@
 from threading import Lock
+
+
 class Product:
     def __init__(self, product_id, product_name, quantity, price, category="null", discount_type=None,
                  buying_type=None):

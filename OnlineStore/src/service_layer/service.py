@@ -153,13 +153,12 @@ def search_product_by_category(category, filters):
 # 2.6.2
 def search_product_by_name(name, filters):
     """
-    Search specific product of a specific store
-
     :param name: product name
     :param filters: filters
     :return: product list
     """
     try:
+        logging.info("starting search product by name: " + name)
         return [True, domain_handler.search_product_by_name(name, filters)]
     except Exception as e:
         return [False, "bug, when searching by name " + e.args[0]]
@@ -330,13 +329,11 @@ def get_user_purchases_history(user_name):
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
     Add new product to specific store's inventory
-
     :param user_name: user name
     :param product_details: (dict) all the relevant data about the product
     :param store_name: store name
     :return: None
     """
-
     try:
         logging.info("add_new_product_to_store_inventory: store name: " + store_name)
         domain_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
