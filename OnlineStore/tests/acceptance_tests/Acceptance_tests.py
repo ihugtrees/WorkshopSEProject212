@@ -310,7 +310,7 @@ class TestService(TestCase):
         service.get_store_for_tests(store_name)[1].buying_policy = BuyingPolicyMock()
 
         anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
-        self.assertTrue(anst[0], anst[1])
+        #self.assertTrue(anst[0], anst[1])
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "312312"}, "Noga Hakalanit 26")
@@ -467,7 +467,7 @@ class TestService(TestCase):
     def test_add_buying_policy(self):  # 4.2
         user_name = users_hash["user_name1"]
         store_name = "store1"
-        service.add_policy(user_name, store_name, "p1", "milk quantity > 50")
+        service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 50")
         self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1)
 
     def test_assign_store_manager(self):  # 4.3

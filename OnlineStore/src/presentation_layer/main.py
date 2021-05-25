@@ -8,13 +8,16 @@ app = Flask(__name__)
 store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
-def convert_cartDTO_to_string(cartDTO: CartDTO):
-    ans = ""
+def convert_purchase_to_string(purchase):
+    pass
+
+def convert_cartDTO_to_list_of_string(cartDTO: CartDTO):
+    ans = list()
     for b in cartDTO.basket_dict:
-        ans += "store name: " + b + " products: "
+        ans.append(b + ": ")
         p_dict = cartDTO.basket_dict[b].products_dict
         for p in p_dict:
-            ans += p + " " + str(p_dict[p]) + ", "
+            ans.append("product name: "+ p + " quantity: " + str(p_dict[p]) + ", ")
     return ans
 
 # creating route for login
@@ -227,7 +230,7 @@ def saveCart():
 
 @app.route('/showCart', methods=['POST', 'GET'])
 def showCart():
-    return render_template("showCart.html", message=convert_cartDTO_to_string(get_cart_info(session['user'])))
+    return render_template("showCart.html", cart_list=convert_cartDTO_to_list_of_string(get_cart_info(session['user'])))
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():
@@ -306,7 +309,8 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    return render_template("pastPurchases.html", message=get_user_purchases_history(session['user']))
+    purchase_list = get_user_purchases_history(session['user'])[1]
+    return render_template("pastPurchases.html", purchase_list=purchase_list)
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
@@ -596,3 +600,5 @@ if __name__ == '__main__':
     log_out(username_hash)
     log_out(niv_hash)
     app.run(debug=False, host="localhost", port=8000, ssl_context=('cert.pem', 'key.pem'))
+
+
