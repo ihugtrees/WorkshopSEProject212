@@ -16,16 +16,5 @@
     <form action="/signup" method="GET">
         <p><input type="submit" value="sign up" /></p>
     </form>
-    <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
-    <script>
-    var socket = io();
-    socket.on('connect', function() {
-        socket.emit('my event', {data: 'I\'m connected!'});
-    });
-    socket.on('message',function() {
-        console.log('a user connected');
-    });
-
-    </script>
 </body>
 </html>

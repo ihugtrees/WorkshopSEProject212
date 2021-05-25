@@ -1,6 +1,7 @@
 import threading
 from unittest import TestCase
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
+from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.service_layer import service
 from OnlineStore.src.security.authentication import Authentication
@@ -95,13 +96,14 @@ class TestService(TestCase):
         self.assertTrue(ans[0], ans[1])
 
         try:
-            ans2 = users.get_user_by_name(user_name)
-            self.assertTrue(ans2.is_logged)
+            # ans2 = users.get_user_by_name(user_name)
+            # self.assertTrue(ans2.is_logged)
+            self.assertTrue(domain_handler.auth.authenticate_session(ans[1]) == None)
         except Exception as e:
             self.fail(e.args[0])
 
-        ans3 = service.login(user_name, password)[0]
-        self.assertFalse(ans3, "try to login when the user already connected")
+        ans3 = service.login(user_name, password)
+        self.assertFalse(ans3[0], ans3[1])
 
         ans4 = service.login(user_name, "wrong password")[0]
         self.assertFalse(ans4, "test: wrong password")
@@ -370,7 +372,9 @@ class TestService(TestCase):
             user = users.get_user_by_name(user_name)
         except Exception as e:
             self.assertTrue(False, e.args[0])
-        self.assertTrue(ans and (not user.is_logged), ans[1])
+        self.assertTrue(ans[0])
+        with self.assertRaises(Exception):
+            domain_handler.auth.authenticate_session(ans[1])
 
         # not logged in
         user_name = "user_name0"
@@ -595,9 +599,43 @@ class TestService(TestCase):
         except:
             self.assertTrue(False, "buuug")
 
+    def test_real_time_notifications(self):  # 9.1
+        user_name0 = "user_name0"
+        user_name1 = "user_name1"
+        user_name2 = "user_name2"
+        user_name3 = "user_name3"
+        service.assign_store_owner(users_hash[user_name1],user_name2,"store1")
+        service.assign_store_owner(users_hash[user_name1], user_name3, "store1")
+        self.assertTrue(len(publisher.topics["store1"]) == 3)
+        service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
+        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+        self.assertTrue(len(users.history_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
+        self.assertTrue(len(users.history_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
+        self.assertTrue(len(users.history_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
+
+        service.logout(users_hash[user_name1])
+        service.logout(users_hash[user_name2])
+        service.logout(users_hash[user_name3])
+
+        service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
+        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+
+        self.assertTrue(len(users.pending_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
+        self.assertTrue(len(users.pending_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
+        self.assertTrue(len(users.pending_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
+
+        service.login(user_name1, "password1")
+        service.remove_store_owner(users_hash[user_name1], user_name2, "store1")
+        self.assertTrue(len(users.pending_messages[user_name2]) == 2, f"len(list) of {user_name2} should be 1")
+
+
     def tearDown(self):
         users.users = dict()
+        users.pending_messages = dict()
+        users.history_messages = dict()
         purchases.purchases = dict()
         stores.store_dict = dict()
         domain_handler.auth = Authentication()
         permissions.permissions = dict()
+        publisher.topics = dict()
+

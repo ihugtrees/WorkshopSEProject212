@@ -11,6 +11,10 @@ def log_in(username, password):
     return service.login(username, password)
 
 
+def logout(username):
+    return service.logout(username)
+
+
 # return true for successful sign up
 def register(user_name, password):
     return service.register(user_name, password)
@@ -78,7 +82,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 def get_cart_info(user_name):
     cart_info = service.get_cart_info(user_name)
     if cart_info[0]:
-        return cart_info[1].get_cart_info()
+        return cart_info[1]
     else:
         return cart_info[1]
     # return 10

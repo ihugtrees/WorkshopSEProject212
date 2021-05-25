@@ -1,21 +1,40 @@
 from flask import (Flask, render_template, request, redirect, session)
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, send, join_room
 
 from OnlineStore.src.presentation_layer.utils import *
+from OnlineStore.src.communication_layer import publisher
 
+topics = dict()
 app = Flask(__name__)
 store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
+
 socketio = SocketIO(app)
+
+
 # app.config['SECRET_KEY'] = 'secret!'
 
 
 # dictionary to store information about users)
 # user = {"username": "abc", "password": "xyz"}
 
-@socketio.on('my event')
-def handle_my_custom_event(json):
-    print('received json: ' + str(json))
+@socketio.on('join')
+def on_join(data):
+    join_room(session['username'])
+
+@socketio.on('send messages')
+def on_send_messages(data):
+    publisher.send_messages(session['username'])
+
+@socketio.on("connect")
+def on_connect():
+    pass
+
+@socketio.on("close")
+def on_close(data):
+    print("close")
+
+
 # creating route for login
 @app.route('/', methods=['POST', 'GET'])
 def login():
@@ -30,8 +49,8 @@ def login():
                 session['user'] = usernameHash[1]
                 print(session['user'])
                 return redirect('/dashboard')
-            else:
-                return redirect('/wronglogin')
+        else:
+            return redirect('/wronglogin')
     return render_template("login.html")
 
 
@@ -80,6 +99,7 @@ def manageStore():
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
+    logout(session['user'])
     session['user'] = None
     return render_template("logout.html")
 
@@ -228,6 +248,7 @@ def showCart():
 def addToCart():
     if (request.method == 'POST'):
         productID = request.form.get('productID')
+        store_name = request.form.get('store_name')
         quantity = request.form.get('quantity')
         try:
             quantity = int(quantity)
@@ -235,7 +256,7 @@ def addToCart():
             return render_template("addToCart.html", message="Quantity must be integer")
         if int(quantity) < 1:
             return render_template("addToCart.html", message="Quantity must be positive")
-        addToCartOutput = add_product_to_cart(session['user'], productID=productID, quantity=quantity, store_name=None)
+        addToCartOutput = add_product_to_cart(session['user'], product_id=productID, quantity=quantity, store_name=store_name)
         if addToCartOutput:
             return render_template("addToCart.html", message="Item has been added to cart")
         else:
@@ -276,11 +297,12 @@ def checkout():
         #     return render_template("checkout.html", message="Card is not valid")
         # if (not delivery(session['user'])):
         #     return render_template("checkout.html", message="Delivery is not available")
-        if purchase(session["user"], payment_info=None, destination=None):
+        res = purchase(request.cookies.get('username'), payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+        if res[0]:
             return render_template("checkout.html", message="Parchase done successfully", price=0)
         else:
-            return render_template("checkout.html", message="Error")
-    return render_template("checkout.html", price=price)
+            return render_template("checkout.html", message=res[1])
+    return render_template("checkout.html", price=0)
 
 
 @app.route('/openStore', methods=['POST', 'GET'])
@@ -496,5 +518,30 @@ def getEmployeePermissions():
     return render_template("getEmployeePermissions.html")
 
 
+def initialize_system():
+    store_name = "store"
+    admin = "admin"
+    niv = "niv"
+    a = "a"
+    register(admin, admin)
+    register(niv, niv)
+    register(a, a)
+    username_hash = log_in(admin, admin)[1]
+    niv_hash = log_in(niv, niv)[1]
+
+    open_store(store_name, username_hash)
+    assign_store_owner(username_hash, a, store_name)
+    add_new_product_to_store_inventory(username_hash, "1", "1", 1, 50, "no description", store_name, "dairy",
+                                             None, None)
+    add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    assign_store_manager(username_hash, niv, store_name)
+
+    # purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+
+    logout(username_hash)
+    logout(niv_hash)
+
+
 if __name__ == '__main__':
+    initialize_system()
     socketio.run(app=app, debug=True)

@@ -6,22 +6,22 @@ from OnlineStore.src.domain_layer.user.appoint import *
 class User:
     def __init__(self, user_name: str, cart: Cart, is_admin=False,
                  purchase_history=list(), appointed_to_store=None):  # change purchase history from none to empty list (yonatan)
-        self.is_logged = False
+        # self.is_logged = False
         self.user_name = user_name
         self.cart = cart
         self.__is_admin = is_admin
         self.purchase_history = purchase_history
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
 
-    def login(self):
-        if self.is_logged:
-            raise Exception("Already loggedIn")
-        self.is_logged = True
+    # def login(self):
+    #     if self.is_logged:
+    #         raise Exception("Already loggedIn")
+    #     self.is_logged = True
 
-    def logout(self):
-        if not self.is_logged:
-            raise Exception("Already disconnected")
-        self.is_logged = False
+    # def logout(self):
+    #     if not self.is_logged:
+    #         raise Exception("Already disconnected")
+    #     self.is_logged = False
 
     def is_admin(self):
         return self.__is_admin
