@@ -1,7 +1,6 @@
 from flask import (Flask, render_template, request, redirect, session)
 
-# from OnlineStore.src.presentation_layer.utils import *
-from OnlineStore.src.communication_layer.publisher import *
+from OnlineStore.src.presentation_layer.utils import *
 
 app = Flask(__name__)
 # store = None
