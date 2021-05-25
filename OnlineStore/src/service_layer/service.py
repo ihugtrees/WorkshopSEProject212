@@ -2,6 +2,10 @@ import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> socket
 logging = Logger()
 
 

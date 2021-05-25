@@ -6,8 +6,7 @@ class User:
     def __init__(self, user_name: str, cart: Cart, is_admin=False,
                  purchase_history=list(),
                  appointed_to_store=None, guest=True,
-                 age=20):  # change purchase history from none to empty list (yonatan)
-        self.is_logged = False
+                 age=20):
         self.user_name = user_name
         self.is_guest = guest
         self.cart = cart
@@ -17,15 +16,15 @@ class User:
         self.msgs = None
         self.age = age
 
-    def login(self):
-        if self.is_logged:
-            raise Exception("Already loggedIn")
-        self.is_logged = True
+    # def login(self):
+    #     if self.is_logged:
+    #         raise Exception("Already loggedIn")
+    #     self.is_logged = True
 
-    def logout(self):
-        if not self.is_logged:
-            raise Exception("Already disconnected")
-        self.is_logged = False
+    # def logout(self):
+    #     if not self.is_logged:
+    #         raise Exception("Already disconnected")
+    #     self.is_logged = False
 
     def is_admin(self):
         return self.is_admin

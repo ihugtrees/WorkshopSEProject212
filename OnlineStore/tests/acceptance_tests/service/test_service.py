@@ -95,8 +95,9 @@ class TestService(TestCase):
         self.assertTrue(ans[0], ans[1])
 
         try:
-            ans2 = users.get_user_by_name(user_name)
-            self.assertTrue(ans2.is_logged)
+            # ans2 = users.get_user_by_name(user_name)
+            # self.assertTrue(ans2.is_logged)
+            self.assertTrue(domain_handler.auth.authenticate_session(ans[1]) == None)
         except Exception as e:
             self.fail(e.args[0])
 
@@ -370,7 +371,10 @@ class TestService(TestCase):
             user = users.get_user_by_name(user_name)
         except Exception as e:
             self.assertTrue(False, e.args[0])
-        self.assertTrue(ans and (not user.is_logged), ans[1])
+        self.assertTrue(ans)
+        with self.assertRaises(Exception):
+            domain_handler.auth.authenticate_session(ans[1])
+        # and (not user.is_logged), ans[1])
 
         # not logged in
         user_name = "user_name0"
