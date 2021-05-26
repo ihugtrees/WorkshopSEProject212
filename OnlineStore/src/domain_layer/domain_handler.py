@@ -8,6 +8,7 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
+import OnlineStore.src.communication_layer.publisher as publisher
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -70,7 +71,8 @@ def login(user_name: str, password: str):
     """
 
     user_name_hash = auth.login(user_name, password)
-    user_handler.login(user_name)
+    # publisher.send_messages(user_name)
+    # user_handler.login(user_name)
     return user_name_hash
 
 
@@ -265,6 +267,8 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
         purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
+        for store_name in cart_dto.basket_dict.keys():
+            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name, "buying product")
         return date
     except Exception as e:
         if payment_done_delivery_done["quantity_taken"]:
@@ -290,7 +294,7 @@ def logout(user_name):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name=user_name, action=Action.LOGOUT.value)
     auth.logout(hash_user_name)
-    user_handler.logout(user_name)
+    # user_handler.logout(user_name)
 
 
 # 3.2, think about arguments and preconditions
@@ -309,6 +313,7 @@ def open_store(store_name, user_name):
         user_name)  # just checks if user is logged in need to see if to change name
     store_handler.open_store(store_name, user_name)
     permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS, user_name, store_name)
+    publisher.subscribe(user_name, store_name)
 
 
 # 3.7
@@ -401,6 +406,7 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
                                              new_store_owner_name,
                                              store_name)
     user_handler.assign_store_employee(user_name, new_store_owner_name, store_name)
+    publisher.subscribe(new_store_owner_name, store_name)
 
 
 # 4.5
@@ -462,7 +468,12 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
+    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}", store_manager_name)
 
+
+def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
+    remove_store_manager(user_name, store_manager_name, store_name)
+    publisher.unsubscribe(store_manager_name, store_name)
 
 # 4.9.1
 

@@ -18,5 +18,36 @@
     <form action="/logout" method="GET">
         <p><input type="submit" value="Log Out" /></p>
     </form>
+    <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+    <script>
+    var socket = io()
+    console.log(socket.uri)
+    socket.on('connect', function() {
+        console.log("Connected to the server\n")
+        socket.emit('join', {});
+        socket.emit('send messages',{})
+    });
+    socket.on('open store',function(json) {
+        console.log(json);
+    });
+    socket.on('close store',function(json) {
+        console.log(json);
+    });
+    socket.on('remove employee',function(json) {
+        console.log(json);
+    });
+    socket.on('buying product',function(json) {
+        console.log(json);
+    });
+
+    socket.on('message',function(json) {
+        console.log(json);
+    });
+    socket.on('close',function() {
+        console.log("close connection");
+        emit('close',{})
+    });
+
+    </script>
 </body>
 </html>
