@@ -1,11 +1,6 @@
 import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
-
-<<<<<<< HEAD
-=======
-
->>>>>>> socket
 logging = Logger()
 
 
@@ -441,7 +436,7 @@ def remove_store_owner(user_name: str, store_manager_name: str, store_name: str)
 
     try:
         logging.info("remove_store_manager")
-        domain_handler.remove_store_manager(user_name, store_manager_name, store_name)
+        domain_handler.remove_store_owner(user_name, store_manager_name, store_name)
         return True, None
     except Exception as e:
         logging.error("remove_store_manager " + e.args[0])

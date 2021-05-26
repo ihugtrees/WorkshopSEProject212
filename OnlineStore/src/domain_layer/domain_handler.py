@@ -468,6 +468,10 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}", store_manager_name)
 
 
+def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
+    remove_store_manager(user_name, store_manager_name, store_name)
+    publisher.unsubscribe(store_manager_name, store_name)
+
 # 4.9.1
 
 def get_employee_information(user_name: str, employee_name: str, store_name: str):

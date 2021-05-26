@@ -71,10 +71,10 @@ def dashboard():
     if (request.method == 'POST' and 'user' in session and session['user'] is not None and request.form.get('storeID') is not None):
         user = session['user']
         storeID = request.form.get('storeID')
-        if(userIsStoreOwner(user,storeID)):
+        if(utils.userIsStoreOwner(user,storeID)):
             session["store"] = storeID
             return render_template("manageStoreOwner.html")
-        if(userIsStoreManager(user,storeID)):
+        if(utils.userIsStoreManager(user,storeID)):
             session["store"] = storeID
             return render_template("manageStoreManager.html")
         return render_template("signup.html")
@@ -85,7 +85,7 @@ def dashboard():
 
 @app.route('/guest_dashboard', methods=['POST', 'GET'])
 def guest_dashboard():
-    ans = get_into_site()
+    ans = utils.get_into_site()
     if ans[0]:
         session['user'] = ans[1]
         return render_template("dashboardGuest.html")
@@ -122,7 +122,7 @@ def manageStoreManager():
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
-    utils.logout(session['user'])
+    utils.log_out(session['user'])
     session['user'] = None
     return render_template("logout.html")
 
@@ -168,7 +168,7 @@ def removeStoreManager():
 def removeStoreOwner():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
-        storeid = request.form.get('storeid')
+        storeid = session['store']
         return render_template("removeStoreOwner.html", message=utils.remove_store_owner(session["user"], userid, storeid)[1])
     return render_template("removeStoreOwner.html")
 
@@ -494,7 +494,7 @@ def deleteDiscountPolicy():
         storeID = session["store"]
         policy_name = request.form.get("discount policy name")
         return render_template("deleteDiscountPolicy.html",
-                               message=delete_discount_policy(session["user"], storeID, policy_name)[1])
+                               message=utils.delete_discount_policy(session["user"], storeID, policy_name)[1])
     return render_template("deleteDiscountPolicy.html")
 
 
@@ -503,7 +503,7 @@ def showPurchasePolicy():
     if (request.method == 'POST'):
         storeID = session["store"]
         return render_template("showPurchasePolicy.html",
-                               message=show_buying_policy(session["user"], storeID)[1])
+                               message=utils.show_buying_policy(session["user"], storeID)[1])
     return render_template("showPurchasePolicy.html")
 
 
@@ -512,7 +512,7 @@ def showDiscountPolicy():
     if (request.method == 'POST'):
         storeID = session["store"]
         return render_template("showDiscountPolicy.html",
-                               message=show_discount_policy(session["user"], storeID)[1])
+                               message=utils.show_discount_policy(session["user"], storeID)[1])
     return render_template("showDiscountPolicy.html")
 
 
@@ -543,7 +543,7 @@ def addTermDiscount():
         discount_term = request.form.get('discount_term')
         discount_value = request.form.get('discount_value')
         return render_template("addTermDiscount.html",
-                               message=add_term_discount(session["user"], storeID,
+                               message=utils.add_term_discount(session["user"], storeID,
                                                          discount_name, discount_value, discount_term)[1])
     return render_template("addTermDiscount.html")
 
@@ -555,7 +555,7 @@ def addSimpleDiscount():
         discount_name = request.form.get('discount_name')
         discount_value = request.form.get('discount_value')
         return render_template("addSimpleDiscount.html",
-                               message=add_simple_discount(session["user"], storeID,
+                               message=utils.add_simple_discount(session["user"], storeID,
                                                            discount_name, discount_value)[1])
     return render_template("addSimpleDiscount.html")
 
@@ -604,9 +604,9 @@ def initialize_system():
     admin = "admin"
     niv = "niv"
     a = "a"
-    utils.register(admin, admin)
-    utils.register(niv, niv)
-    utils.register(a, a)
+    utils.register(admin, admin, 20)
+    utils.register(niv, niv, 20)
+    utils.register(a, a, 20)
     username_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
 
@@ -619,8 +619,8 @@ def initialize_system():
 
     # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
-    utils.logout(username_hash)
-    utils.logout(niv_hash)
+    utils.log_out(username_hash)
+    utils.log_out(niv_hash)
 
 
 if __name__ == '__main__':
