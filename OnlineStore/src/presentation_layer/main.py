@@ -17,7 +17,7 @@ def convert_cartDTO_to_list_of_string(cartDTO: CartDTO):
         ans.append(b + ": ")
         p_dict = cartDTO.basket_dict[b].products_dict
         for p in p_dict:
-            ans.append("product name: "+ p + " quantity: " + str(p_dict[p]) + ", ")
+            ans.append("product name: "+ p + " quantity: " + str(p_dict[p]))
     return ans
 
 # creating route for login
