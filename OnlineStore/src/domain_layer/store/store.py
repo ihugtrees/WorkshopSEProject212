@@ -68,6 +68,9 @@ class Store:
                      discount_value_type: str = False):
         self.discount_policy.add_discount(discount_name, discount_value, discount_term= discount_term, discount_value_type=discount_value_type)
 
+    def combine_discount(self, d1_name, d2_name, operator: str, new_name):
+        self.discount_policy.combine_discount(d1_name, d2_name, operator, new_name)
+
     def show_discount(self):
         return self.discount_policy.show_discount_policy()
 

@@ -4,11 +4,11 @@ class Product:
                  buying_type=None):
         self.product_id = product_id
         self.product_name = product_name
-        self.quantity = quantity
+        self.quantity = int(quantity)
         self.description = ""
         self.discount_type = discount_type
         self.buying_type = buying_type
-        self.price = price
+        self.price = int(price)
         self.category = category
         self.rating = 0
         self.lock = Lock()

@@ -27,10 +27,12 @@ class DiscountPolicy:
     def combine_discount(self, d1_name, d2_name, operator: str, new_name):
         if new_name in self.discount_dict:
             raise Exception("discount name already exist")
+        if d1_name not in self.discount_dict or d2_name not in self.discount_dict:
+            raise Exception("wrong discount name")
         t1 = self.discount_dict[d1_name]
         t2 = self.discount_dict[d2_name]
-        self.discount_dict[new_name] = (self.combine_discount_private(t1, t2, operator),
-                                        self.discount_dict[d1_name]+" "+ operator+ " "+ self.discount_dict[d2_name])
+        self.discount_dict[new_name] = (self.combine_discount_private(t1[0], t2[0], operator),
+                                        self.discount_dict[d1_name][1]+" "+ operator+ " "+ self.discount_dict[d2_name][1])
         self.discount_dict.pop(d1_name)
         self.discount_dict.pop(d2_name)
 

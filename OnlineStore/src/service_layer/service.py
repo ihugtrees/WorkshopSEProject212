@@ -24,7 +24,7 @@ def exit_the_site(guest_name):
 
 def register(user_name: str, password: str, age):
     try:
-        logging.info("register" + user_name)
+        logging.info("register " + user_name)
         domain_handler.register(user_name, password, age)
         return [True, "New user has been added successfully"]
     except Exception as e:
@@ -227,7 +227,7 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 
     try:
         logging.info("add product to cart")
-        return [True, domain_handler.add_product_to_cart(user_name, product_id, quantity, store_name)]
+        return [True, domain_handler.add_product_to_cart(user_name, product_id, int(quantity), store_name)]
     except Exception as e:
         logging.error("add product to cart fail: " + e.args[0])
         return [False, e.args[0]]
@@ -681,6 +681,15 @@ def add_term_discount(user_name, store, discount_name, discount_value, discount_
         return [True, domain_handler.add_term_discount(user_name, store, discount_name, discount_value, discount_term)]
     except Exception as e:
         logging.error("add new discount " + e.args[0])
+        return [False, e.args[0]]
+
+
+def combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name):
+    try:
+        logging.info("combine discount " + discount_name1+ " "+ discount_name2)
+        return [True, domain_handler.combine_discount(user_name, store, discount_name1, discount_name2,operator, new_name)]
+    except Exception as e:
+        logging.error("combine discount " + e.args[0])
         return [False, e.args[0]]
 
 

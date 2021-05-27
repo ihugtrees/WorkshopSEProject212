@@ -569,6 +569,11 @@ def add_term_discount(user_name, store, discount_name, discount_value, discount_
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
     return store_handler.add_discount(store, discount_name, discount_value, discount_term)
 
+def combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
+    return store_handler.combine_discount(store, discount_name1, discount_name2, operator, new_name)
+
 
 def add_simple_discount(user_name, store, discount_name, discount_value):
     user_name = auth.get_username_from_hash(user_name)

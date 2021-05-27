@@ -135,11 +135,9 @@ def get_store_purchase_history(user_name, store_name):
 
 
 def add_new_product_to_store_inventory(user_name, product_id, product_name, price, quantity, description, store_name,
-                                       category, discount_type, buying_type):
+                                       category):
     return service.add_new_product_to_store_inventory(user_name, {"product_id": product_id, "product_name": product_name
-        , "quantity": quantity, "description": description, "price": price, "category": category,
-                                                                  "discount_type": discount_type,
-                                                                  "buying_type": buying_type}, store_name)
+        , "quantity": quantity, "description": description, "price": price, "category": category}, store_name)
 
 
 def remove_product_from_store_inventory(user_name, product_id, store_name):
@@ -217,6 +215,10 @@ def edit_discount_policy(user_name, store_name, discount_policy, details):
 
 def add_term_discount(user_name, store_name, discount_name, discount_value, discount_term):
     return service.add_term_discount(user_name, store_name, discount_name, discount_value, discount_term)
+
+
+def combine_discount(user_name, store_name, discount_name1, discount_name2, operator, new_name):
+    return service.combine_discount(user_name, store_name, discount_name1, discount_name2, operator, new_name)
 
 
 def add_simple_discount(user_name, store_name, discount_name, discount_value):

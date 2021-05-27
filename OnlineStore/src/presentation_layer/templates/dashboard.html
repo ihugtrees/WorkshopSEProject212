@@ -12,8 +12,15 @@
     <form action="/manageCart" method="POST">
         <p><input type="submit" value="Manage Cart" /></p>
     </form>
-    <form action="/manageStore" method="POST">
+
+    <form action="/dashboard" method="POST">
+        <p>Enter storeID:</p>
+        <p><input type="text" name="storeID" /></p>
         <p><input type="submit" value="Manage Store" /></p>
+    </form>
+
+    <form action="/openStore" method="GET">
+        <p><input type="submit" value="Open Store"/></p>
     </form>
     <form action="/logout" method="GET">
         <p><input type="submit" value="Log Out" /></p>
