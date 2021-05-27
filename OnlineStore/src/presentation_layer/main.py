@@ -30,11 +30,12 @@ def on_send_messages(data):
 
 @socketio.on("connect")
 def on_connect():
-    pass
+    print(f"Client {session['username']} connected")
 
-@socketio.on("close")
-def on_close(data):
-    print("close")
+
+@socketio.on('disconnect')
+def socket_disconnect():
+    print(f"Client {session['username']} disconnected")
 
 def convert_purchase_to_string(purchase):
     pass
@@ -71,8 +72,8 @@ def web_login():
             session['user'] = username_hash[1]
             # print(session['user'])
             return resp
-        elif username_hash[1] == "Already loggedIn":
-            return redirect('/userloggedin')
+        elif username_hash[1] == "User Already Logged In":
+            return redirect('/dashboard')
         else:
             return redirect('/wronglogin')
     return render_template("login.html")
@@ -98,7 +99,7 @@ def dashboard():
             return render_template("manageStoreManager.html")
         return render_template("signup.html")
     if 'user' in session and session['user'] is not None:
-        return render_template("dashboard.html")
+        return render_template("dashboard.html", message=session["store"])
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
