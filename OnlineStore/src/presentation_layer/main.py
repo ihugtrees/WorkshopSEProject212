@@ -682,4 +682,4 @@ def initialize_system():
 
 if __name__ == '__main__':
     initialize_system()
-    socketio.run(app=app, debug=False)
+    socketio.run(app=app, debug=True)

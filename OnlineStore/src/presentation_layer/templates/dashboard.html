@@ -34,14 +34,6 @@
         socket.emit('join', {});
         socket.emit('send messages',{});
     });
-    socket.on('disconnect', function(socket){
-        socket.emit('close', {});
-    });
-    socket.on('connection', function(socket){
-      socket.on('disconnect',function(){
-         socket.emit('close', {});
-      });
-    });
     socket.on('open store',function(json) {
         console.log(json);
     });
