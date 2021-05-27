@@ -88,7 +88,7 @@ def wronglogin():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    if (request.method == 'POST' and 'user' in session and session['user'] is not None and request.form.get('storeID') is not None):
+    if request.method == 'POST' and 'user' in session and session['user'] is not None:
         user = session['user']
         storeID = request.form.get('storeID')
         if(utils.userIsStoreOwner(user,storeID)):
@@ -99,6 +99,7 @@ def dashboard():
             return render_template("manageStoreManager.html")
         return render_template("signup.html")
     if 'user' in session and session['user'] is not None:
+        session["store"] = "None" if "store" not in session else session["store"]
         return render_template("dashboard.html", message=session["store"])
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
