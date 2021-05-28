@@ -5,12 +5,10 @@
     <p>Past Purchases</p>
 </head>
 <body>
-<form action="/pastStorePurchases" method="POST">
-        <p>Enter Store ID:</p>
-        <p><input type="text" name="storeid" /></p>
+    <form action="/pastStorePurchases" method="POST">
         <p><input type="submit" value="Show Past Purchases" /></p>
     </form>
-<p>{{message}}</p>
+    <p>{{message}}</p>
     <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back To Dashboard" /></p>
     </form>

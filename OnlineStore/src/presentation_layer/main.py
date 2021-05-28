@@ -100,7 +100,7 @@ def dashboard():
         return render_template("signup.html")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
-        return render_template("dashboard.html", message=session["store"])
+        return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 

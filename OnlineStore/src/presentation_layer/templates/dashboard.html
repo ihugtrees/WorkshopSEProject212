@@ -71,7 +71,7 @@
     </style>
 </head>
 <body>
-    <h1 style="color:blue;">Dashboard</h1>
+    <h1 style="color:blue;">{{welcome}}</h1>
     <div class="popup" id="popup-1">
         <div class="overlay"></div>
         <div class="content">
@@ -100,46 +100,6 @@
         <p><input type="submit" value="Log Out" /></p>
     </form>
     <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
-    <script>
-    var socket = io()
-    console.log(socket.uri)
-    socket.on('connect', function() {
-        console.log("Connected to the server\n")
-        socket.emit('join', {});
-        socket.emit('send messages',{});
-    });
-    socket.on('open store',function(json) {
-        console.log(json);
-    });
-    socket.on('close store',function(json) {
-        console.log(json);
-    });
-    socket.on('remove employee',function(json) {
-        console.log(json);
-        togglePopup(json);
-    });
-    socket.on('buying product',function(json) {
-        console.log(json);
-        togglePopup(json)
-    });
-
-    socket.on('message',function(json) {
-        console.log(json);
-    });
-    socket.on('close',function() {
-        console.log("close connection");
-        emit('close',{})
-    });
-
-    function togglePopup(){
-        document.getElementById("popup-1").classList.toggle("active");
-    }
-
-    function togglePopup(data){
-        document.getElementById("popup-1").classList.toggle("active");
-        document.getElementById("data").innerHTML = data;
-    }
-
-    </script>
+    <script src="static/js/script.js"></script>
 </body>
 </html>
