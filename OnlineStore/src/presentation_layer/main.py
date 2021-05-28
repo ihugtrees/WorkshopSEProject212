@@ -668,6 +668,7 @@ def initialize_system():
     utils.register(a, a, 20)
     username_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
+    a_hash = utils.log_in(a, a)[1]
 
     utils.open_store(store_name, username_hash)
     utils.assign_store_owner(username_hash, a, store_name)
@@ -677,7 +678,7 @@ def initialize_system():
     utils.add_simple_discount(username_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=username_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.assign_store_manager(username_hash, niv, store_name)
+    utils.assign_store_owner(a_hash, niv, store_name)
 
     # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
@@ -687,4 +688,4 @@ def initialize_system():
 
 if __name__ == '__main__':
     initialize_system()
-    socketio.run(app=app, debug=True)
+    socketio.run(app=app, debug=True,ssl_context=('cert.pem', 'key.pem'),port=8000)
