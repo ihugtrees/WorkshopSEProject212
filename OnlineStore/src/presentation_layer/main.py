@@ -361,10 +361,11 @@ def openStore():
         storeName = request.form.get('storeName')
         # if(not availableStoreName(storeName)):
         #     return render_template("openStore.html",message= "Store name is not valid")
-        if (utils.open_store(storeName, session['user'])):
+        resp = utils.open_store(storeName, session['user'])
+        if resp[0]:
             return render_template("openStore.html", message="New store has been added")
         else:
-            return render_template("openStore.html", message="Something went wrong... try again")
+            return render_template("openStore.html", message=resp[1])
     return render_template("openStore.html")
 
 
