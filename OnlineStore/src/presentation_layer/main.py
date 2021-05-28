@@ -35,6 +35,8 @@ def on_connect():
 
 @socketio.on('disconnect')
 def socket_disconnect():
+    if utils.is_user_guest(session["username"]):
+        utils.exit_the_site(session["username"])
     print(f"Client {session['username']} disconnected")
 
 def convert_purchase_to_string(purchase):
@@ -109,6 +111,7 @@ def guest_dashboard():
     ans = utils.get_into_site()
     if ans[0]:
         session['user'] = ans[1]
+        session['username'] = ans[1]
         return render_template("dashboardGuest.html")
     else:
         return redirect('/wronglogin')
@@ -145,6 +148,7 @@ def manageStoreManager():
 def logout():
     utils.log_out(session['user'])
     session['user'] = None
+    session['username'] = None
     return render_template("logout.html")
 
 

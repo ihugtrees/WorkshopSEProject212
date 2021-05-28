@@ -40,7 +40,7 @@ def exit_the_site(guest_name):
     :param guest_name: guest name
     :return: None
     """
-
+    auth.remove_guest(guest_name)
     return user_handler.exit_the_site(guest_name)
 
 

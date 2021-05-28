@@ -64,6 +64,11 @@ class Authentication:
         self._hash_to_name[user_name] = user_name
         self._name_to_hash[user_name] = user_name
 
+    def remove_guest(self, guest_name: str):
+        self.users.pop(guest_name)
+        self._hash_to_name.pop(guest_name)
+        self._name_to_hash.pop(guest_name)
+
     def check_logged_and_take_lock(self, username) -> Lock:
         """
         Takes the restlock and check if logged in.

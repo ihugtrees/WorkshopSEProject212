@@ -10,6 +10,8 @@ import OnlineStore.src.service_layer.service as service
 def get_into_site():
     return service.get_into_site()
 
+def exit_the_site(guest_name):
+    return service.exit_the_site(guest_name)
 
 def log_in(username, password):
     return service.login(username, password)

@@ -3,15 +3,15 @@ from OnlineStore.src.domain_layer.user.cart import Cart
 
 
 class User:
-    def __init__(self, user_name: str, cart: Cart, is_admin=False,
-                 purchase_history=list(),
+    def __init__(self, user_name: str, cart=None, is_admin=False,
+                 purchase_history=None,
                  appointed_to_store=None, guest=True,
                  age=20):
         self.user_name = user_name
         self.is_guest = guest
-        self.cart = cart
+        self.cart = cart if cart is not None else Cart()
         self.is_admin = is_admin
-        self.purchase_history = purchase_history
+        self.purchase_history = purchase_history if purchase_history is not None else list()
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
         self.msgs = None
         self.age = age
