@@ -1,3 +1,4 @@
+import OnlineStore.src.communication_layer.publisher as publisher
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.data_layer.store_data as stores
 import OnlineStore.src.data_layer.users_data as users
@@ -8,7 +9,6 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
-import OnlineStore.src.communication_layer.publisher as publisher
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -58,9 +58,9 @@ def register(user_name: str, password: str, age=20):
     user_handler.register(user_name, age)
 
 
-
 def change_password(user_name: str, old_password: str, new_password):
     auth.change_password(user_name, old_password, new_password)
+
 
 # 2.4
 def login(user_name: str, password: str):
@@ -610,6 +610,7 @@ def delete_discount_policy(user_name, store, discount_name):
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
+
 
 def get_user_history_message(user_name):
     return users.get_user_message_history(user_name)
