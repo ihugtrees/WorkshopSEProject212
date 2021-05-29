@@ -239,7 +239,7 @@ def productInfo():
 def storeInfo():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
-        storeInfo = get_store_info(storeID)
+        storeInfo = utils.get_store_info(storeID)
         if storeInfo[0]:
             return render_template("storeInfo.html", storeID=storeID, storeInfo=storeInfo[1])
         return render_template("storeInfo.html", storeID=storeID, warning="Something went wrong...")
@@ -288,8 +288,8 @@ def prodByCategory():
 @app.route('/prodByKeyword', methods=['POST', 'GET'])
 def prodByKeyword():
     if request.method == 'POST':
-        key = request.form.get('key') \
-                category = request.form.get('category')
+        key = request.form.get('key')
+        category = request.form.get('category')
         minprice = request.form.get('minprice')
         maxprice = request.form.get('maxprice')
         prating = request.form.get('prating')
