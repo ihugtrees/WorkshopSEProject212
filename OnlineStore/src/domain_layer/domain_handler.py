@@ -59,6 +59,10 @@ def register(user_name: str, password: str, age=20):
     user_handler.register(user_name, age)
 
 
+
+def change_password(user_name: str, old_password: str, new_password):
+    auth.change_password(user_name, old_password, new_password)
+
 # 2.4
 
 def login(user_name: str, password: str):
@@ -613,3 +617,6 @@ def delete_discount_policy(user_name, store, discount_name):
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
+
+def get_user_history_message(user_name):
+    return users.get_user_message_history(user_name)

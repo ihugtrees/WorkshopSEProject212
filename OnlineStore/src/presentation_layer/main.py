@@ -6,6 +6,7 @@ from OnlineStore.src.communication_layer import publisher
 # from OnlineStore.src.presentation_layer.utils import *
 from OnlineStore.src.communication_layer.publisher import *
 from OnlineStore.src.dto.cart_dto import CartDTO
+from OnlineStore.src.presentation_layer import convert_data
 
 app = Flask(__name__)
 # store = None
@@ -162,9 +163,15 @@ def signup():
         if username is not None and password is not None:
             ans = utils.register(username, password, age)
             return render_template("signup.html", message=display_answer(ans[1]))
-
-
     return render_template("signup.html")
+
+@app.route('/changePassword', methods=['POST', 'GET'])
+def changePassword():
+    if (request.method == 'POST'):
+        old_password = request.form.get("current_password")
+        new_password = request.form.get("new_password")
+        return render_template("changePassword.html", message=display_answer(utils.change_password(session["user"], old_password, new_password)[1]))
+    return render_template("changePassword.html")
 
 
 @app.route('/addstoremanager', methods=['POST', 'GET'])
@@ -289,6 +296,13 @@ def saveCart():
 @app.route('/showCart', methods=['POST', 'GET'])
 def showCart():
     return render_template("showCart.html", cart_list=convert_cartDTO_to_list_of_string(utils.get_cart_info(session['user'])))
+
+
+@app.route('/messageBox', methods=['POST', 'GET'])
+def messageBox():
+    ans = utils.get_user_history_message(session["user"])
+    return render_template("messageBox.html", message_list=convert_data.convert_messages
+    (ans[1]))
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():
