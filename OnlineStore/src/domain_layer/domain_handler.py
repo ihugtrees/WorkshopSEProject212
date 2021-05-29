@@ -285,8 +285,8 @@ def logout(user_name_hash):
     """
     user_name = auth.get_username_from_hash(user_name_hash)
     permission_handler.is_permmited_to(user_name=user_name, action=Action.LOGOUT.value)
-    auth.logout(hash_user_name)  #   דייייייי
-    # user_handler.logout(user_name)
+    auth.logout(user_name_hash)
+    user_handler.logout(user_name)
 
 
 # 3.2, think about arguments and preconditions
