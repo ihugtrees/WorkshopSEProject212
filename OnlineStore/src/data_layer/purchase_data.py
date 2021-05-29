@@ -19,7 +19,7 @@ def get_user_purchases(user_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
         if purchase.user_name == user_name:
-            purchase_list.append(purchase)
+            purchase_list.append(vars(purchase))
     return purchase_list
 
 
@@ -27,7 +27,7 @@ def get_store_purchases(store_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
         if purchase.store_name == store_name:
-            purchase_list.append(purchase)
+            purchase_list.append(vars(purchase))
     return purchase_list
 
 

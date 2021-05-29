@@ -1,10 +1,9 @@
 from flask import (Flask, render_template, request, redirect, session)
-from flask_socketio import SocketIO, send, join_room
+from flask_socketio import SocketIO, join_room
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
 # from OnlineStore.src.presentation_layer.utils import *
-from OnlineStore.src.communication_layer.publisher import *
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
 
@@ -67,7 +66,8 @@ def display_answer(ans):
 def web_login():
     if request.method == 'POST':
         if 'user' in session and session['user'] is not None:
-            return redirect('/wronglogin')  # maybe bug
+            pass
+            # return redirect('/wronglogin')  # maybe bug
         username = request.form.get('username')
         password = request.form.get('password')
         username_hash = utils.log_in(username, password)
@@ -173,12 +173,14 @@ def signup():
 
     return render_template("signup.html")
 
+
 @app.route('/changePassword', methods=['POST', 'GET'])
 def changePassword():
     if (request.method == 'POST'):
         old_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
-        return render_template("changePassword.html", message=display_answer(utils.change_password(session["user"], old_password, new_password)[1]))
+        return render_template("changePassword.html", message=display_answer(
+            utils.change_password(session["user"], old_password, new_password)[1]))
     return render_template("changePassword.html")
 
 
@@ -327,12 +329,12 @@ def showCart():
                            cart_list=convert_cartDTO_to_list_of_string(utils.get_cart_info(session['user'])))
 
 
-
 @app.route('/messageBox', methods=['POST', 'GET'])
 def messageBox():
     ans = utils.get_user_history_message(session["user"])
     return render_template("messageBox.html", message_list=convert_data.convert_messages
     (ans[1]))
+
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():
@@ -414,16 +416,24 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    purchase_list = utils.get_user_purchases_history(session['user'])[1]
-    return render_template("pastPurchases.html", purchase_list=purchase_list)
+    purchase_list = utils.get_user_purchases_history(session['user'])
+    if purchase_list[0]:
+        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list)
+    else:
+        return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeid = request.form.get('storeid')
-        return render_template("pastStorePurchases.html",
-                               message=display_answer(utils.get_store_purchase_history(session["user"], storeid)))
+        purchase_list = utils.get_store_purchase_history(session["user"], storeid)
+        if purchase_list[0]:
+            return render_template("pastStorePurchases.html",
+                                   message="Purchase history", purchase_list=purchase_list[1])
+        else:
+            return render_template("pastStorePurchases.html", message="Error: " + purchase_list[1])
+
     return render_template("pastStorePurchases.html")
 
 
@@ -741,6 +751,8 @@ def initialize_system():
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.assign_store_manager(username_hash, niv, store_name)
 
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
     utils.log_out(username_hash)

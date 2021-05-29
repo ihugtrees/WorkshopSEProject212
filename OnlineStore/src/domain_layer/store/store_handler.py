@@ -47,7 +47,7 @@ class StoreHandler:
 
     def get_store_info(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        store_info = {"Store name: ": store.name, "Founder": store.store_founder, "Rating:": store.rating}
+        store_info = {"Store name:": store.name, "Founder": store.store_founder, "Rating:": store.rating}
         return store_info
 
     def get_store(self, store_name):

@@ -309,21 +309,17 @@ def open_store(store_name, user_name):
 
 
 # 3.7
-
 def get_user_purchases_history(user_name):
     """
     Gets all user purchase history
-
     :param user_name:
     :return: list of the purchase history
     """
-
     user_name = auth.get_username_from_hash(user_name)
     return purchase_handler.get_user_purchases(user_name)
 
 
 # 4.1.1
-
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
     Add new product to specific store's inventory

@@ -1,8 +1,8 @@
 from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
-# from OnlineStore.src.domain.store.buying_policy.buying_policy import BuyingPolicy
+# from OnlineStore.src.unit_tests.store.buying_policy.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.discont_policy.discount_policy import DiscountPolicy
-# from OnlineStore.src.domain.user.basket import Basket
-# from OnlineStore.src.domain.user.user import User
+# from OnlineStore.src.unit_tests.user.basket import Basket
+# from OnlineStore.src.unit_tests.user.user import User
 # from OnlineStore.src.domain_layer.store.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.inventory import Inventory
 from OnlineStore.src.domain_layer.user.basket import Basket

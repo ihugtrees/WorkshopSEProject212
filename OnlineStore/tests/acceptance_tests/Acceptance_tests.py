@@ -126,7 +126,7 @@ class TestService(TestCase):
         store_name = "store0"
         ans = service.get_store_info(store_name)
         self.assertTrue(ans[0], ans[1])
-        self.assertEqual(ans[1].name, store_name)
+        self.assertEqual(ans[1]["Store name:"], store_name)
         # {"store_name": store.name, "store_founder": store.store_founder,
         #  "buying_policy": store.buying_policy, "discount_policy": store.discount_policy}
 
@@ -367,6 +367,7 @@ class TestService(TestCase):
     def test_logout(self):  # 3.1
         user_name = "user_name1"
         user_name_hash = users_hash[user_name]
+        service.login(user_name, "password1")
         ans = service.logout(user_name_hash)
         try:
             user = users.get_user_by_name(user_name)
