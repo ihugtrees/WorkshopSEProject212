@@ -75,6 +75,8 @@ def web_login():
             # print(session['user'])
             return resp
         elif username_hash[1] == "User Already Logged In":
+            session['username'] = username
+            session['user'] = username_hash[1]
             return redirect('/dashboard')
         else:
             return redirect('/wronglogin')
