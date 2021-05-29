@@ -40,12 +40,14 @@ def add_purchase(purchase: Receipt) -> None:
     purchase_lock.release()
 
 
-def add_all_basket_purchases_to_history(cart: CartDTO, user_name):
+def add_all_basket_purchases_to_history(cart: CartDTO, user_name, user_handler, store_handler):
     for store_name, basket in cart.basket_dict.items():
         while True:
             try:
                 receipt = Receipt(get_random_string(20), user_name, store_name, basket.products_dict)
                 add_purchase(receipt)
+                user_handler.add_purchase_history(user_name, receipt)
+                store_handler.add_purchase_history(store_name, receipt)
                 return receipt
             except:
                 continue

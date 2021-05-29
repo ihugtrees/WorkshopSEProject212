@@ -247,9 +247,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         payment_adapter.pay_for_cart(payment_info, cart_sum)
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
-        receipt = purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
-        user_handler.add_purchase_history(user_name, receipt)
-        store_handler.add_purchase_history(receipt.store_name, receipt)
+        receipt = purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, user_handler, store_handler)
         for store_name in cart_dto.basket_dict.keys():
             publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name,
                                                       "buying product")
