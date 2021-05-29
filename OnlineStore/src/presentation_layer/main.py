@@ -29,8 +29,8 @@ def on_connect():
 
 @socketio.on('disconnect')
 def socket_disconnect():
-    if utils.is_user_guest(session["username"]):
-        utils.exit_the_site(session["username"])
+    # if utils.is_user_guest(session["username"]):
+    #     utils.exit_the_site(session["username"])
     print(f"Client {session['username']} disconnected")
 
 
