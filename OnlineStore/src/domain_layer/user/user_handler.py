@@ -31,7 +31,7 @@ class UserHandler:
 
     def register(self, user_name, age):
         self.lock.acquire()
-        user = User(user_name, Cart(), guest=False)
+        user = User(user_name, Cart(), guest=False, age=age)
         try:
             users.add_user(user)
             permissions.add_permission(user_name, REGISTERED_PERMMISIONS)

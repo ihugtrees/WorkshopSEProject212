@@ -7,7 +7,6 @@ from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.dto.product_dto import ProductDTO
-from OnlineStore.src.dto.store_dto import StoreDTO
 from OnlineStore.src.dto.user_dto import UserDTO
 
 
@@ -49,7 +48,8 @@ class StoreHandler:
 
     def get_store_info(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        return StoreDTO(store)
+        store_info = {"Store name: ": store.name, "Founder": store.store_founder, "Rating:": store.rating}
+        return store_info
 
     def get_store(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
@@ -95,7 +95,6 @@ class StoreHandler:
             money_sum += store.calculate_basket_sum(cart.basket_dict.get(store.name))
         return money_sum
 
-    ########## Search related functions ##########
     def get_stores_with_rating(self, rating):
         if rating is None:
             rating = 0
@@ -140,9 +139,9 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.category.find(category) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            raise Exception("Product does not exist in the store")
+            return "no product found"
         return product_list
 
     def search_product_by_name(self, name, filters):
@@ -150,9 +149,9 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.product_name.find(name) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            raise Exception("Product not found")
+            return "no product found"
         return product_list
 
     def search_product_by_keyword(self, keyword, filters):
@@ -160,12 +159,13 @@ class StoreHandler:
         for store in self.get_stores_with_rating(filters['srating']):
             for product in self.get_products_with_filters(store.name, filters):
                 if product.description.find(keyword) != -1:
-                    product_list.append(ProductDTO(product))
+                    product_list.append(vars(ProductDTO(product)))
+        if len(product_list) == 0:
+            return "no product found"
         return product_list
-    ########## Search related functions ##########
 
-    def add_discount(self, store, discount_name, discount_value, discount_term = None):
-        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term= discount_term)
+    def add_discount(self, store, discount_name, discount_value, discount_term=None):
+        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)
 
     def combine_discount(self, store, d1_name, d2_name, operator: str, new_name):
         return stores.get_store_by_name(store).combine_discount(d1_name, d2_name, operator, new_name)
@@ -177,7 +177,7 @@ class StoreHandler:
         return stores.get_store_by_name(store).delete_discount(discount_name)
 
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
-        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag= no_flag)
+        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
 
     def delete_buying_policy(self, store, policy_name):
         return stores.get_store_by_name(store).delete_buying_policy(policy_name)

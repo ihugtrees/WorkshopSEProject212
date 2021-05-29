@@ -1,4 +1,3 @@
-import OnlineStore.src.data_layer.users_data as usersdb
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
 logging = Logger()
@@ -41,7 +40,6 @@ def login(user_name: str, password: str):
     :param password: password
     :return: hashed user name (function as a session key)
     """
-
     try:
         logging.info("login " + user_name)
         user_name_hash = domain_handler.login(user_name, password)
@@ -73,11 +71,9 @@ def get_information_about_products(store_name: str):
 def get_store_info(store_name: str):
     """
     Get information about specific store (who are the owners contacts and more..)
-
     :param store_name: store name
     :return: Store
     """
-
     try:
         logging.info("get_store_info " + store_name)
         ans = domain_handler.get_store_info(store_name)
@@ -156,13 +152,12 @@ def search_product_by_category(category, filters):
 # 2.6.2
 def search_product_by_name(name, filters):
     """
-    Search specific product of a specific store
-
     :param name: product name
     :param filters: filters
     :return: product list
     """
     try:
+        logging.info("starting search product by name: " + name)
         return [True, domain_handler.search_product_by_name(name, filters)]
     except Exception as e:
         return [False, "bug, when searching by name " + e.args[0]]
@@ -301,12 +296,10 @@ def logout(user_name):
 # 3.2, think about arguments and preconditions
 def open_store(store_name, user_name):
     """
-
     :param store_name:
     :param user_name:
     :return:
     """
-
     try:
         logging.info("open_store user name: " + user_name + " store name: " + store_name)
         domain_handler.open_store(store_name, user_name)
@@ -338,13 +331,11 @@ def get_user_purchases_history(user_name):
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
     Add new product to specific store's inventory
-
     :param user_name: user name
     :param product_details: (dict) all the relevant data about the product
     :param store_name: store name
     :return: None
     """
-
     try:
         logging.info("add_new_product_to_store_inventory: store name: " + store_name)
         domain_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)

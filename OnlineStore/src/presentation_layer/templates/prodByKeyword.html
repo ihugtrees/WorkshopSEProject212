@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product Info</title>
-    <p>Product Info</p>
+    <title>Search products by Keyword</title>
+    <p>Search products by Keyword</p>
 </head>
 <body>
-    <form action="/prodByKeyword" method="POST">
-        <p>Enter key:</p>
-        <p><input type="text" name="key" /></p>
-        <p><input type="submit" value="submit" /></p>
-        <p>Products : {{products}}</p>
-        <p>{{warning}}</p>
+<form action="/prodByKeyword" method="POST">
+    <p>Enter keyword:</p>
+    <p><input type="text" name="key"/></p>
+    <p>Enter category:</p>
+    <p><input type="text" name="category"/></p>
+    <p>Enter minimum price:</p>
+    <p><input type="text" name="minprice"/></p>
+    <p>Enter maximum price:</p>
+    <p><input type="text" name="maxprice"/></p>
+    <p>Enter minimum product rating:</p>
+    <p><input type="text" name="prating"/></p>
+    <p>Enter minimum store rating:</p>
+    <p><input type="text" name="srating"/></p>
+    <p><input type="submit" value="submit"/></p>
+    <p>Products : {{products}}</p>
+    <p>{{warning}}</p>
 
 
-    </form>
-    <form action="/dashboard" method="GET">
-        <p><input type="submit" value="return to dashboard" /></p>
-    </form>
+</form>
+<form action="/dashboard" method="GET">
+    <p><input type="submit" value="return to dashboard"/></p>
+</form>
 </body>
 </html>

@@ -60,8 +60,7 @@ def display_answer(ans):
 def web_login():
     if request.method == 'POST':
         if 'user' in session and session['user'] is not None:
-            print("buuuuuug")
-            # return redirect('/wronglogin')
+            return redirect('/wronglogin')
         username = request.form.get('username')
         password = request.form.get('password')
         username_hash = utils.log_in(username, password)
@@ -219,7 +218,7 @@ def addStoreOwner():
 
 @app.route('/productInfo', methods=['POST', 'GET'])
 def productInfo():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeID = request.form.get('storeID')
         productID = request.form.get('productID')
         product = utils.find_product_by_id(productID, storeID)
@@ -233,50 +232,65 @@ def productInfo():
 def storeInfo():
     if (request.method == 'POST'):
         storeID = request.form.get('storeID')
-        storeInfo = utils.get_store_info(storeID)
-        if storeInfo is None:
-            return render_template("storeInfo.html", storeID=storeID, warning="Something went wrong...")
-        return render_template("storeInfo.html", storeID=storeID, storeInfo=storeInfo)
+        storeInfo = get_store_info(storeID)
+        if storeInfo[0]:
+            return render_template("storeInfo.html", storeID=storeID, storeInfo=storeInfo[1])
+        return render_template("storeInfo.html", storeID=storeID, warning="Something went wrong...")
     return render_template("storeInfo.html")
+  
+  
+@app.route('/prodByName', methods=['POST', 'GET'])
+def prodByName():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        category = request.form.get('category')
+        minprice = request.form.get('minprice')
+        maxprice = request.form.get('maxprice')
+        prating = request.form.get('prating')
+        srating = request.form.get('srating')
+        try:
+            filters = utils.create_filters(minprice, maxprice, prating, category, srating)
+        except Exception as e:
+            return render_template("prodByName.html", warning="prices and ratings must be numbers" + e.args[0])
+        products = search_product_by_name(name, filters)
+        if products[0]:
+            return render_template("prodByName.html", products=products[1])
+        else:
+            return render_template("prodByName.html", warning=products[1])
+    return render_template("prodByName.html")
 
 
 @app.route('/prodByCategory', methods=['POST', 'GET'])
 def prodByCategory():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         category = request.form.get('category')
-        products = utils.getProductsByFilter(category=category)
-        return render_template("prodByCategory.html", category=category, products=products)
+        minprice = request.form.get('minprice')
+        maxprice = request.form.get('maxprice')
+        prating = request.form.get('prating')
+        srating = request.form.get('srating')
+        products = utils.search_product_by_category(category, utils.create_filters(minprice, maxprice, prating, category, srating))
+        if products[0]:
+            return render_template("prodByCategory.html", products=products)
+        else:
+            return render_template("prodByCategory.html", warning=products[1])
     return render_template("prodByCategory.html")
-
-
-@app.route('/prodByName', methods=['POST', 'GET'])
-def prodByName():
-    if (request.method == 'POST'):
-        name = request.form.get('name')
-        products = utils.getProductsByFilter(name=name)
-        return render_template("prodByName.html", name=name, products=products)
-    return render_template("prodByName.html")
 
 
 @app.route('/prodByKeyword', methods=['POST', 'GET'])
 def prodByKeyword():
-    if (request.method == 'POST'):
-        key = request.form.get('key')
-        products = utils.getProductsByFilter(key=key)
-        return render_template("prodByKeyword.html", products=products)
-    return render_template("prodByKeyword.html")
-
-
-@app.route('/prodMultiFilter', methods=['POST', 'GET'])
-def prodMultiFilter():
-    if (request.method == 'POST'):
-        priceRange = request.form.get('priceRange')
-        rating = request.form.get('rating')
+    if request.method == 'POST':
+        key = request.form.get('key')\
         category = request.form.get('category')
-        storeRating = request.form.get('storeRating')
-        products = utils.getProductsByFilter(priceRange=priceRange, rating=rating, category=category, storeRating=storeRating)
-        return render_template("prodMultiFilter.html", products=products)
-    return render_template("prodMultiFilter.html")
+        minprice = request.form.get('minprice')
+        maxprice = request.form.get('maxprice')
+        prating = request.form.get('prating')
+        srating = request.form.get('srating')
+        products = utils.search_product_by_keyword(key, utils.create_filters(minprice, maxprice, prating, category, srating))
+        if products[0]:
+            return render_template("prodByKeyword.html", products=products)
+        else:
+            return render_template("prodByKeyword.html", warning=products[1])
+    return render_template("prodByKeyword.html")
 
 
 @app.route('/saveCart', methods=['POST', 'GET'])
