@@ -24,6 +24,16 @@ class Authentication:
             self._hash_to_name[username_hash] = username
             self._name_to_hash[username] = username_hash
 
+    def change_password(self, user_name, old_password, new_password):
+        if user_name not in self.passwords.values():
+            raise Exception("Error in user session")
+        if user_name != hashlib.sha256(old_password.encode()).hexdigest():
+            raise Exception("wrong password")
+        else:
+            self.passwords[self._hash_to_name[user_name]] = hashlib.sha256(new_password.encode()).hexdigest()
+
+
+
     def login(self, username, password) -> str:
         self.lock_rest.acquire()
 

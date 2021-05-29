@@ -1,6 +1,5 @@
-from OnlineStore.src.dto.user_dto import UserDTO
-from OnlineStore.src.domain_layer.permissions.user_permissions import UserPermissions
 import OnlineStore.src.data_layer.permissions_data as permissions
+from OnlineStore.src.domain_layer.permissions.user_permissions import UserPermissions
 
 
 class PermissionHandler:
@@ -14,6 +13,8 @@ class PermissionHandler:
         Args:
             user (UserDTO): The user that asks to do the action.
             action (int): The action num (from Action) the user wants to do.
+            :param user_name:
+            :param store_name:
         """
 
         user_permissions: UserPermissions = permissions.get_permissions_by_user_name(user_name)
@@ -27,7 +28,7 @@ class PermissionHandler:
 
     def is_working_in_store(self, user_name: str, store_name: str) -> None:
         permissions.get_permissions_by_user_name(user_name).is_working_in_store(store_name)
-    
+
     def remove_employee(self, to_remove: list, store_name: str):
         for store_employee_name in to_remove:
             permissions.get_permissions_by_user_name(store_employee_name).remove_employee(store_name)

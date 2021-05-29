@@ -1,6 +1,6 @@
 from OnlineStore.src.domain_layer.user.user import User
 
-users: dict = dict()
+users: dict = dict()   # key - user name, value User
 pending_messages: dict = dict()  # key: username, value: list of messages
 history_messages: dict = dict()
 
@@ -46,3 +46,8 @@ def add_message_to_history(username, message, event) -> None:
         history_messages[username] = list()
     history_messages[username].append({"message": message, "event": event})
 
+def get_user_message_history(user_name):
+    if user_name not in history_messages:
+        return list()
+    else:
+        return history_messages[user_name]

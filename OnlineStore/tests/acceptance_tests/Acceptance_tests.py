@@ -594,10 +594,10 @@ class TestService(TestCase):
 
     def test_register_sync(self):
         try:
-            t1 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t2 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t3 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t4 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t1 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t2 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t3 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t4 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
             t1.start()
             t2.start()
             t3.start()

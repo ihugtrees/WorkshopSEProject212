@@ -31,7 +31,7 @@ class UserHandler:
 
     def register(self, user_name, age):
         self.lock.acquire()
-        user = User(user_name, Cart(), guest=False)
+        user = User(user_name, Cart(), guest=False, age=age)
         try:
             users.add_user(user)
             permissions.add_permission(user_name, REGISTERED_PERMMISIONS)
@@ -126,3 +126,6 @@ class UserHandler:
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
+
+    def add_purchase_history(self, user_name, receipt):
+        users.get_user_by_name(user_name).add_purchase_history(receipt)

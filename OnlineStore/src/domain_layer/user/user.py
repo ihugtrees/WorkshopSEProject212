@@ -16,16 +16,6 @@ class User:
         self.msgs = None
         self.age = age
 
-    # def login(self):
-    #     if self.is_logged:
-    #         raise Exception("Already loggedIn")
-    #     self.is_logged = True
-
-    # def logout(self):
-    #     if not self.is_logged:
-    #         raise Exception("Already disconnected")
-    #     self.is_logged = False
-
     def is_admin(self):
         return self.is_admin
 
@@ -55,3 +45,6 @@ class User:
 
     def remove_store_from_appoint(self, store_name):
         self.appointed_to_store.remove_store_from_appoint(store_name)
+
+    def add_purchase_history(self, receipt):
+        self.purchase_history.add(receipt)
