@@ -45,16 +45,15 @@ def exit_the_site(guest_name):
 
 
 # 2.3
-
 def register(user_name: str, password: str, age=20):
     """
-    Registeres new user to the system
+    Registers new user to the system
 
+    :param age:
     :param user_name: user name
     :param password: password
     :return: None
     """
-
     auth.register(user_name, password)
     user_handler.register(user_name, age)
 
@@ -64,7 +63,6 @@ def change_password(user_name: str, old_password: str, new_password):
     auth.change_password(user_name, old_password, new_password)
 
 # 2.4
-
 def login(user_name: str, password: str):
     """
     Login registered user to the system
@@ -81,7 +79,6 @@ def login(user_name: str, password: str):
 
 
 # 2.5.0
-
 def get_information_about_products(store_name: str):
     """
     Gets all the products of a specific store
@@ -102,12 +99,10 @@ def get_store_info(store_name: str):
     :param store_name: store name
     :return: Store
     """
-
     return store_handler.get_store_info(store_name)
 
 
 # TODO DONT NEED THAT NEED TO CHECK WHY THERE IS GET STORE INFO
-
 def get_store(store_name: str):
     """
     Gets a specific store
@@ -146,7 +141,6 @@ def find_product_by_id(product_id, store_name):  # TODO SEARCH PRODUCT BY ID IF 
 
 
 # 2.6.1
-
 def search_product_by_category(category, filters):
     """
     :param category: product category
@@ -158,7 +152,6 @@ def search_product_by_category(category, filters):
 
 
 # 2.6.2
-
 def search_product_by_name(name, filters):
     """
     Search specific product of a specific store
@@ -171,7 +164,6 @@ def search_product_by_name(name, filters):
 
 
 # 2.6.3
-
 def search_product_by_keyword(keyword, filters):
     """
     :param keyword: product keyword
@@ -186,13 +178,11 @@ def search_product_by_keyword(keyword, filters):
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
 # 2.7
-
 def save_cart(user_name):
     pass
 
 
 # 2.8.1
-
 def get_cart_info(user_name):
     """
     Get information about the user cart
@@ -241,11 +231,10 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
     :return: None
     """
     user_name = auth.get_username_from_hash(user_name)
-    return user_handler.remove_product(user_name,store_name, product_id,quantity)
+    return user_handler.remove_product(user_name, store_name, product_id, quantity)
 
 
 # 2.9.0
-
 def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
@@ -270,9 +259,10 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         payment_adapter.pay_for_cart(payment_info, cart_sum)
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
-        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
+        receipt = purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, user_handler, store_handler)
         for store_name in cart_dto.basket_dict.keys():
-            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name, "buying product")
+            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name,
+                                                      "buying product")
         return date
     except Exception as e:
         if payment_done_delivery_done["quantity_taken"]:
@@ -286,18 +276,16 @@ def purchase(user_name: str, payment_info: dict, destination: str):
 
 # 3.1
 
-def logout(user_name):
+def logout(user_name_hash):
     """
     Logouts the registered user from the system
 
-    :param user_name: user name
+    :param user_name_hash: user name
     :return: None
     """
-
-    hash_user_name = user_name
-    user_name = auth.get_username_from_hash(user_name)
+    user_name = auth.get_username_from_hash(user_name_hash)
     permission_handler.is_permmited_to(user_name=user_name, action=Action.LOGOUT.value)
-    auth.logout(hash_user_name)
+    auth.logout(hash_user_name)  #   דייייייי
     # user_handler.logout(user_name)
 
 
@@ -339,7 +327,6 @@ def get_user_purchases_history(user_name):
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
     Add new product to specific store's inventory
-
     :param user_name: user name
     :param product_details: (dict) all the relevant data about the product
     :param store_name: store name
@@ -353,7 +340,6 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
 
 
 # 4.1.2
-
 def remove_product_from_store_inventory(user_name, product_id, store_name):
     """
     removes a @product_id from a store named @store_name
@@ -472,12 +458,14 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
-    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}", store_manager_name)
+    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}",
+                                       store_manager_name)
 
 
 def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
     remove_store_manager(user_name, store_manager_name, store_name)
     publisher.unsubscribe(store_manager_name, store_name)
+
 
 # 4.9.1
 
@@ -573,6 +561,7 @@ def add_term_discount(user_name, store, discount_name, discount_value, discount_
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
     return store_handler.add_discount(store, discount_name, discount_value, discount_term)
 
+
 def combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
@@ -594,11 +583,13 @@ def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
                                        store)  # TODO ask niv gadol for permissions
     store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
 
+
 def delete_policy(user_name, store, policy_name: str):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     store_handler.delete_buying_policy(store, policy_name)
+
 
 def show_buying_policy(user_name, store):
     user_name = auth.get_username_from_hash(user_name)
@@ -606,11 +597,13 @@ def show_buying_policy(user_name, store):
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.show_buying_policy(store)
 
+
 def show_discount_policy(user_name, store):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.show_discount_policy(store)
+
 
 def delete_discount_policy(user_name, store, discount_name):
     user_name = auth.get_username_from_hash(user_name)

@@ -237,11 +237,14 @@ def get_employee_details(user_name, store_name, employeeid):
 def get_employee_permissions(user_name, store_name, employeeid):
     return service.get_employee_permissions(user_name, store_name, employeeid)
 
-def userIsStoreOwner(user,storeID):
+
+def userIsStoreOwner(user, storeID):
     return True
 
-def userIsStoreManager(user,storeID):
+
+def userIsStoreManager(user, storeID):
     return True
+
 
 # import OnlineStore.src.service_layer.service as service
 
@@ -450,3 +453,29 @@ def userIsStoreManager(user,storeID):
 
 # def get_employee_permissions(user_name, store_name, employeeid):
 #     return service.get_employee_permissions(user_name, store_name, employeeid)
+
+def create_filters(minimum, maximum, prating, category, srating):
+    if not minimum:
+        minimum = 0
+    if not maximum:
+        maximum = None
+    else:
+        maximum = float(maximum)
+    if not prating:
+        prating = 0
+    if not srating:
+        srating = 0
+    return {"min": float(minimum), "max": maximum, "prating": float(prating), "category": category,
+            "srating": float(srating)}
+
+
+def search_product_by_category(category, filters):
+    return service.search_product_by_category(category, filters)
+
+
+def search_product_by_name(name, filters):
+    return service.search_product_by_name(name, filters)
+
+
+def search_product_by_keyword(keyword, filters):
+    return service.search_product_by_keyword(keyword, filters)

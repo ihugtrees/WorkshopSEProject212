@@ -1,7 +1,8 @@
-from OnlineStore.src.domain_layer.store.receipt import Receipt
-from OnlineStore.src.dto.cart_dto import CartDTO
-from OnlineStore.src.domain_layer.user.user_handler import get_random_string
 from threading import Lock
+
+from OnlineStore.src.domain_layer.store.receipt import Receipt
+from OnlineStore.src.domain_layer.user.user_handler import get_random_string
+from OnlineStore.src.dto.cart_dto import CartDTO
 
 purchases: dict = dict()
 purchase_lock = Lock()
@@ -39,12 +40,14 @@ def add_purchase(purchase: Receipt) -> None:
     purchase_lock.release()
 
 
-
-def add_all_basket_purchases_to_history(cart: CartDTO, user_name):
-    for store_name in cart.basket_dict.keys():
+def add_all_basket_purchases_to_history(cart: CartDTO, user_name, user_handler, store_handler):
+    for store_name, basket in cart.basket_dict.items():
         while True:
             try:
-                add_purchase(Receipt(get_random_string(20), user_name, store_name))
-                break
+                receipt = Receipt(get_random_string(20), user_name, store_name, basket.products_dict)
+                add_purchase(receipt)
+                user_handler.add_purchase_history(user_name, receipt)
+                store_handler.add_purchase_history(store_name, receipt)
+                return receipt
             except:
                 continue
