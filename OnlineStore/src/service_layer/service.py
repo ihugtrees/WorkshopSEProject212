@@ -31,6 +31,16 @@ def register(user_name: str, password: str, age):
         return [False, e.args[0]]
 
 
+def change_password(user_name: str, old_password: str, new_password):
+    try:
+        logging.info("change password from ***** to ***** " + user_name)
+        domain_handler.change_password(user_name, old_password, new_password)
+        return [True, "Password changed successfully"]
+    except Exception as e:
+        logging.error("fail in register: " + e.args[0])
+        return [False, e.args[0]]
+
+
 # 2.4
 def login(user_name: str, password: str):
     """
@@ -735,4 +745,12 @@ def delete_discount_policy(user_name, store, discount_name):
         return [True, domain_handler.delete_discount_policy(user_name, store, discount_name)]
     except Exception as e:
         logging.error("delete discount policy " + e.args[0])
+        return [False, e.args[0]]
+
+def get_user_history_message(user_name):
+    try:
+        logging.info("get message history of " + user_name)
+        return [True, domain_handler.get_user_history_message(user_name)]
+    except Exception as e:
+        logging.error("get message history " + e.args[0])
         return [False, e.args[0]]

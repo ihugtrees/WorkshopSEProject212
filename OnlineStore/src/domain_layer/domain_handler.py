@@ -1,4 +1,3 @@
-import OnlineStore.src.communication_layer.publisher as publisher
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.data_layer.store_data as stores
 import OnlineStore.src.data_layer.users_data as users
@@ -9,6 +8,7 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
+import OnlineStore.src.communication_layer.publisher as publisher
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -58,6 +58,10 @@ def register(user_name: str, password: str, age=20):
     user_handler.register(user_name, age)
 
 
+
+def change_password(user_name: str, old_password: str, new_password):
+    auth.change_password(user_name, old_password, new_password)
+
 # 2.4
 def login(user_name: str, password: str):
     """
@@ -67,6 +71,7 @@ def login(user_name: str, password: str):
     :param password: password
     :return: hashed user name (function as a session key)
     """
+
     user_name_hash = auth.login(user_name, password)
     # publisher.send_messages(user_name)
     # user_handler.login(user_name)
@@ -142,6 +147,7 @@ def search_product_by_category(category, filters):
     :param filters: filters
     :return: product list
     """
+
     return store_handler.search_product_by_category(category, filters)
 
 
@@ -164,7 +170,10 @@ def search_product_by_keyword(keyword, filters):
     :param filters: filters
     :return: product list
     """
-    return store_handler.search_product_by_keyword(keyword, filters)
+    product_list = store_handler.search_product_by_keyword(keyword, filters)
+    if len(product_list) == 0:
+        raise Exception("Product not found")
+    return product_list
 
 
 # TODO DOESNT NEED THAT FUNCTION MAYBE DELETE?
@@ -229,6 +238,9 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
+
+    :param delivery_success:
+    :param payment_success:
     :param destination: the address of the customer
     :param user_name: user name
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
@@ -320,6 +332,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     :param store_name: store name
     :return: None
     """
+
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_PRODUCT_TO_INVENTORY.value,
                                        store_name)
@@ -597,3 +610,6 @@ def delete_discount_policy(user_name, store, discount_name):
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
+
+def get_user_history_message(user_name):
+    return users.get_user_message_history(user_name)
