@@ -684,8 +684,9 @@ def initialize_system():
 
     utils.log_out(username_hash)
     utils.log_out(niv_hash)
+    utils.log_out(a_hash)
 
 
 if __name__ == '__main__':
     initialize_system()
-    socketio.run(app=app, debug=True,ssl_context=('cert.pem', 'key.pem'),port=8000)
+    socketio.run(app=app, debug=True)
