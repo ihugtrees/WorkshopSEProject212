@@ -232,7 +232,8 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 
     try:
         logging.info("add product to cart")
-        return [True, domain_handler.add_product_to_cart(user_name, product_id, int(quantity), store_name)]
+        domain_handler.add_product_to_cart(user_name, product_id, int(quantity), store_name)
+        return [True, "Success"]
     except Exception as e:
         logging.error("add product to cart fail: " + e.args[0])
         return [False, e.args[0]]
@@ -313,7 +314,7 @@ def open_store(store_name, user_name):
     try:
         logging.info("open_store user name: " + user_name + " store name: " + store_name)
         domain_handler.open_store(store_name, user_name)
-        return [True, None]
+        return [True, "Success"]
     except Exception as e:
         logging.error("open_store fail: " + e.args[0])
         return [False, e.args[0]]
@@ -349,7 +350,7 @@ def add_new_product_to_store_inventory(user_name, product_details, store_name):
     try:
         logging.info("add_new_product_to_store_inventory: store name: " + store_name)
         domain_handler.add_new_product_to_store_inventory(user_name, product_details, store_name)
-        return [True, None]
+        return [True, "Success"]
     except Exception as e:
         logging.error("add_new_product_to_store_inventory fail: " + e.args[0])
         return [False, "Add new product to store inventory fail: " + e.args[0]]
@@ -371,7 +372,7 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
     try:
         logging.info("remove product from store inventory: product ID: " + product_id)
         domain_handler.remove_product_from_store_inventory(user_name, product_id, store_name)
-        return [True, None]
+        return [True, "Success"]
     except Exception as e:
         logging.error("remove product from store inventory fail: " + e.args[0])
         return [False, "remove product from store inventory fail: " + e.args[0]]
@@ -393,7 +394,7 @@ def edit_product_description(user_name: str, product_description: str, store_nam
     try:
         logging.info("edit_product_details")
         domain_handler.edit_product_description(user_name, product_description, store_name, product_name)
-        return [True, None]
+        return [True, "Success"]
     except Exception as e:
         logging.error("edit_product_details fail: " + e.args[0])
         return [False, e.args[0]]
@@ -420,7 +421,7 @@ def assign_store_owner(user_name, new_store_owner_name, store_name):
     try:
         logging.info("assign store owner")
         domain_handler.assign_store_owner(user_name, new_store_owner_name, store_name)
-        return [True, None]
+        return [True, "Success"]
     except Exception as e:
         logging.error("assign store owner fail: " + e.args[0])
         return [False, "assign store owner fail: " + e.args[0]]
@@ -439,12 +440,12 @@ def remove_store_owner(user_name: str, store_manager_name: str, store_name: str)
     """
 
     try:
-        logging.info("remove_store_manager")
+        logging.info("remove store manager")
         domain_handler.remove_store_owner(user_name, store_manager_name, store_name)
-        return True, None
+        return [True, "Success"]
     except Exception as e:
-        logging.error("remove_store_manager " + e.args[0])
-        return False, e.args[0]
+        logging.error("remove store manager " + e.args[0])
+        return [False, e.args[0]]
 
 
 # 4.5
@@ -747,6 +748,24 @@ def delete_discount_policy(user_name, store, discount_name):
         logging.error("delete discount policy " + e.args[0])
         return [False, e.args[0]]
 
+def is_store_owner(user_hash, store_name):
+    try:
+        logging.info("is store owner")
+        domain_handler.is_store_owner(user_hash, store_name)
+        return [True, "Success"]
+    except Exception as e:
+        logging.error("is store owner " + e.args[0])
+        return [False, e.args[0]]
+
+def is_store_manager(user_hash, store_name):
+    try:
+        logging.info("is store manager")
+        domain_handler.is_store_manager(user_hash, store_name)
+        return [True, "Success"]
+    except Exception as e:
+        logging.error("is store manager " + e.args[0])
+        return [False, e.args[0]]
+        
 def get_user_history_message(user_name):
     try:
         logging.info("get message history of " + user_name)

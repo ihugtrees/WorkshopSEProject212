@@ -3,9 +3,9 @@ class Appoint:
         self.__appointed_by_me = appointed_by_me if appointed_by_me is not None else dict()  # {store_name: (list[str] = list of all appointees}
 
     def is_appointed_by_me(self, store_name: str, appointee: str):
-        appointees: list = self.__appointed_by_me[store_name]
+        appointees: list = self.__appointed_by_me.get(store_name)
         if appointees is None or appointee not in appointees:
-            raise Exception("The user " + appointee + " not appointed by you!")
+            raise Exception("The user " + appointee + " was not appointed by you!")
 
     def assign_store_employee(self, new_store_owner_name: str, store_name: str) -> None:
         if self.__appointed_by_me.get(store_name) is None:

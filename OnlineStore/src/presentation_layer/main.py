@@ -3,23 +3,14 @@ from flask_socketio import SocketIO, send, join_room
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
-# from OnlineStore.src.presentation_layer.utils import *
-from OnlineStore.src.communication_layer.publisher import *
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
 
 app = Flask(__name__)
-# store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
 socketio = SocketIO(app)
 
-
-# app.config['SECRET_KEY'] = 'secret!'
-
-
-# dictionary to store information about users)
-# user = {"username": "abc", "password": "xyz"}
 
 @socketio.on('join')
 def on_join(data):
@@ -38,6 +29,8 @@ def on_connect():
 
 @socketio.on('disconnect')
 def socket_disconnect():
+    if utils.is_user_guest(session["username"]):
+        utils.exit_the_site(session["username"])
     print(f"Client {session['username']} disconnected")
 
 
@@ -79,6 +72,8 @@ def web_login():
             # print(session['user'])
             return resp
         elif username_hash[1] == "User Already Logged In":
+            session['username'] = username
+            session['user'] = username_hash[1]
             return redirect('/dashboard')
         else:
             return redirect('/wronglogin')
@@ -97,16 +92,17 @@ def dashboard():
     if request.method == 'POST' and 'user' in session and session['user'] is not None:
         user = session['user']
         storeID = request.form.get('storeID')
-        if (utils.userIsStoreOwner(user, storeID)):
+        resp = utils.userIsStoreOwner(user, storeID)
+        if(resp[0]):
             session["store"] = storeID
             return render_template("manageStoreOwner.html")
-        if (utils.userIsStoreManager(user, storeID)):
+        if(utils.userIsStoreManager(user,storeID)[0]):
             session["store"] = storeID
-            return render_template("manageStoreManager.html")
-        return render_template("signup.html")
+            return render_template("dashboardStoreManager.html")
+        return render_template("dashboard.html")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
-        return render_template("dashboard.html", message=session["store"])
+        return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
@@ -115,6 +111,7 @@ def guest_dashboard():
     ans = utils.get_into_site()
     if ans[0]:
         session['user'] = ans[1]
+        session['username'] = ans[1]
         return render_template("dashboardGuest.html")
     else:
         return redirect('/wronglogin')
@@ -152,6 +149,7 @@ def manageStoreManager():
 def logout():
     utils.log_out(session['user'])
     session['user'] = None
+    session['username'] = None
     return render_template("logout.html")
 
 
@@ -405,10 +403,11 @@ def openStore():
         storeName = request.form.get('storeName')
         # if(not availableStoreName(storeName)):
         #     return render_template("openStore.html",message= "Store name is not valid")
-        if (utils.open_store(storeName, session['user'])):
+        resp = utils.open_store(storeName, session['user'])
+        if resp[0]:
             return render_template("openStore.html", message="New store has been added")
         else:
-            return render_template("openStore.html", message="Something went wrong... try again")
+            return render_template("openStore.html", message=resp[1])
     return render_template("openStore.html")
 
 
@@ -724,11 +723,14 @@ def initialize_system():
     admin = "admin"
     niv = "niv"
     a = "a"
+    manager1 = "manager1"
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
+    utils.register(manager1, manager1, 20)
     username_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
+    a_hash = utils.log_in(a, a)[1]
 
     utils.open_store(store_name, username_hash)
     utils.assign_store_owner(username_hash, a, store_name)
@@ -739,12 +741,14 @@ def initialize_system():
     utils.add_simple_discount(username_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=username_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.assign_store_manager(username_hash, niv, store_name)
+    utils.assign_store_owner(a_hash, niv, store_name)
+    utils.assign_store_manager(a_hash, manager1, store_name)
 
     # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
     utils.log_out(username_hash)
     utils.log_out(niv_hash)
+    utils.log_out(a_hash)
 
 
 if __name__ == '__main__':

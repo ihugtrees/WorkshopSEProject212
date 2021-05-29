@@ -40,7 +40,7 @@ def exit_the_site(guest_name):
     :param guest_name: guest name
     :return: None
     """
-
+    auth.remove_guest(guest_name)
     return user_handler.exit_the_site(guest_name)
 
 
@@ -611,6 +611,14 @@ def delete_discount_policy(user_name, store, discount_name):
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
 
+
+def is_store_owner(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_owner(user_name, store_name)
+    
+def is_store_manager(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_manager(user_name, store_name)
 
 def get_user_history_message(user_name):
     return users.get_user_message_history(user_name)
