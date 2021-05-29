@@ -11,7 +11,6 @@ from OnlineStore.src.dto.user_dto import UserDTO
 
 
 class StoreHandler:
-
     def __init__(self):
         self.lock = Lock()
 
@@ -184,3 +183,6 @@ class StoreHandler:
 
     def show_buying_policy(self, store):
         return stores.get_store_by_name(store).show_buying_policy()
+
+    def add_purchase_history(self, store_name, receipt):
+        stores.get_store_by_name(store_name).add_purchase_history(receipt)

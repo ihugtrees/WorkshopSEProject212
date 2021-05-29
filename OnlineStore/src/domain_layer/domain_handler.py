@@ -1,3 +1,4 @@
+import OnlineStore.src.communication_layer.publisher as publisher
 import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.data_layer.store_data as stores
 import OnlineStore.src.data_layer.users_data as users
@@ -8,7 +9,6 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
-import OnlineStore.src.communication_layer.publisher as publisher
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -222,17 +222,13 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
     :return: None
     """
     user_name = auth.get_username_from_hash(user_name)
-    return user_handler.remove_product(user_name,store_name, product_id,quantity)
+    return user_handler.remove_product(user_name, store_name, product_id, quantity)
 
 
 # 2.9.0
-
 def purchase(user_name: str, payment_info: dict, destination: str):
     """
     Purchase all the items in the cart
-
-    :param delivery_success:
-    :param payment_success:
     :param destination: the address of the customer
     :param user_name: user name
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
@@ -251,9 +247,12 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         payment_adapter.pay_for_cart(payment_info, cart_sum)
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
-        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
+        receipt = purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name)
+        user_handler.add_purchase_history(user_name, receipt)
+        store_handler.add_purchase_history(receipt.store_name, receipt)
         for store_name in cart_dto.basket_dict.keys():
-            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name, "buying product")
+            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name,
+                                                      "buying product")
         return date
     except Exception as e:
         if payment_done_delivery_done["quantity_taken"]:
@@ -448,12 +447,14 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
-    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}", store_manager_name)
+    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}",
+                                       store_manager_name)
 
 
 def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
     remove_store_manager(user_name, store_manager_name, store_name)
     publisher.unsubscribe(store_manager_name, store_name)
+
 
 # 4.9.1
 
@@ -549,6 +550,7 @@ def add_term_discount(user_name, store, discount_name, discount_value, discount_
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
     return store_handler.add_discount(store, discount_name, discount_value, discount_term)
 
+
 def combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value, store)
@@ -570,11 +572,13 @@ def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
                                        store)  # TODO ask niv gadol for permissions
     store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
 
+
 def delete_policy(user_name, store, policy_name: str):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     store_handler.delete_buying_policy(store, policy_name)
+
 
 def show_buying_policy(user_name, store):
     user_name = auth.get_username_from_hash(user_name)
@@ -582,11 +586,13 @@ def show_buying_policy(user_name, store):
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.show_buying_policy(store)
 
+
 def show_discount_policy(user_name, store):
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.show_discount_policy(store)
+
 
 def delete_discount_policy(user_name, store, discount_name):
     user_name = auth.get_username_from_hash(user_name)

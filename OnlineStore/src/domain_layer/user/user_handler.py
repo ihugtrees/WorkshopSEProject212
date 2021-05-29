@@ -126,3 +126,6 @@ class UserHandler:
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
+
+    def add_purchase_history(self, user_name, receipt):
+        users.get_user_by_name(user_name).add_purchase_history(receipt)
