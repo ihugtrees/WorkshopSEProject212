@@ -741,7 +741,7 @@ def initialize_system():
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.assign_store_manager(username_hash, niv, store_name)
 
-    # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
     utils.log_out(username_hash)
     utils.log_out(niv_hash)
