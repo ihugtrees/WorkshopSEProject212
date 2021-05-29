@@ -76,8 +76,10 @@ class StoreHandler:
         return stores
 
     def is_valid_for_purchase(self, cart: CartDTO, user: UserDTO):
+        ans = True
         for store in self.__get_stores_from_cart(cart):
-            store.is_policies_eligible(user)
+            ans = ans and store.is_policies_eligible(user)
+        return ans
 
     def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
@@ -164,6 +166,9 @@ class StoreHandler:
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):
         return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)
+
+    def combine_discount(self, store, d1_name, d2_name, operator: str, new_name):
+        return stores.get_store_by_name(store).combine_discount(d1_name, d2_name, operator, new_name)
 
     def show_discount_policy(self, store):
         return stores.get_store_by_name(store).show_discount()

@@ -6,28 +6,22 @@
 </head>
 <body>
     <form action="/addNewProduct" method="POST">
-        <p>Enter Store ID:</p>
-        <p><input type="text" name="storeID" /></p>
         <p>Enter Product ID:</p>
         <p><input type="text" name="productID" /></p>
         <p>Enter Product Name:</p>
         <p><input type="text" name="productName" /></p>
         <p>Enter Product Price:</p>
         <p><input type="text" name="productPrice" /></p>
-        <p>Enter Product Amout:</p>
-        <p><input type="text" name="productAmout" /></p>
+        <p>Enter Product Amount:</p>
+        <p><input type="text" name="productAmount" /></p>
         <p>Enter Product Description:</p>
         <p><input type="text" name="productDescription" /></p>
                 <p>Enter Product Category:</p>
         <p><input type="text" name="productCategory" /></p>
-                <p>Enter Product Discount Type:</p>
-        <p><input type="text" name="productDiscountType" /></p>
-                <p>Enter Product Buying Type:</p>
-        <p><input type="text" name="productBuyingType" /></p>
         <p><input type="submit" value="Add Product" /></p>
         <p>{{message}}</p>
     </form>
-    <form action="/dashboard" method="POST">
+    <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back To Dashboard" /></p>
     </form>
 

@@ -23,11 +23,11 @@ GUEST_NAME_LENGTH = 20
 
 class UserHandler:
     def __init__(self):
-        self.users_dict = dict()  # key-user_name, value - user
+        # self.users_dict = dict()  # key-user_name, value - user
         self.lock = Lock()
 
-    def print_users(self):
-        print(self.users_dict)
+    # def print_users(self):
+    #     print(self.users_dict)
 
     def register(self, user_name, age):
         self.lock.acquire()
@@ -43,6 +43,16 @@ class UserHandler:
     def get_cart_info(self, user_name) -> CartDTO:
         user = users.get_user_by_name(user_name)
         return CartDTO(user.cart)
+
+    # def login(self, user_name):
+    #     users.get_user_by_name(user_name).login()
+    #
+    # def logout(self, user_name):
+    #     users.get_user_by_name(user_name).logout()
+    # def get_cart_info_for_gui(self, user_name) -> CartDTO:
+    #     user = users.get_user_by_name(user_name)
+    #     ans = self.convert_cartDTO_to_string(CartDTO(user.cart))
+    #     return ans
 
     def login(self, user_name):
         users.get_user_by_name(user_name).login()
@@ -72,8 +82,8 @@ class UserHandler:
 
     def check_permission_to_open_store(self, user_name):
         user = users.get_user_by_name(user_name)
-        if user.is_logged is False:
-            raise Exception("the current user is not logged in, so he cannot open a store")
+        # if user.is_logged is False:
+        #     raise Exception("the current user is not logged in, so he cannot open a store")
 
     def get_user_purchase_history(self, user_name):
         user = users.get_user_by_name(user_name)

@@ -13,18 +13,26 @@ class DiscountPolicy:
                      discount_value_type: str = False):
         if discount_name in self.discount_dict:
             raise Exception("discount name already exist")
-        self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
-         discount_description_products=discount_value, discount_description_categories = discount_value_type),
+        if discount_term is None:
+            self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
+                                                              discount_description_products=discount_value,
+                                                              discount_description_categories=discount_value_type),
+                                                 "term: " + "None" + ", value: " + discount_value)
+        else:
+            self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
+            discount_description_products=discount_value, discount_description_categories = discount_value_type),
                                              "term: " + discount_term+ ", value: " + discount_value)
 
 
     def combine_discount(self, d1_name, d2_name, operator: str, new_name):
         if new_name in self.discount_dict:
             raise Exception("discount name already exist")
+        if d1_name not in self.discount_dict or d2_name not in self.discount_dict:
+            raise Exception("wrong discount name")
         t1 = self.discount_dict[d1_name]
         t2 = self.discount_dict[d2_name]
-        self.discount_dict[new_name] = (self.combine_discount_private(t1, t2, operator),
-                                        self.discount_dict[d1_name]+" "+ operator+ " "+ self.discount_dict[d2_name])
+        self.discount_dict[new_name] = (self.combine_discount_private(t1[0], t2[0], operator),
+                                        self.discount_dict[d1_name][1]+" "+ operator+ " "+ self.discount_dict[d2_name][1])
         self.discount_dict.pop(d1_name)
         self.discount_dict.pop(d2_name)
 

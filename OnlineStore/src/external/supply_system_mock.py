@@ -1,7 +1,5 @@
 import datetime
-
 from OnlineStore.src.dto.cart_dto import CartDTO
-
 
 # the supply system rejects all the deliveries to haifa
 

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add To Cart</title>
-    <p>Add To Cart</p>
+    <title>Remove From Cart</title>
+    <p>Remove From Cart</p>
 </head>
 <body>
     <form action="/removeFromCart" method="POST">
+        <p>Enter store name:</p>
+        <p><input type="text" name="storeID" /></p>
         <p>Enter product id:</p>
         <p><input type="text" name="productID" /></p>
         <p>Enter quantity:</p>

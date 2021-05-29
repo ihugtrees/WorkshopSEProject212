@@ -6,8 +6,6 @@
 </head>
 <body>
     <form action="/addPurchasePolicy" method="POST">
-        <p>Enter Store ID:</p>
-        <p><input type="text" name="storeID" /></p>
         <p>enter buying policy name:</p>
         <p><input type="text" name="buying policy name" /></p>
         <p>Enter Purchase Type Details:</p>
@@ -15,7 +13,7 @@
         <p><input type="submit" value="Add Purchase Policy" /></p>
         <p>{{message}}</p>
     </form>
-    <form action="/dashboard" method="POST">
+    <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back To Dashboard" /></p>
     </form>
 

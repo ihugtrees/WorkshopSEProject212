@@ -2,6 +2,7 @@ from OnlineStore.src.domain_layer.store.discont_policy.atomic_term import Atomic
 from OnlineStore.src.domain_layer.store.discont_policy.composite_discount_value import CompositeDiscountValue
 from OnlineStore.src.domain_layer.store.discont_policy.composite_term import CompositeTerm
 from OnlineStore.src.domain_layer.store.discont_policy.atomic_discount_value import DiscountValue, AtomicDiscountValue
+from OnlineStore.src.domain_layer.store.discont_policy.simple_term import SimpleTerm
 from OnlineStore.src.domain_layer.store.discont_policy.term import Term
 
 
@@ -17,7 +18,7 @@ class TermDiscount:
 
     def make_term_from_string(self, s_term: str):
         if s_term is None:
-            return None
+            return SimpleTerm()
         i = 0
         for i in range(len(s_term)):
             if s_term[i] == "O" and s_term[i + 1] == "R":
@@ -69,6 +70,9 @@ class TermDiscount:
 
     def make_products_disc_from_str(self, str_d: str, category_flag):
         dictP = dict()
+        if "-C" in str_d:
+            category_flag = True
+            str_d = str_d[3: len(str_d)]
         start_word = 0
         first_Word = ""
         is_fist = True
@@ -87,7 +91,7 @@ class TermDiscount:
 
     def calc_term(self, basketDTO):
         if self.term is None:
-            return Term # supose to be return true
+            return True # maybe supose to be return Term?
         else:
             return self.term.calc_term(basketDTO)
 
