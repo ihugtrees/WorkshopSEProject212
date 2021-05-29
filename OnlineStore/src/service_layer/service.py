@@ -746,3 +746,21 @@ def delete_discount_policy(user_name, store, discount_name):
     except Exception as e:
         logging.error("delete discount policy " + e.args[0])
         return [False, e.args[0]]
+
+def is_store_owner(user_hash, store_name):
+    try:
+        logging.info("is store owner")
+        domain_handler.is_store_owner(user_hash, store_name)
+        return [True, "Success"]
+    except Exception as e:
+        logging.error("is store owner " + e.args[0])
+        return [False, e.args[0]]
+
+def is_store_manager(user_hash, store_name):
+    try:
+        logging.info("is store manager")
+        domain_handler.is_store_manager(user_hash, store_name)
+        return [True, "Success"]
+    except Exception as e:
+        logging.error("is store manager " + e.args[0])
+        return [False, e.args[0]]

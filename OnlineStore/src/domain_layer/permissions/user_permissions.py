@@ -34,3 +34,17 @@ class UserPermissions:
 
     def remove_employee(self, store_name):
         self.__permissions_in_store.pop(store_name)
+
+    def is_store_owner(self, store_name):
+        store_permissions = self.__permissions_in_store.get(store_name)
+        if store_permissions is None:
+            raise Exception(f"Not an employee of the store({store_name})")
+        if store_permissions & (1 << Action.IS_OWNER.value) == 0:
+            raise Exception(f"Not owner in the store({store_name})")
+
+    def is_store_manager(self, store_name):
+        store_permissions = self.__permissions_in_store.get(store_name)
+        if store_permissions is None:
+            raise Exception(f"Not an employee of the store({store_name})")
+        if store_permissions & (1 << Action.IS_MANAGER.value) == 0:
+            raise Exception(f"Not manager in the store({store_name})")

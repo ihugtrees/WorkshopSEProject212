@@ -613,3 +613,12 @@ def delete_discount_policy(user_name, store, discount_name):
     permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
+
+
+def is_store_owner(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_owner(user_name, store_name)
+    
+def is_store_manager(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_manager(user_name, store_name)

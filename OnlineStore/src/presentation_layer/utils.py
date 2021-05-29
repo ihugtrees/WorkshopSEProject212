@@ -234,11 +234,11 @@ def get_employee_details(user_name, store_name, employeeid):
 def get_employee_permissions(user_name, store_name, employeeid):
     return service.get_employee_permissions(user_name, store_name, employeeid)
 
-def userIsStoreOwner(user,storeID):
-    return True
+def userIsStoreOwner(user_hash, store_name):
+    return service.is_store_owner(user_hash, store_name)
 
-def userIsStoreManager(user,storeID):
-    return True
+def userIsStoreManager(user_hash, store_name):
+    return service.is_store_manager(user_hash, store_name)
 
 # import OnlineStore.src.service_layer.service as service
 

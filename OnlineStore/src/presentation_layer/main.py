@@ -3,22 +3,13 @@ from flask_socketio import SocketIO, send, join_room
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
-# from OnlineStore.src.presentation_layer.utils import *
-from OnlineStore.src.communication_layer.publisher import *
 from OnlineStore.src.dto.cart_dto import CartDTO
 
 app = Flask(__name__)
-# store = None
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
 socketio = SocketIO(app)
 
-
-# app.config['SECRET_KEY'] = 'secret!'
-
-
-# dictionary to store information about users)
-# user = {"username": "abc", "password": "xyz"}
 
 @socketio.on('join')
 def on_join(data):
@@ -95,13 +86,14 @@ def dashboard():
     if request.method == 'POST' and 'user' in session and session['user'] is not None:
         user = session['user']
         storeID = request.form.get('storeID')
-        if(utils.userIsStoreOwner(user,storeID)):
+        resp = utils.userIsStoreOwner(user, storeID)
+        if(resp[0]):
             session["store"] = storeID
             return render_template("manageStoreOwner.html")
-        if(utils.userIsStoreManager(user,storeID)):
+        if(utils.userIsStoreManager(user,storeID)[0]):
             session["store"] = storeID
-            return render_template("manageStoreManager.html")
-        return render_template("signup.html")
+            return render_template("dashboardStoreManager.html")
+        return render_template("dashboard.html")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
         return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
@@ -665,9 +657,11 @@ def initialize_system():
     admin = "admin"
     niv = "niv"
     a = "a"
+    manager1 = "manager1"
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
+    utils.register(manager1, manager1, 20)
     username_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
     a_hash = utils.log_in(a, a)[1]
@@ -681,6 +675,7 @@ def initialize_system():
     utils.add_product_to_cart(user_name=username_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.assign_store_owner(a_hash, niv, store_name)
+    utils.assign_store_manager(a_hash, manager1, store_name)
 
     # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 

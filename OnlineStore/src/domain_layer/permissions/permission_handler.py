@@ -31,3 +31,26 @@ class PermissionHandler:
     def remove_employee(self, to_remove: list, store_name: str):
         for store_employee_name in to_remove:
             permissions.get_permissions_by_user_name(store_employee_name).remove_employee(store_name)
+
+    # TODO MAYBE CHANGE TO GET ROLE IN STORE
+    def is_store_owner(self, user_name, store_name):
+        """
+        Raises an exception if not store owner
+
+        Args:
+            user_name (str):
+            store_name (str):
+        """
+        permissions.get_permissions_by_user_name(user_name).is_store_owner(store_name)
+
+    
+    # TODO MAYBE CHANGE TO GET ROLE IN STORE
+    def is_store_manager(self, user_name, store_name):
+        """
+        Raises an exception if not store manager
+
+        Args:
+            user_name (str):
+            store_name (str):
+        """
+        permissions.get_permissions_by_user_name(user_name).is_store_manager(store_name)
