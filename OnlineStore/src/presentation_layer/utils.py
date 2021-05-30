@@ -23,6 +23,7 @@ def log_out(username):
 def register(user_name, password, age):
     return service.register(user_name, password, age)
 
+
 def change_password(user_name, old_password, new_password):
     return service.change_password(user_name, old_password, new_password)
 
@@ -195,8 +196,10 @@ def delete_buying_policy(user_name, store_name, policy_name):
 def delete_discount_policy(user_name, store_name, discount_name):
     return service.delete_discount_policy(user_name, store_name, discount_name)
 
+
 def get_user_history_message(user_name):
     return service.get_user_history_message(user_name)
+
 
 def show_buying_policy(user_name, store):
     return service.show_buying_policy(user_name, store)
