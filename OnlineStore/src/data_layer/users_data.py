@@ -46,6 +46,7 @@ def add_message_to_history(username, message, event) -> None:
         history_messages[username] = list()
     history_messages[username].append({"message": message, "event": event})
 
+
 def get_user_message_history(user_name):
     if user_name not in history_messages:
         return list()

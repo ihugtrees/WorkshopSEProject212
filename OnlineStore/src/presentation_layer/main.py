@@ -330,8 +330,7 @@ def showCart():
 @app.route('/messageBox', methods=['POST', 'GET'])
 def messageBox():
     ans = utils.get_user_history_message(session["user"])
-    return render_template("messageBox.html", message_list=convert_data.convert_messages
-    (ans[1]))
+    return render_template("messageBox.html", message_list=convert_data.convert_messages(ans[1]))
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():

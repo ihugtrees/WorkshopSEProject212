@@ -624,4 +624,4 @@ def is_store_manager(user_hash, store_name):
     permission_handler.is_store_manager(user_name, store_name)
 
 def get_user_history_message(user_name):
-    return users.get_user_message_history(user_name)
+    return users.get_user_message_history(auth.get_username_from_hash(user_name))
