@@ -6,7 +6,7 @@ from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
 
-# import eventlet
+import eventlet
 # from gevent import monkey
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
@@ -757,7 +757,7 @@ def initialize_system():
 
 
 if __name__ == '__main__':
-    # eventlet.monkey_patch()
+    eventlet.monkey_patch()
     # monkey.patch_all()
     initialize_system()
     socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
