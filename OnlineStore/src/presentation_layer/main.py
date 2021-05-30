@@ -1,3 +1,4 @@
+import eventlet
 from flask import (Flask, render_template, request, redirect, session)
 from flask_socketio import SocketIO, join_room
 
@@ -6,7 +7,6 @@ from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
 
-import eventlet
 # from gevent import monkey
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
@@ -93,13 +93,13 @@ def wronglogin():
 def dashboard():
     if request.method == 'POST' and 'user' in session and session['user'] is not None:
         user = session['user']
-        storeID = request.form.get('storeID')
-        resp = utils.userIsStoreOwner(user, storeID)
-        if (resp[0]):
-            session["store"] = storeID
+        store_id = request.form.get('storeID')
+        resp = utils.userIsStoreOwner(user, store_id)
+        if resp[0]:
+            session["store"] = store_id
             return render_template("manageStoreOwner.html")
-        if (utils.userIsStoreManager(user, storeID)[0]):
-            session["store"] = storeID
+        if utils.userIsStoreManager(user, store_id)[0]:
+            session["store"] = store_id
             return render_template("dashboardStoreManager.html")
         return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
@@ -427,9 +427,8 @@ def pastPurchases():
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if request.method == 'POST':
-        storeid = request.form.get('storeid')
-        purchase_list = utils.get_store_purchase_history(session["user"], storeid)
+    if 'store' in session and session["store"] is not None:
+        purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
         if purchase_list[0]:
             return render_template("pastStorePurchases.html",
                                    message="Purchase history", purchase_list=purchase_list[1])
