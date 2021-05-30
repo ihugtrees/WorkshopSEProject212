@@ -140,7 +140,7 @@ class StoreHandler:
                 if product.category.find(category) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def search_product_by_name(self, name, filters):
@@ -150,7 +150,7 @@ class StoreHandler:
                 if product.product_name.find(name) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def search_product_by_keyword(self, keyword, filters):
@@ -160,7 +160,7 @@ class StoreHandler:
                 if product.description.find(keyword) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):

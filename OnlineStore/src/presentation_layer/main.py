@@ -291,7 +291,7 @@ def prodByCategory():
                                                     utils.create_filters(minprice, maxprice, prating, category,
                                                                          srating))
         if products[0]:
-            return render_template("prodByCategory.html", products=products)
+            return render_template("prodByCategory.html", products=products[1])
         else:
             return render_template("prodByCategory.html", warning=products[1])
     return render_template("prodByCategory.html")
@@ -309,7 +309,7 @@ def prodByKeyword():
         products = utils.search_product_by_keyword(key,
                                                    utils.create_filters(minprice, maxprice, prating, category, srating))
         if products[0]:
-            return render_template("prodByKeyword.html", products=products)
+            return render_template("prodByKeyword.html", products=products[1])
         else:
             return render_template("prodByKeyword.html", warning=products[1])
     return render_template("prodByKeyword.html")

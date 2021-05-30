@@ -14,6 +14,7 @@ import OnlineStore.src.data_layer.store_data as stores
 product_id: int = 0
 users_hash: dict = dict()
 
+filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
 
 def take_info(user_name, store_name):
     cart = service.get_cart_info(user_name)[1]
@@ -33,12 +34,12 @@ class TestService(TestCase):
             user_name = "user_name" + str(i)
             password = "password" + str(i)
             store_name = "store" + str(i)
-            service.register(user_name, password, 20)[0]
+            service.register(user_name, password, 20)
 
             user_name_hash = service.login(user_name, password)[1]
             users_hash[user_name] = user_name_hash
 
-            service.open_store(store_name, user_name_hash)[0]
+            service.open_store(store_name, user_name_hash)
             product = {
                 "product_id": "product",
                 "product_name": "product",
@@ -148,25 +149,22 @@ class TestService(TestCase):
         self.assertTrue(quantity == 10, quantity)
 
     def test_search_product_by_category(self):  # 2.6.1
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans = service.search_product_by_category("dogs", filters)
-        self.assertFalse(ans[0], ans[1])
-        ans2, product_list = service.search_product_by_category("null", filters)
-        self.assertTrue(ans2 and (len(product_list) == product_id), product_list)
+        self.assertFalse(ans[0])
+        ans = service.search_product_by_category("null", filters)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_search_product_by_name(self):  # 2.6.2
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
-        ans, result = service.search_product_by_name("not exist", filters)
-        self.assertFalse(ans)
-        ans2, result = service.search_product_by_name("product", filters)
-        self.assertTrue(ans2 and result[0].quantity == 10, result)
+        ans = service.search_product_by_name("not exist", filters)
+        self.assertFalse(ans[0])
+        ans = service.search_product_by_name("product", filters)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_search_product_by_keyword(self):  # 2.6.3
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans = service.search_product_by_keyword("not exist", filters)
-        self.assertFalse(ans[0], ans[1])
+        self.assertFalse(ans[0])
         ans = service.search_product_by_name("", filters)
-        self.assertTrue(ans[0] and ans[1][0].quantity == 10)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_add_product_to_cart(self):  # 2.7
         store_name = "store1"
@@ -367,7 +365,7 @@ class TestService(TestCase):
     def test_logout(self):  # 3.1
         user_name = "user_name1"
         user_name_hash = users_hash[user_name]
-        service.login(user_name, "password1")
+        # service.login(user_name_hash, "password1")
         ans = service.logout(user_name_hash)
         try:
             user = users.get_user_by_name(user_name)
