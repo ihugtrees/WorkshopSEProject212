@@ -44,16 +44,6 @@ class UserHandler:
         user = users.get_user_by_name(user_name)
         return CartDTO(user.cart)
 
-    # def login(self, user_name):
-    #     users.get_user_by_name(user_name).login()
-    #
-    # def logout(self, user_name):
-    #     users.get_user_by_name(user_name).logout()
-    # def get_cart_info_for_gui(self, user_name) -> CartDTO:
-    #     user = users.get_user_by_name(user_name)
-    #     ans = self.convert_cartDTO_to_string(CartDTO(user.cart))
-    #     return ans
-
     def login(self, user_name):
         users.get_user_by_name(user_name).login()
 
@@ -84,10 +74,6 @@ class UserHandler:
         user = users.get_user_by_name(user_name)
         # if user.is_logged is False:
         #     raise Exception("the current user is not logged in, so he cannot open a store")
-
-    def get_user_purchase_history(self, user_name):
-        user = users.get_user_by_name(user_name)
-        return user.get_purchase_history()
 
     def get_employee_information(self, employee_name: str):
         return self.get_user_dto_by_name(employee_name)
@@ -126,6 +112,3 @@ class UserHandler:
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
-
-    def add_purchase_history(self, user_name, receipt):
-        users.get_user_by_name(user_name).add_purchase_history(receipt)

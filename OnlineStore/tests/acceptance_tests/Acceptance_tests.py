@@ -397,7 +397,7 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
 
         ans = service.get_user_purchases_history(user_name)
-        self.assertTrue(ans[0] and (len(ans[1]) == 0), ans[1])
+        self.assertTrue(((ans[0] and (len(ans[1]) == 0)) or not ans[0]), ans[1])
 
         ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
         self.assertTrue(ans[0], ans[1])
@@ -644,7 +644,8 @@ class TestService(TestCase):
         users.users = dict()
         users.pending_messages = dict()
         users.history_messages = dict()
-        purchases.purchases = dict()
+        purchases.user_purchases = dict()
+        purchases.store_purchases = dict()
         stores.store_dict = dict()
         domain_handler.auth = Authentication()
         permissions.permissions = dict()
