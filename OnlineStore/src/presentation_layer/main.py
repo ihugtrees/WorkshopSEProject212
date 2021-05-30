@@ -5,9 +5,8 @@ import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
-import eventlet
-eventlet.monkey_patch()
-
+# import eventlet
+# from gevent import monkey
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
@@ -101,7 +100,7 @@ def dashboard():
         if(utils.userIsStoreManager(user,storeID)[0]):
             session["store"] = storeID
             return render_template("dashboardStoreManager.html")
-        return render_template("dashboard.html")
+        return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
         return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
@@ -754,6 +753,8 @@ def initialize_system():
 
 
 if __name__ == '__main__':
+    # eventlet.monkey_patch()
+    # monkey.patch_all()
     initialize_system()
     socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
     # socketio.run(app=app, debug=True)
