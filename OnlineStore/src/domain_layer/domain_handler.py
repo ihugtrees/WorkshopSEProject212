@@ -41,7 +41,7 @@ def exit_the_site(guest_name):
     :param guest_name: guest name
     :return: None
     """
-
+    auth.remove_guest(guest_name)
     return user_handler.exit_the_site(guest_name)
 
 
@@ -469,13 +469,16 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
-    publisher.send_remove_employee_msg(f"{store_manager_name} has been removed from {store_name} by {user_name}",
-                                       store_manager_name)
-
+    for store_employee_name in to_remove:
+        publisher.send_remove_employee_msg(f"You are no longer an employee in {store_name} you have been removed by {user_name}",
+                                           store_employee_name)
+        try:
+            publisher.unsubscribe(store_employee_name, store_name)
+        except:
+            continue
 
 def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
     remove_store_manager(user_name, store_manager_name, store_name)
-    publisher.unsubscribe(store_manager_name, store_name)
 
 
 # 4.9.1
@@ -623,6 +626,14 @@ def delete_discount_policy(user_name, store, discount_name):
                                        store)  # TODO ask niv gadol for permissions
     return store_handler.delete_discount(store, discount_name)
 
+
+def is_store_owner(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_owner(user_name, store_name)
+    
+def is_store_manager(user_hash, store_name):
+    user_name = auth.get_username_from_hash(user_hash)
+    permission_handler.is_store_manager(user_name, store_name)
 
 def get_user_history_message(user_name):
     return users.get_user_message_history(user_name)
