@@ -5,9 +5,10 @@ import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.domain_layer.user.action as action
 from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
 from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
+from OnlineStore.src.domain_layer.store.receipt import Receipt
 from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
-from OnlineStore.src.domain_layer.user.user_handler import UserHandler
+from OnlineStore.src.domain_layer.user.user_handler import UserHandler, get_random_string
 from OnlineStore.src.security.authentication import Authentication
 
 user_handler = UserHandler()
@@ -236,6 +237,18 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 # 2.9.0
 def purchase(user_name: str, payment_info: dict, destination: str):
+    def add_to_history(cart_dto, user_name, total_sum, date):
+        for store_name, basket in cart_dto.basket_dict.items():
+            while True:
+                try:
+                    receipt = Receipt(get_random_string(20), user_name, store_name, total_sum, date,
+                                      basket.products_dict)
+                    user_handler.add_purchase_history(user_name, receipt)
+                    store_handler.add_purchase_history(store_name, receipt)
+                    return receipt
+                except:
+                    continue
+
     """
     Purchase all the items in the cart
 
@@ -259,7 +272,8 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         payment_adapter.pay_for_cart(payment_info, cart_sum)
         date = supply_adapter.supply_products_to_user(cart_dto, destination)
         user_handler.empty_cart(user_name)
-        receipt = purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, user_handler, store_handler)
+        # purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, user_handler, store_handler)
+        add_to_history(cart_dto, user_name, cart_sum, date)
         for store_name in cart_dto.basket_dict.keys():
             publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name,
                                                       "buying product")
@@ -316,8 +330,8 @@ def get_user_purchases_history(user_name):
     :return: list of the purchase history
     """
     user_name = auth.get_username_from_hash(user_name)
-    return purchase_handler.get_user_purchases(user_name)
-
+    # return purchase_handler.get_user_purchases(user_name)
+    return user_handler.get_user_purchase_history(user_name)
 
 # 4.1.1
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
@@ -513,8 +527,8 @@ def get_store_purchase_history(user_name, store_name):
 
     user_name = auth.get_username_from_hash(user_name)
     permission_handler.is_permmited_to(user_name, Action.STORE_PURCHASE_HISTORY.value, store_name)
-    return purchase_handler.get_store_purchases(store_name)
-
+    # return purchase_handler.get_store_purchases(store_name)
+    return store_handler.get_store_purchase_history(store_name)
 
 # 6.4.1
 

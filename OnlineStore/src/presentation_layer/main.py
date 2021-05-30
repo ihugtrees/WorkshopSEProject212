@@ -418,7 +418,7 @@ def openStore():
 def pastPurchases():
     purchase_list = utils.get_user_purchases_history(session['user'])
     if purchase_list[0]:
-        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list)
+        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
     else:
         return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
 

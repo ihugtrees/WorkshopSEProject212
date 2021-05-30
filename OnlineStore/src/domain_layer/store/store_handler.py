@@ -186,3 +186,7 @@ class StoreHandler:
 
     def add_purchase_history(self, store_name, receipt):
         stores.get_store_by_name(store_name).add_purchase_history(receipt)
+
+    def get_store_purchase_history(self, store_name):
+        store = stores.get_store_by_name(store_name)
+        return store.get_purchase_history()

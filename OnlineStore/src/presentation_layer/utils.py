@@ -130,12 +130,10 @@ def open_store(store_name, user_name):
 
 def get_user_purchases_history(user_name):
     return service.get_user_purchases_history(user_name)
-    # return "dsadsadsa"
 
 
 def get_store_purchase_history(user_name, store_name):
     return service.get_store_purchase_history(user_name, store_name)
-    # return "dsadsadsa"
 
 
 def add_new_product_to_store_inventory(user_name, product_id, product_name, price, quantity, description, store_name,
