@@ -10,8 +10,10 @@ import OnlineStore.src.service_layer.service as service
 def get_into_site():
     return service.get_into_site()
 
+
 def exit_the_site(guest_name):
     return service.exit_the_site(guest_name)
+
 
 def log_in(username, password):
     return service.login(username, password)
@@ -240,8 +242,10 @@ def get_employee_details(user_name, store_name, employeeid):
 def get_employee_permissions(user_name, store_name, employeeid):
     return service.get_employee_permissions(user_name, store_name, employeeid)
 
+
 def userIsStoreOwner(user_hash, store_name):
     return service.is_store_owner(user_hash, store_name)
+
 
 def userIsStoreManager(user_hash, store_name):
     return service.is_store_manager(user_hash, store_name)

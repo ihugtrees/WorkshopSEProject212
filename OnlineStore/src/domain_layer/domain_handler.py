@@ -5,10 +5,9 @@ import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.domain_layer.user.action as action
 from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
 from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
-from OnlineStore.src.data_layer.receipt import Receipt
 from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
-from OnlineStore.src.domain_layer.user.user_handler import UserHandler, get_random_string
+from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
 
 user_handler = UserHandler()
@@ -237,7 +236,6 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 # 2.9.0
 def purchase(user_name: str, payment_info: dict, destination: str):
-
     """
     Purchase all the items in the cart
 
@@ -458,12 +456,14 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
     permission_handler.remove_employee(to_remove, store_name)
     for store_employee_name in to_remove:
-        publisher.send_remove_employee_msg(f"You are no longer an employee in {store_name} you have been removed by {user_name}",
-                                           store_employee_name)
+        publisher.send_remove_employee_msg(
+            f"You are no longer an employee in {store_name} you have been removed by {user_name}",
+            store_employee_name)
         try:
             publisher.unsubscribe(store_employee_name, store_name)
         except:
             continue
+
 
 def remove_store_owner(user_name: str, store_manager_name: str, store_name: str):
     remove_store_manager(user_name, store_manager_name, store_name)
@@ -617,10 +617,12 @@ def delete_discount_policy(user_name, store, discount_name):
 def is_store_owner(user_hash, store_name):
     user_name = auth.get_username_from_hash(user_hash)
     permission_handler.is_store_owner(user_name, store_name)
-    
+
+
 def is_store_manager(user_hash, store_name):
     user_name = auth.get_username_from_hash(user_hash)
     permission_handler.is_store_manager(user_name, store_name)
+
 
 def get_user_history_message(user_name):
     return users.get_user_message_history(auth.get_username_from_hash(user_name))

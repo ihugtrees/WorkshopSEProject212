@@ -383,7 +383,7 @@ def checkout():
     # print(f"from checkout: {request.cookies.get('username')}")
     # print(f"from checkout: {session['user']}")
     price = utils.get_cart_info(session['user']).sum
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         cardNum = request.form.get('cardNum')
         payment_info = {"card_number": cardNum}
         delivery = request.form.get("delivery")
@@ -739,28 +739,28 @@ def initialize_system():
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
     utils.register(manager1, manager1, 20)
-    username_hash = utils.log_in(admin, admin)[1]
+    admin_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
     a_hash = utils.log_in(a, a)[1]
 
-    utils.open_store(store_name, username_hash)
-    utils.assign_store_owner(username_hash, a, store_name)
-    utils.add_new_product_to_store_inventory(username_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
-    utils.add_new_product_to_store_inventory(username_hash, "milk", "milk", 50, 50, "milk description", store_name,
+    utils.open_store(store_name, admin_hash)
+    utils.assign_store_owner(admin_hash, a, store_name)
+    utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
+    utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
                                              "milky")
-    utils.add_simple_discount(username_hash, store_name, "a", "milk 20")
-    utils.add_simple_discount(username_hash, store_name, "b", "milk 30")
-    utils.add_product_to_cart(user_name=username_hash, store_name=store_name, product_id="milk", quantity=4)
+    utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
+    utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
+    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.assign_store_owner(a_hash, niv, store_name)
     utils.assign_store_manager(a_hash, manager1, store_name)
 
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
-    utils.log_out(username_hash)
+    utils.log_out(admin_hash)
     utils.log_out(niv_hash)
     utils.log_out(a_hash)
 

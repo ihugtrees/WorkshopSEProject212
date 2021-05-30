@@ -15,7 +15,10 @@ class UserPurchaseHistory:
         self.lock.release()
 
     def get_purchase_history(self):
-        return self.purchases.values()
+        purchases = list()
+        for receipt in self.purchases.values():
+            purchases.append(vars(receipt))
+        return purchases
 
     def get_purchase_by_id(self, purchase_id: str):
         purchase = self.purchases.get(purchase_id)

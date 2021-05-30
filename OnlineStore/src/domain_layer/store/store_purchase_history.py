@@ -1,5 +1,7 @@
-from OnlineStore.src.data_layer.receipt import Receipt
 from threading import Lock
+
+from OnlineStore.src.data_layer.receipt import Receipt
+
 
 class StorePurchaseHistory:
     def __init__(self):
@@ -15,4 +17,7 @@ class StorePurchaseHistory:
         self.lock.release()
 
     def get_purchase_history(self):
-        return self.purchases.values()
+        purchases = list()
+        for receipt in self.purchases.values():
+            purchases.append(vars(receipt))
+        return purchases

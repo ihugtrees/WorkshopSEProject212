@@ -748,6 +748,7 @@ def delete_discount_policy(user_name, store, discount_name):
         logging.error("delete discount policy " + e.args[0])
         return [False, e.args[0]]
 
+
 def is_store_owner(user_hash, store_name):
     try:
         logging.info("is store owner")
@@ -757,6 +758,7 @@ def is_store_owner(user_hash, store_name):
         logging.error("is store owner " + e.args[0])
         return [False, e.args[0]]
 
+
 def is_store_manager(user_hash, store_name):
     try:
         logging.info("is store manager")
@@ -765,6 +767,8 @@ def is_store_manager(user_hash, store_name):
     except Exception as e:
         logging.error("is store manager " + e.args[0])
         return [False, e.args[0]]
+
+
 def get_user_history_message(user_name):
     try:
         logging.info("get message history of " + user_name)
