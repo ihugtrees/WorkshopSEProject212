@@ -87,7 +87,7 @@ class UserHandler:
 
     def get_user_purchase_history(self, user_name):
         user = users.get_user_by_name(user_name)
-        return user.purchase_history
+        return user.get_purchase_history()
 
     def get_employee_information(self, employee_name: str):
         return self.get_user_dto_by_name(employee_name)

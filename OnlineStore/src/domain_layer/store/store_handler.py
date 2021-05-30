@@ -47,7 +47,7 @@ class StoreHandler:
 
     def get_store_info(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        store_info = {"Store name: ": store.name, "Founder": store.store_founder, "Rating:": store.rating}
+        store_info = {"Store name:": store.name, "Founder": store.store_founder, "Rating:": store.rating}
         return store_info
 
     def get_store(self, store_name):
@@ -140,7 +140,7 @@ class StoreHandler:
                 if product.category.find(category) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def search_product_by_name(self, name, filters):
@@ -150,7 +150,7 @@ class StoreHandler:
                 if product.product_name.find(name) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def search_product_by_keyword(self, keyword, filters):
@@ -160,7 +160,7 @@ class StoreHandler:
                 if product.description.find(keyword) != -1:
                     product_list.append(vars(ProductDTO(product)))
         if len(product_list) == 0:
-            return "no product found"
+            raise Exception("no product found")
         return product_list
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):
@@ -186,3 +186,7 @@ class StoreHandler:
 
     def add_purchase_history(self, store_name, receipt):
         stores.get_store_by_name(store_name).add_purchase_history(receipt)
+
+    def get_store_purchase_history(self, store_name):
+        store = stores.get_store_by_name(store_name)
+        return store.get_purchase_history()

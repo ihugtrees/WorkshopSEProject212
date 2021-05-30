@@ -1,10 +1,11 @@
 from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
-# from OnlineStore.src.domain.store.buying_policy.buying_policy import BuyingPolicy
+# from OnlineStore.src.unit_tests.store.buying_policy.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.discont_policy.discount_policy import DiscountPolicy
-# from OnlineStore.src.domain.user.basket import Basket
-# from OnlineStore.src.domain.user.user import User
+# from OnlineStore.src.unit_tests.user.basket import Basket
+# from OnlineStore.src.unit_tests.user.user import User
 # from OnlineStore.src.domain_layer.store.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.inventory import Inventory
+from OnlineStore.src.domain_layer.store.store_purchase_history import PurchaseHistory
 from OnlineStore.src.domain_layer.user.basket import Basket
 from OnlineStore.src.dto.user_dto import UserDTO
 
@@ -15,10 +16,10 @@ class Store:
         self.name = store_name
         self.store_founder = store_founder
         self.inventory = Inventory(dict())
+        self.rating = 0
         self.buying_policy: BuyingPolicy = buying_policy if buying_policy is not None else BuyingPolicy()
         self.discount_policy = discount_policy if discount_policy is not None else DiscountPolicy()
-        self.rating = 0
-        self.purchase_history = purchase_history if purchase_history is not None else list()  # list of Receipts
+        self.purchase_history = purchase_history if purchase_history is not None else PurchaseHistory()
 
     def remove_product_store(self, product_id):
         self.inventory.remove_product_inventory(product_id)
@@ -90,4 +91,7 @@ class Store:
         return ans
 
     def add_purchase_history(self, receipt):
-        self.purchase_history.append(receipt)
+        self.purchase_history.add_purchase(receipt)
+
+    def get_purchase_history(self):
+        return self.purchase_history.get_purchase_history()

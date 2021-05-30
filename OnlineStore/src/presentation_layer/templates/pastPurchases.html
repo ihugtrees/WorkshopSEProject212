@@ -3,16 +3,17 @@
 <head>
     <title>Past Purchases</title>
     <p>Past Purchases</p>
-      <ul>
-{% for user in purchase_list %}
-  <li><a href="#">{{ user }}</a></li>
-{% endfor %}
-</ul>
 </head>
 <body>
 <p>{{message}}</p>
-    <form action="/dashboard" method="GET">
-        <p><input type="submit" value="Back To Dashboard" /></p>
-    </form>
+<ul>
+    {% for user in purchase_list %}
+    <li>{{ user }}</a></li>
+    {% endfor %}
+</ul>
+
+<form action="/dashboard" method="GET">
+    <p><input type="submit" value="Back To Dashboard"/></p>
+</form>
 </body>
 </html>

@@ -292,7 +292,7 @@ def prodByCategory():
                                                     utils.create_filters(minprice, maxprice, prating, category,
                                                                          srating))
         if products[0]:
-            return render_template("prodByCategory.html", products=products)
+            return render_template("prodByCategory.html", products=products[1])
         else:
             return render_template("prodByCategory.html", warning=products[1])
     return render_template("prodByCategory.html")
@@ -310,7 +310,7 @@ def prodByKeyword():
         products = utils.search_product_by_keyword(key,
                                                    utils.create_filters(minprice, maxprice, prating, category, srating))
         if products[0]:
-            return render_template("prodByKeyword.html", products=products)
+            return render_template("prodByKeyword.html", products=products[1])
         else:
             return render_template("prodByKeyword.html", warning=products[1])
     return render_template("prodByKeyword.html")
@@ -418,16 +418,24 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    purchase_list = utils.get_user_purchases_history(session['user'])[1]
-    return render_template("pastPurchases.html", purchase_list=purchase_list)
+    purchase_list = utils.get_user_purchases_history(session['user'])
+    if purchase_list[0]:
+        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
+    else:
+        return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeid = request.form.get('storeid')
-        return render_template("pastStorePurchases.html",
-                               message=display_answer(utils.get_store_purchase_history(session["user"], storeid)))
+        purchase_list = utils.get_store_purchase_history(session["user"], storeid)
+        if purchase_list[0]:
+            return render_template("pastStorePurchases.html",
+                                   message="Purchase history", purchase_list=purchase_list[1])
+        else:
+            return render_template("pastStorePurchases.html", message="Error: " + purchase_list[1])
+
     return render_template("pastStorePurchases.html")
 
 
@@ -749,7 +757,9 @@ def initialize_system():
     utils.assign_store_owner(a_hash, niv, store_name)
     utils.assign_store_manager(a_hash, manager1, store_name)
 
-    # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
     utils.log_out(username_hash)
     utils.log_out(niv_hash)
