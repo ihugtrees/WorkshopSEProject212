@@ -1,6 +1,6 @@
 from threading import Lock
 
-from OnlineStore.src.domain_layer.store.receipt import Receipt
+from OnlineStore.src.data_layer.receipt import Receipt
 from OnlineStore.src.domain_layer.user.user_handler import get_random_string
 from OnlineStore.src.dto.cart_dto import CartDTO
 
@@ -19,7 +19,7 @@ def get_user_purchases(user_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
         if purchase.user_name == user_name:
-            purchase_list.append(purchase)
+            purchase_list.append(vars(purchase))
     return purchase_list
 
 
@@ -27,7 +27,7 @@ def get_store_purchases(store_name: str) -> list:
     purchase_list = list()
     for purchase in purchases.values():
         if purchase.store_name == store_name:
-            purchase_list.append(purchase)
+            purchase_list.append(vars(purchase))
     return purchase_list
 
 
