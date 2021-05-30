@@ -1,18 +1,15 @@
-from OnlineStore.src.domain_layer.user.user_purchase_history import PurchaseHistory
 from OnlineStore.src.domain_layer.user.appoint import *
 from OnlineStore.src.domain_layer.user.cart import Cart
 
 
 class User:
     def __init__(self, user_name: str, cart=None, is_admin=False,
-                 purchase_history=None,
                  appointed_to_store=None, guest=True,
                  age=20):
         self.user_name = user_name
         self.is_guest = guest
         self.cart = cart if cart is not None else Cart()
         self.is_admin = is_admin
-        self.purchase_history = purchase_history if purchase_history is not None else PurchaseHistory()
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
         self.age = age
 
@@ -45,9 +42,3 @@ class User:
 
     def remove_store_from_appoint(self, store_name):
         self.appointed_to_store.remove_store_from_appoint(store_name)
-
-    def add_purchase_history(self, receipt):
-        self.purchase_history.add_purchase(receipt)
-
-    def get_purchase_history(self):
-        return self.purchase_history.get_purchase_history()
