@@ -1,5 +1,6 @@
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
+
 logging = Logger()
 
 
@@ -324,11 +325,9 @@ def open_store(store_name, user_name):
 def get_user_purchases_history(user_name):
     """
     Gets all user purchase history
-
     :param user_name:
     :return: list of the purchase history
     """
-
     try:
         logging.info("get user purchases history: user name: " + user_name)
         return [True, domain_handler.get_user_purchases_history(user_name)]
@@ -688,8 +687,9 @@ def add_term_discount(user_name, store, discount_name, discount_value, discount_
 
 def combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name):
     try:
-        logging.info("combine discount " + discount_name1+ " "+ discount_name2)
-        return [True, domain_handler.combine_discount(user_name, store, discount_name1, discount_name2,operator, new_name)]
+        logging.info("combine discount " + discount_name1 + " " + discount_name2)
+        return [True,
+                domain_handler.combine_discount(user_name, store, discount_name1, discount_name2, operator, new_name)]
     except Exception as e:
         logging.error("combine discount " + e.args[0])
         return [False, e.args[0]]
@@ -765,7 +765,6 @@ def is_store_manager(user_hash, store_name):
     except Exception as e:
         logging.error("is store manager " + e.args[0])
         return [False, e.args[0]]
-        
 def get_user_history_message(user_name):
     try:
         logging.info("get message history of " + user_name)

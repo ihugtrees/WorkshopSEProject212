@@ -5,12 +5,20 @@
     <p>Past Purchases</p>
 </head>
 <body>
-    <form action="/pastStorePurchases" method="POST">
-        <p><input type="submit" value="Show Past Purchases" /></p>
-    </form>
-    <p>{{message}}</p>
-    <form action="/dashboard" method="GET">
-        <p><input type="submit" value="Back To Dashboard" /></p>
-    </form>
+<!--<form action="/pastStorePurchases" method="POST">-->
+<!--    <p>Enter Store ID:</p>-->
+<!--    <p><input type="text" name="storeid"/></p>-->
+<!--    <p><input type="submit" value="Show Past Purchases"/></p>-->
+<!--</form>-->
+
+<p>{{message}}</p>
+<ul>
+    {% for user in purchase_list %}
+    <li>{{ user }}</a></li>
+    {% endfor %}
+</ul>
+<form action="/dashboard" method="GET">
+    <p><input type="submit" value="Back To Dashboard"/></p>
+</form>
 </body>
 </html>

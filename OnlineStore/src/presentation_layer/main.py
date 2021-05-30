@@ -1,11 +1,12 @@
+import eventlet
 from flask import (Flask, render_template, request, redirect, session)
-from flask_socketio import SocketIO, send, join_room
+from flask_socketio import SocketIO, join_room
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
-# import eventlet
+
 # from gevent import monkey
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
@@ -92,18 +93,19 @@ def wronglogin():
 def dashboard():
     if request.method == 'POST' and 'user' in session and session['user'] is not None:
         user = session['user']
-        storeID = request.form.get('storeID')
-        resp = utils.userIsStoreOwner(user, storeID)
-        if(resp[0]):
-            session["store"] = storeID
+        store_id = request.form.get('storeID')
+        resp = utils.userIsStoreOwner(user, store_id)
+        if resp[0]:
+            session["store"] = store_id
             return render_template("manageStoreOwner.html")
-        if(utils.userIsStoreManager(user,storeID)[0]):
-            session["store"] = storeID
+        if utils.userIsStoreManager(user, store_id)[0]:
+            session["store"] = store_id
             return render_template("dashboardStoreManager.html")
         return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
-        return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
+        return render_template("dashboard.html", message=session["store"],
+                               welcome=f"Hi {session['username']} What would You like to do?")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
@@ -172,12 +174,14 @@ def signup():
 
     return render_template("signup.html")
 
+
 @app.route('/changePassword', methods=['POST', 'GET'])
 def changePassword():
     if (request.method == 'POST'):
         old_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
-        return render_template("changePassword.html", message=display_answer(utils.change_password(session["user"], old_password, new_password)[1]))
+        return render_template("changePassword.html", message=display_answer(
+            utils.change_password(session["user"], old_password, new_password)[1]))
     return render_template("changePassword.html")
 
 
@@ -288,7 +292,7 @@ def prodByCategory():
                                                     utils.create_filters(minprice, maxprice, prating, category,
                                                                          srating))
         if products[0]:
-            return render_template("prodByCategory.html", products=products)
+            return render_template("prodByCategory.html", products=products[1])
         else:
             return render_template("prodByCategory.html", warning=products[1])
     return render_template("prodByCategory.html")
@@ -306,7 +310,7 @@ def prodByKeyword():
         products = utils.search_product_by_keyword(key,
                                                    utils.create_filters(minprice, maxprice, prating, category, srating))
         if products[0]:
-            return render_template("prodByKeyword.html", products=products)
+            return render_template("prodByKeyword.html", products=products[1])
         else:
             return render_template("prodByKeyword.html", warning=products[1])
     return render_template("prodByKeyword.html")
@@ -326,11 +330,11 @@ def showCart():
                            cart_list=convert_cartDTO_to_list_of_string(utils.get_cart_info(session['user'])))
 
 
-
 @app.route('/messageBox', methods=['POST', 'GET'])
 def messageBox():
     ans = utils.get_user_history_message(session["user"])
     return render_template("messageBox.html", message_list=convert_data.convert_messages(ans[1]))
+
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():
@@ -413,16 +417,23 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    purchase_list = utils.get_user_purchases_history(session['user'])[1]
-    return render_template("pastPurchases.html", purchase_list=purchase_list)
+    purchase_list = utils.get_user_purchases_history(session['user'])
+    if purchase_list[0]:
+        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
+    else:
+        return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if (request.method == 'POST'):
-        storeid = request.form.get('storeid')
-        return render_template("pastStorePurchases.html",
-                               message=display_answer(utils.get_store_purchase_history(session["user"], storeid)))
+    if 'store' in session and session["store"] is not None:
+        purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
+        if purchase_list[0]:
+            return render_template("pastStorePurchases.html",
+                                   message="Purchase history", purchase_list=purchase_list[1])
+        else:
+            return render_template("pastStorePurchases.html", message="Error: " + purchase_list[1])
+
     return render_template("pastStorePurchases.html")
 
 
@@ -744,7 +755,9 @@ def initialize_system():
     utils.assign_store_owner(a_hash, niv, store_name)
     utils.assign_store_manager(a_hash, manager1, store_name)
 
-    # utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
 
     utils.log_out(username_hash)
     utils.log_out(niv_hash)
@@ -752,7 +765,7 @@ def initialize_system():
 
 
 if __name__ == '__main__':
-    # eventlet.monkey_patch()
+    eventlet.monkey_patch()
     # monkey.patch_all()
     initialize_system()
     socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
