@@ -1,10 +1,11 @@
 from flask import (Flask, render_template, request, redirect, session)
-from flask_socketio import SocketIO, send, join_room
+from flask_socketio import SocketIO, join_room
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
+
 # import eventlet
 # from gevent import monkey
 app = Flask(__name__)
@@ -94,16 +95,17 @@ def dashboard():
         user = session['user']
         storeID = request.form.get('storeID')
         resp = utils.userIsStoreOwner(user, storeID)
-        if(resp[0]):
+        if (resp[0]):
             session["store"] = storeID
             return render_template("manageStoreOwner.html")
-        if(utils.userIsStoreManager(user,storeID)[0]):
+        if (utils.userIsStoreManager(user, storeID)[0]):
             session["store"] = storeID
             return render_template("dashboardStoreManager.html")
         return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
         session["store"] = "None" if "store" not in session else session["store"]
-        return render_template("dashboard.html", message=session["store"], welcome=f"Hi {session['username']} What would You like to do?")
+        return render_template("dashboard.html", message=session["store"],
+                               welcome=f"Hi {session['username']} What would You like to do?")
     return '<h1>You are not logged in.</h1>'  # if the user is not in the session
 
 
@@ -172,12 +174,14 @@ def signup():
 
     return render_template("signup.html")
 
+
 @app.route('/changePassword', methods=['POST', 'GET'])
 def changePassword():
     if (request.method == 'POST'):
         old_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
-        return render_template("changePassword.html", message=display_answer(utils.change_password(session["user"], old_password, new_password)[1]))
+        return render_template("changePassword.html", message=display_answer(
+            utils.change_password(session["user"], old_password, new_password)[1]))
     return render_template("changePassword.html")
 
 
@@ -326,12 +330,12 @@ def showCart():
                            cart_list=convert_cartDTO_to_list_of_string(utils.get_cart_info(session['user'])))
 
 
-
 @app.route('/messageBox', methods=['POST', 'GET'])
 def messageBox():
     ans = utils.get_user_history_message(session["user"])
     return render_template("messageBox.html", message_list=convert_data.convert_messages
     (ans[1]))
+
 
 @app.route('/addToCart', methods=['POST', 'GET'])
 def addToCart():
