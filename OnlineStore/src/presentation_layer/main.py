@@ -5,6 +5,8 @@ import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.dto.cart_dto import CartDTO
 from OnlineStore.src.presentation_layer import convert_data
+import eventlet
+eventlet.monkey_patch()
 
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
@@ -14,24 +16,24 @@ socketio = SocketIO(app)
 
 @socketio.on('join')
 def on_join(data):
-    join_room(session['username'])
+    join_room(session.get('username'))
 
 
 @socketio.on('send messages')
 def on_send_messages(data):
-    publisher.send_messages(session['username'])
+    publisher.send_messages(session.get('username'))
 
 
 @socketio.on("connect")
 def on_connect():
-    print(f"Client {session['username']} connected")
+    print(f"Client {session.get('username')} connected")
 
 
 @socketio.on('disconnect')
 def socket_disconnect():
     # if utils.is_user_guest(session["username"]):
     #     utils.exit_the_site(session["username"])
-    print(f"Client {session['username']} disconnected")
+    print(f"Client {session.get('username')} disconnected")
 
 
 def convert_purchase_to_string(purchase):
@@ -59,8 +61,8 @@ def display_answer(ans):
 @app.route('/', methods=['POST', 'GET'])
 def web_login():
     if request.method == 'POST':
-        if 'user' in session and session['user'] is not None:
-            return redirect('/wronglogin')  # maybe bug
+        # if 'user' in session and session['user'] is not None:
+        #     return redirect('/wronglogin')  # maybe bug
         username = request.form.get('username')
         password = request.form.get('password')
         username_hash = utils.log_in(username, password)
@@ -753,4 +755,5 @@ def initialize_system():
 
 if __name__ == '__main__':
     initialize_system()
-    socketio.run(app=app, debug=True)
+    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    # socketio.run(app=app, debug=True)

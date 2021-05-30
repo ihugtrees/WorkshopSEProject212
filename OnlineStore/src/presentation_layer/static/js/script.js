@@ -1,7 +1,8 @@
 
 
 // const socket = io("ws://localhost:5000");
-const socket = io();
+const socket = io({secure: true});
+// var socket = io();
 socket.on('connect', function() {
     console.log("Connected to the server\n")
     socket.emit('join', {});

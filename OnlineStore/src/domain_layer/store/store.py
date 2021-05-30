@@ -90,4 +90,4 @@ class Store:
         return ans
 
     def add_purchase_history(self, receipt):
-        self.purchase_history.add(receipt)
+        self.purchase_history.append(receipt)
