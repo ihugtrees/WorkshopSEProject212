@@ -5,7 +5,7 @@ import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.domain_layer.user.action as action
 from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
 from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
-from OnlineStore.src.domain_layer.store.receipt import Receipt
+from OnlineStore.src.data_layer.receipt import Receipt
 from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler, get_random_string
@@ -333,6 +333,7 @@ def get_user_purchases_history(user_name):
     # return purchase_handler.get_user_purchases(user_name)
     return user_handler.get_user_purchase_history(user_name)
 
+
 # 4.1.1
 def add_new_product_to_store_inventory(user_name, product_details, store_name):
     """
@@ -529,6 +530,7 @@ def get_store_purchase_history(user_name, store_name):
     permission_handler.is_permmited_to(user_name, Action.STORE_PURCHASE_HISTORY.value, store_name)
     # return purchase_handler.get_store_purchases(store_name)
     return store_handler.get_store_purchase_history(store_name)
+
 
 # 6.4.1
 

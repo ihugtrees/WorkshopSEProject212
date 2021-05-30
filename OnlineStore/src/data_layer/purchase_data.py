@@ -1,6 +1,6 @@
 from threading import Lock
 
-from OnlineStore.src.domain_layer.store.receipt import Receipt
+from OnlineStore.src.data_layer.receipt import Receipt
 from OnlineStore.src.domain_layer.user.user_handler import get_random_string
 from OnlineStore.src.dto.cart_dto import CartDTO
 
