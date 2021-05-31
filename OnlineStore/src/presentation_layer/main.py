@@ -735,16 +735,22 @@ def initialize_system():
     niv = "niv"
     a = "a"
     manager1 = "manager1"
+    b = "b"
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
     utils.register(manager1, manager1, 20)
+    utils.register(b, b, 20)
     admin_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
     a_hash = utils.log_in(a, a)[1]
+    manager_hash = utils.log_in(manager1, manager1)[1]
 
+    utils.open_store("store1", manager_hash)
     utils.open_store(store_name, admin_hash)
     utils.assign_store_owner(admin_hash, a, store_name)
+    utils.assign_store_owner(a_hash, b, store_name)
+    utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
                                              "milky")
@@ -752,21 +758,21 @@ def initialize_system():
     utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.assign_store_owner(a_hash, niv, store_name)
-    utils.assign_store_manager(a_hash, manager1, store_name)
 
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 
-
+    utils.log_out(manager_hash)
     utils.log_out(admin_hash)
     utils.log_out(niv_hash)
     utils.log_out(a_hash)
 
 
 if __name__ == '__main__':
-    eventlet.monkey_patch()
+    # eventlet.monkey_patch()
     # monkey.patch_all()
     initialize_system()
     socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)

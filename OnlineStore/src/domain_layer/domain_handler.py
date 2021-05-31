@@ -9,6 +9,7 @@ from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
 from OnlineStore.src.security.authentication import Authentication
+from datetime import datetime
 
 user_handler = UserHandler()
 store_handler = StoreHandler()
@@ -261,7 +262,7 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         user_handler.empty_cart(user_name)
         purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, cart_sum, date, destination)
         for store_name in cart_dto.basket_dict.keys():
-            publisher.send_message_to_store_employees(f"{user_name} buy from {store_name}", store_name,
+            publisher.send_message_to_store_employees(f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store_name}) the following items:\n{cart_dto.basket_dict[store_name].products_dict}", store_name,
                                                       "buying product")
         return date
     except Exception as e:

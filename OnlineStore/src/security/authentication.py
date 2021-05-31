@@ -88,8 +88,12 @@ class Authentication:
         :param username:
         :return: The lock if logged in or None if not logged
         """
-        self.lock_rest.acquire()
-        if self.users[self._name_to_hash[username]] is True:
-            return self.lock_rest
-        self.lock_rest.release()
-        return None
+        try:
+            self.lock_rest.acquire()
+            if self.users[self._name_to_hash[username]] is True:
+                return self.lock_rest
+            self.lock_rest.release()
+            return None
+        except:
+            self.lock_rest.release()
+            return None
