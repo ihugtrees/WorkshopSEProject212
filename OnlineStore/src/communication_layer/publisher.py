@@ -1,9 +1,8 @@
 import flask
-from flask_socketio import send, emit
 
-from OnlineStore.src.data_layer import users_data
-import OnlineStore.src.domain_layer.domain_handler as domain_handler
 import OnlineStore.src.data_layer.users_data as user_data_handler
+import OnlineStore.src.domain_layer.domain_handler as domain_handler
+from OnlineStore.src.data_layer import users_data
 
 topics = dict()
 
@@ -37,8 +36,8 @@ def send_messages(username):
         messages = users_data.pop_user_messages(username)
         socket_io = flask.current_app.extensions['socketio']
         for message_dict in messages:
-            send_message(message=message_dict["message"],to=username,event=message_dict["event"])
-            #socket_io.emit(data=message_dict["message"], room=username, event=message_dict["event"])
+            send_message(message=message_dict["message"], to=username, event=message_dict["event"])
+            # socket_io.emit(data=message_dict["message"], room=username, event=message_dict["event"])
     except Exception as e:
         return
 
