@@ -6,26 +6,26 @@
 </head>
 <body>
 <h1>Manage Cart</h1>
-    <form action="/saveCart" method="GET">
-        <p><input type="submit" value="Save Cart" /></p>
-    </form>
-    <form action="/showCart" method="GET">
-        <p><input type="submit" value="Show Cart" /></p>
-    </form>
+<!--    <form action="/saveCart" method="GET">-->
+<!--        <p><input type="submit" value="Save Cart" /></p>-->
+<!--    </form>-->
+<form action="/showCart" method="POST">
+    <p><input type="submit" value="Show Cart"/></p>
+</form>
 <form action="/addToCart" method="GET">
-        <p><input type="submit" value="Add To Cart" /></p>
-    </form>
+    <p><input type="submit" value="Add To Cart"/></p>
+</form>
 <form action="/removeFromCart" method="GET">
-        <p><input type="submit" value="Remove From Cart" /></p>
-    </form>
+    <p><input type="submit" value="Remove From Cart"/></p>
+</form>
 <form action="/checkout" method="GET">
-        <p><input type="submit" value="Checkout" /></p>
-    </form>
+    <p><input type="submit" value="Checkout"/></p>
+</form>
 <form action="/pastPurchases" method="GET">
-        <p><input type="submit" value="Past Purchases" /></p>
-    </form>
-    <form action="/dashboard" method="POST">
-        <p><input type="submit" value="Back To Dashboard" /></p>
-    </form>
+    <p><input type="submit" value="Past Purchases"/></p>
+</form>
+<form action="/dashboard" method="GET">
+    <p><input type="submit" value="Back To Dashboard"/></p>
+</form>
 </body>
 </html>

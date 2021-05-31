@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>addstoremanagere</title>
+    <title>Add Store Managere</title>
     <p>Add Store Manager</p>
 </head>
 <body>
     <form action="/addstoremanager" method="POST">
-        <p>Enter Store ID:</p>
-        <p><input type="text" name="storeid" /></p>
         <p>Enter User ID:</p>
-        <p><input type="text" name="userid" /></p>
+        <p><input type="text" name="userid" autofocus="True" /></p>
         <p><input type="submit" value="Add Store Manager" /></p>
     </form>
-    <form action="/dashboard" method="POST">
+    <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back to Dashboard" /></p>
     </form>
     <p>{{message}}</p>

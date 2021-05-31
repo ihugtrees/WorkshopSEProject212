@@ -1,50 +1,57 @@
-from OnlineStore.src.domain.store.receipt import Receipt
-from OnlineStore.src.dto.cart_dto import CartDTO
-from OnlineStore.src.domain.user.user_handler import get_random_string
 from threading import Lock
 
-purchases: dict = dict()
+from OnlineStore.src.data_layer.receipt import Receipt
+from OnlineStore.src.domain_layer.store.store_purchase_history import StorePurchaseHistory
+from OnlineStore.src.domain_layer.user.user_handler import get_random_string
+from OnlineStore.src.domain_layer.user.user_purchase_history import UserPurchaseHistory
+from OnlineStore.src.dto.cart_dto import CartDTO
+
+user_purchases: dict = dict()
+store_purchases: dict = dict()
 purchase_lock = Lock()
 
 
-def get_purchase_by_id(purchase_id: str) -> Receipt:
-    purchase = purchases.get(purchase_id)
-    if purchase is None:
-        raise Exception("purchase does not exist")
-    return purchase
+def get_purchase_by_id(user_name: str, purchase_id: str) -> Receipt:
+    purchase_obj: UserPurchaseHistory = user_purchases.get(user_name)
+    if purchase_obj is None:
+        raise Exception(f"The {user_name} does not have any purchase history logged")
+    return purchase_obj.get_purchase_by_id(purchase_id)
 
 
-def get_user_purchases(user_name: str) -> list:
-    purchase_list = list()
-    for purchase in purchases.values():
-        if purchase.user_name == user_name:
-            purchase_list.append(purchase)
-    return purchase_list
+def get_user_purchase_history(user_name: str) -> list:
+    purchase_obj: UserPurchaseHistory = user_purchases.get(user_name)
+    if purchase_obj is None:
+        raise Exception(f"The {user_name} does not have any purchase history logged")
+    return purchase_obj.get_purchase_history()
 
 
-def get_store_purchases(store_name: str) -> list:
-    purchase_list = list()
-    for purchase in purchases.values():
-        if purchase.store_name == store_name:
-            purchase_list.append(purchase)
-    return purchase_list
+def get_store_history_purchases(store_name: str) -> list:
+    purchase_obj: StorePurchaseHistory = store_purchases.get(store_name)
+    if purchase_obj is None:
+        raise Exception(f"{store_name} does not have any purchase history logged")
+    return purchase_obj.get_purchase_history()
 
 
-def add_purchase(purchase: Receipt) -> None:
-    purchase_lock.acquire()
-    if purchase.receipt_id in purchases:
-        purchase_lock.release()
-        raise Exception("purchase id already exists")
-    purchases[purchase.receipt_id] = purchase
-    purchase_lock.release()
+def add_receipt(receipt: Receipt) -> None:
+    purchase_obj = user_purchases.get(receipt.user_name)
+    if purchase_obj is None:
+        purchase_obj = UserPurchaseHistory()
+    purchase_obj.add_purchase(receipt)
+    user_purchases[receipt.user_name] = purchase_obj
+    purchase_obj = store_purchases.get(receipt.store_name)
+    if purchase_obj is None:
+        purchase_obj = StorePurchaseHistory()
+    purchase_obj.add_purchase(receipt)
+    store_purchases[receipt.store_name] = purchase_obj
 
 
-
-def add_all_basket_purchases_to_history(cart: CartDTO, user_name):
-    for store_name in cart.basket_dict.keys():
+def add_all_basket_purchases_to_history(cart: CartDTO, user_name, cart_sum, date, destination):
+    for store_name, basket in cart.basket_dict.items():
         while True:
             try:
-                add_purchase(Receipt(get_random_string(20), user_name, store_name))
+                receipt = Receipt(get_random_string(20), user_name, store_name, cart_sum, date, destination,
+                                  basket.products_dict)
+                add_receipt(receipt)
                 break
             except:
                 continue

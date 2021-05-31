@@ -6,14 +6,12 @@
 </head>
 <body>
 <form action="/getEmployeePermissions" method="POST">
-        <p>Enter Store ID:</p>
-        <p><input type="text" name="storeid" /></p>
         <p>Enter Employee ID:</p>
-        <p><input type="text" name="employeeid" /></p>
+        <p><input type="text" name="employeeid" autofocus="True" /></p>
         <p><input type="submit" value="Show Employee Permissions" /></p>
     </form>
 <p>{{message}}</p>
-    <form action="/dashboard" method="POST">
+    <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back To Dashboard" /></p>
     </form>
 </body>

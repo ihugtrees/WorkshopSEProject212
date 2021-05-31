@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.user.basket import Basket
+from OnlineStore.src.domain_layer.user.basket import Basket
 
 
 class BasketDTO:

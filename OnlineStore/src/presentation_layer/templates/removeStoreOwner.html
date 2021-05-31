@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Remove Store Owner</title>
+    <h1>Remove Store Owner</h1>
+</head>
+<body>
+    <form action="/removeStoreOwner" method="POST">
+        <p>Enter User ID:</p>
+        <p><input type="text" name="userid" autofocus="True" /></p>
+        <p><input type="submit" value="Remove Store Owner" /></p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="Back to Dashboard" /></p>
+    </form>
+    <p>{{message}}</p>
+
+
+</body>
+</html>

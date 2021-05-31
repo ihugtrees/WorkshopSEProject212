@@ -1,10 +1,11 @@
 import threading
 from unittest import TestCase
-import OnlineStore.src.domain.domain_handler as domain_handler
-from OnlineStore.src.domain.store.store import Store
-from OnlineStore.src.service import service
+import OnlineStore.src.domain_layer.domain_handler as domain_handler
+from OnlineStore.src.communication_layer import publisher
+from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.service_layer import service
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.domain.store.buying_policy_mock import BuyingPolicyMock
+from OnlineStore.src.domain_layer.store.buying_policy_mock import BuyingPolicyMock
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.data_layer.purchase_data as purchases
 import OnlineStore.src.data_layer.permissions_data as permissions
@@ -13,6 +14,7 @@ import OnlineStore.src.data_layer.store_data as stores
 product_id: int = 0
 users_hash: dict = dict()
 
+filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
 
 def take_info(user_name, store_name):
     cart = service.get_cart_info(user_name)[1]
@@ -32,12 +34,12 @@ class TestService(TestCase):
             user_name = "user_name" + str(i)
             password = "password" + str(i)
             store_name = "store" + str(i)
-            service.register(user_name, password)[0]
+            service.register(user_name, password, 20)
 
             user_name_hash = service.login(user_name, password)[1]
             users_hash[user_name] = user_name_hash
 
-            service.open_store(store_name, user_name_hash)[0]
+            service.open_store(store_name, user_name_hash)
             product = {
                 "product_id": "product",
                 "product_name": "product",
@@ -52,35 +54,39 @@ class TestService(TestCase):
 
         service.logout(users_hash["user_name0"])
 
-        # for u in service.user_handler.users_dict.keys():
+        # for u in service_layer.user_handler.users_dict.keys():
         # print(u)
 
     def test_get_into_site(self):  # 2.1
         ans, user_name = service.get_into_site()
         self.assertTrue(ans)
-        ans = service.get_user_for_tests(user_name)[0]
-        self.assertTrue(ans)
+        try:
+            users.get_user_by_name(user_name)
+        except Exception as e:
+            self.fail(e.args[0])
 
     def test_exit_the_site(self):  # 2.2
         user_name = service.get_into_site()[1]
         ans1 = service.exit_the_site(user_name)[0]
         self.assertTrue(ans1)
-        ans = service.get_user_for_tests(user_name)[0]
-        self.assertFalse(ans)
+        with self.assertRaises(Exception):
+            users.get_user_by_name(user_name)
 
     def test_registered(self):  # 2.3
         user_name = "user_name10000"
         password = "1"
 
-        ans = service.register(user_name, password)
+        ans = service.register(user_name, password, 20)
         self.assertTrue(ans[0], ans[1])
-        user_name = service.login(user_name, password)[1]
+        service.login(user_name, password)[1]
 
-        ans2, user2 = service.get_user_for_tests(user_name)
-        self.assertTrue(ans2, user2)
+        try:
+            user2 = users.get_user_by_name(user_name)
+        except Exception as e:
+            self.fail(e.args[0])
         self.assertTrue(user2.user_name == "user_name10000")
 
-        ans = service.register("user_name10000", password)
+        ans = service.register("user_name10000", password, 20)
         self.assertFalse(ans[0], ans[1])
 
     def test_login(self):  # 2.4
@@ -88,14 +94,17 @@ class TestService(TestCase):
         password = "password0"
 
         ans = service.login(user_name, password)
-        user_name = ans[1]
         self.assertTrue(ans[0], ans[1])
 
-        ans2 = service.get_user_for_tests(user_name)
-        self.assertTrue(ans2[0] and ans2[1].is_logged)
+        try:
+            # ans2 = users.get_user_by_name(user_name)
+            # self.assertTrue(ans2.is_logged)
+            self.assertTrue(domain_handler.auth.authenticate_session(ans[1]) == None)
+        except Exception as e:
+            self.fail(e.args[0])
 
-        ans3 = service.login(user_name, password)[0]
-        self.assertFalse(ans3, "try to login when the user already connected")
+        ans3 = service.login(user_name, password)
+        self.assertFalse(ans3[0], ans3[1])
 
         ans4 = service.login(user_name, "wrong password")[0]
         self.assertFalse(ans4, "test: wrong password")
@@ -104,8 +113,8 @@ class TestService(TestCase):
         self.assertFalse(ans5, "test: bad name")
 
     # def test_test_login_sync(self):
-    #     t1 = threading.Thread(service.login, ("user_name5", "5",))
-    #     t2 = threading.Thread(service.login, ("user_name5", "5"))
+    #     t1 = threading.Thread(service_layer.login, ("user_name5", "5",))
+    #     t2 = threading.Thread(service_layer.login, ("user_name5", "5"))
 
     def test_get_information_about_products(self):  # 2.5
         store_name = "store0"
@@ -118,7 +127,7 @@ class TestService(TestCase):
         store_name = "store0"
         ans = service.get_store_info(store_name)
         self.assertTrue(ans[0], ans[1])
-        self.assertEqual(ans[1].name, store_name)
+        self.assertEqual(ans[1]["Store name:"], store_name)
         # {"store_name": store.name, "store_founder": store.store_founder,
         #  "buying_policy": store.buying_policy, "discount_policy": store.discount_policy}
 
@@ -140,47 +149,49 @@ class TestService(TestCase):
         self.assertTrue(quantity == 10, quantity)
 
     def test_search_product_by_category(self):  # 2.6.1
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans = service.search_product_by_category("dogs", filters)
-        self.assertFalse(ans[0], ans[1])
-        ans2, product_list = service.search_product_by_category("null", filters)
-        self.assertTrue(ans2 and (len(product_list) == product_id), product_list)
+        self.assertFalse(ans[0])
+        ans = service.search_product_by_category("null", filters)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_search_product_by_name(self):  # 2.6.2
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
-        ans, result = service.search_product_by_name("not exist", filters)
-        self.assertFalse(ans)
-        ans2, result = service.search_product_by_name("product", filters)
-        self.assertTrue(ans2 and result[0].quantity == 10, result)
+        ans = service.search_product_by_name("not exist", filters)
+        self.assertFalse(ans[0])
+        ans = service.search_product_by_name("product", filters)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_search_product_by_keyword(self):  # 2.6.3
-        filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
         ans = service.search_product_by_keyword("not exist", filters)
-        self.assertFalse(ans[0], ans[1])
+        self.assertFalse(ans[0])
         ans = service.search_product_by_name("", filters)
-        self.assertTrue(ans[0] and ans[1][0].quantity == 10)
+        self.assertTrue(ans[0] and len(ans[1]) == 10)
 
     def test_add_product_to_cart(self):  # 2.7
-        store_name = "store0"
+        store_name = "store1"
         product_name = "product"
-        user_name = users_hash["user_name0"]
+        user_name = "user_name1"
+        user_name_hash = users_hash[user_name]
 
         store = service.get_store_for_tests(store_name)[1]
         product_dict = store.inventory.products_dict
         ans4 = product_dict[product_name].quantity
         self.assertTrue(ans4 == 10)
 
-        ans = service.add_product_to_cart(user_name, product_name, 5, store_name)[0]
+        ans = service.add_product_to_cart(user_name_hash, product_name, 5, store_name)[0]
         self.assertTrue(ans, "test: add product to cart")
+        try:
+            user = users.get_user_by_name(user_name)
+        except Exception as e:
+            self.fail(e.args[0])
         self.assertTrue(
-            service.get_user_for_tests(user_name)[1].cart.basket_dict[store_name].products_dict[product_name] == 10)
+            user.cart.basket_dict[store_name].products_dict[product_name] == 10)
         store = service.get_store_for_tests(store_name)[1]
         product_dict = store.inventory.products_dict
         ans3 = product_dict[product_name].quantity
         self.assertTrue(ans3 == 10)
 
     def test_get_cart_info(self):  # 2.8
-        user_name = users_hash["user_name0"]
+        user_name = users_hash["user_name2"]
         product_name = "product"
         store_name = "store1"
 
@@ -191,9 +202,9 @@ class TestService(TestCase):
         self.assertTrue(ans and cart.basket_dict[store_name].products_dict[product_name] == 4, cart)
 
     def test_remove_product_from_store_inventory(self):  # 4.1.2
-        store_name = "store0"
+        store_name = "store1"
         product_name = "product"
-        user_name = users_hash["user_name0"]
+        user_name = users_hash["user_name1"]
 
         ans = service.find_product_by_id(product_name, store_name)
         self.assertTrue(ans[0], ans[1])
@@ -206,8 +217,8 @@ class TestService(TestCase):
 
     # 2.9.0
     def test_purchase(self):
-        user_name = users_hash["user_name0"]
-        store_name = "store0"
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
         product_name = "product"
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
@@ -241,8 +252,8 @@ class TestService(TestCase):
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
     def test_purchase_delivery_fail(self):
-        user_name = users_hash["user_name0"]
-        store_name = "store0"
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
         product_name = "product"
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
@@ -268,8 +279,8 @@ class TestService(TestCase):
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
     def test_purchase_payment_fail(self):
-        user_name = users_hash["user_name0"]
-        store_name = "store0"
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
         product_name = "product"
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
@@ -299,7 +310,7 @@ class TestService(TestCase):
         service.get_store_for_tests(store_name)[1].buying_policy = BuyingPolicyMock()
 
         anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
-        self.assertTrue(anst[0], anst[1])
+        #self.assertTrue(anst[0], anst[1])
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
         ans = service.purchase(user_name, {"card_number": "312312"}, "Noga Hakalanit 26")
@@ -315,11 +326,11 @@ class TestService(TestCase):
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
     def test_purchase_sync(self):
-        user_name0 = users_hash["user_name0"]
+        user_name0 = users_hash["user_name4"]
         user_name1 = users_hash["user_name1"]
         user_name2 = users_hash["user_name2"]
         user_name3 = users_hash["user_name3"]
-        store_name = "store0"
+        store_name = "store4"
         product_name = "product"
         add_to_cart1 = service.add_product_to_cart(user_name1, product_name, 5, store_name)
         self.assertTrue(add_to_cart1[0], add_to_cart1[1])
@@ -352,9 +363,23 @@ class TestService(TestCase):
         self.assertTrue(len(store_history) == 2, str(len(store_history)))
 
     def test_logout(self):  # 3.1
-        user_name = users_hash["user_name1"]
-        ans = service.logout(user_name)
-        self.assertTrue(ans and (not service.get_user_for_tests(user_name)[1].is_logged))
+        user_name = "user_name1"
+        user_name_hash = users_hash[user_name]
+        # service.login(user_name_hash, "password1")
+        ans = service.logout(user_name_hash)
+        try:
+            user = users.get_user_by_name(user_name)
+        except Exception as e:
+            self.assertTrue(False, e.args[0])
+        self.assertTrue(ans[0])
+        with self.assertRaises(Exception):
+            domain_handler.auth.authenticate_session(ans[1])
+
+        # not logged in
+        user_name = "user_name0"
+        user_name_hash = users_hash[user_name]
+        ans = service.logout(user_name_hash)
+        self.assertFalse(ans[0], "Not logged in called log out and succeeded")
 
     def test_open_store(self):  # 3.2
         store_name = "new store"
@@ -372,7 +397,7 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
 
         ans = service.get_user_purchases_history(user_name)
-        self.assertTrue(ans[0] and (len(ans[1]) == 0), ans[1])
+        self.assertTrue(((ans[0] and (len(ans[1]) == 0)) or not ans[0]), ans[1])
 
         ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
         self.assertTrue(ans[0], ans[1])
@@ -436,6 +461,18 @@ class TestService(TestCase):
         ans = service.assign_store_owner(assignee_user_name, not_owner_already_name, store_name)
         self.assertTrue(ans[0], ans[1])
 
+    def test_add_discount(self):  # 4.2
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.add_term_discount(user_name, store_name, "d1", "milk 20", "milk quantity > 50")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].discount_policy.discount_dict) == 1)
+
+    def test_add_buying_policy(self):  # 4.2
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 50")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1)
+
     def test_assign_store_manager(self):  # 4.3
         user_name = users_hash["user_name1"]
         new_store_manager_name = "user_name2"
@@ -484,18 +521,24 @@ class TestService(TestCase):
     def test_edit_manager_permissions(self):  # 4.6
         pass
 
-    def test_remove_store_manager(self):  # 4.7
+    def test_remove_store_owner(self):  # 4.4
         user_name = users_hash["user_name1"]
         store_name = "store1"
         removed_manager = "user_name2"
 
-        ans, result = service.assign_store_manager(user_name, removed_manager, store_name)
+        ans, result = service.assign_store_owner(user_name, removed_manager, store_name)
         self.assertTrue(ans, result)
 
-        ans2, result = service.remove_store_manager(user_name, removed_manager, store_name)
+        ans, result = service.assign_store_owner(users_hash[removed_manager], "user_name3", store_name)
+        self.assertTrue(ans, result)
+
+        ans, result = service.assign_store_owner(users_hash["user_name3"], "user_name4", store_name)
+        self.assertTrue(ans, result)
+
+        ans2, result = service.remove_store_owner(user_name, removed_manager, store_name)
         self.assertTrue(ans2, result)
 
-        ans3, result = service.remove_store_manager(user_name, removed_manager, store_name)
+        ans3, result = service.remove_store_owner(user_name, removed_manager, store_name)
         self.assertFalse(ans3, result)
 
     def test_get_employee_information(self):  # 4.9.1
@@ -550,10 +593,10 @@ class TestService(TestCase):
 
     def test_register_sync(self):
         try:
-            t1 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t2 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t3 = threading.Thread(target=service.register, args=("user_name33", "33",))
-            t4 = threading.Thread(target=service.register, args=("user_name33", "33",))
+            t1 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t2 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t3 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
+            t4 = threading.Thread(target=service.register, args=("user_name33", "33", 23,))
             t1.start()
             t2.start()
             t3.start()
@@ -567,9 +610,44 @@ class TestService(TestCase):
         except:
             self.assertTrue(False, "buuug")
 
+    def test_real_time_notifications(self):  # 9.1
+        user_name0 = "user_name0"
+        user_name1 = "user_name1"
+        user_name2 = "user_name2"
+        user_name3 = "user_name3"
+        service.assign_store_owner(users_hash[user_name1],user_name2,"store1")
+        service.assign_store_owner(users_hash[user_name1], user_name3, "store1")
+        self.assertTrue(len(publisher.topics["store1"]) == 3)
+        service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
+        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+        self.assertTrue(len(users.history_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
+        self.assertTrue(len(users.history_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
+        self.assertTrue(len(users.history_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
+
+        service.logout(users_hash[user_name1])
+        service.logout(users_hash[user_name2])
+        service.logout(users_hash[user_name3])
+
+        service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
+        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+
+        self.assertTrue(len(users.pending_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
+        self.assertTrue(len(users.pending_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
+        self.assertTrue(len(users.pending_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
+
+        service.login(user_name1, "password1")
+        service.remove_store_owner(users_hash[user_name1], user_name2, "store1")
+        self.assertTrue(len(users.pending_messages[user_name2]) == 2, f"len(list) of {user_name2} should be 1")
+
+
     def tearDown(self):
         users.users = dict()
-        purchases.purchases = dict()
+        users.pending_messages = dict()
+        users.history_messages = dict()
+        purchases.user_purchases = dict()
+        purchases.store_purchases = dict()
         stores.store_dict = dict()
         domain_handler.auth = Authentication()
         permissions.permissions = dict()
+        publisher.topics = dict()
+

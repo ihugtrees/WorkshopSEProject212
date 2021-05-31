@@ -3,6 +3,11 @@
 <head>
     <title>Product Info</title>
     <p>Your Cart</p>
+    <ul>
+{% for user in cart_list %}
+  <li>{{ user }}</a></li>
+{% endfor %}
+</ul>
 </head>
 <body>
     <form action="/showCart" method="POST">

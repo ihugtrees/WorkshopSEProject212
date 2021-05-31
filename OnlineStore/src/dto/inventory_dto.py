@@ -1,4 +1,4 @@
-from OnlineStore.src.domain.store.inventory import Inventory
+from OnlineStore.src.domain_layer.store.inventory import Inventory
 from OnlineStore.src.dto.product_dto import ProductDTO
 
 
