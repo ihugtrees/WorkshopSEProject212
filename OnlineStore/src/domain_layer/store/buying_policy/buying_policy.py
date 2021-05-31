@@ -9,7 +9,7 @@ class BuyingPolicy:
     def __init__(self):
         self.terms_dict: Dict[str, (BuyingTerm, str)] = dict()  # key - term name, val - (BuyingTerm, description)
 
-    def eligible_for_buying(self, user: UserDTO, basket) -> None:
+    def eligible_for_buying(self, user, basket) -> None:
         ans = True
         for t in self.terms_dict:
             ans = ans and self.terms_dict[t][0].calc_term(basket, user)

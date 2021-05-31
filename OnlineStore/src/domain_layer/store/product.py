@@ -3,11 +3,11 @@ from threading import Lock
 
 class Product:
     def __init__(self, product_id, product_name, quantity, price, category="null", discount_type=None,
-                 buying_type=None):
+                 buying_type=None, description=""):
         self.product_id = product_id
         self.product_name = product_name
         self.quantity = int(quantity)
-        self.description = ""
+        self.description = description
         self.discount_type = discount_type
         self.buying_type = buying_type
         self.price = int(price)

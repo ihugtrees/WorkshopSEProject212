@@ -1,4 +1,3 @@
-import eventlet
 from flask import (Flask, render_template, request, redirect, session)
 from flask_socketio import SocketIO, join_room
 
@@ -736,11 +735,15 @@ def initialize_system():
     a = "a"
     manager1 = "manager1"
     b = "b"
+    c = "c"
+    d = "d"
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
     utils.register(manager1, manager1, 20)
     utils.register(b, b, 20)
+    utils.register(c, c, 16)
+    utils.register(d, d, 10)
     admin_hash = utils.log_in(admin, admin)[1]
     niv_hash = utils.log_in(niv, niv)[1]
     a_hash = utils.log_in(a, a)[1]
@@ -752,13 +755,15 @@ def initialize_system():
     utils.assign_store_owner(a_hash, b, store_name)
     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
+    utils.add_new_product_to_store_inventory(admin_hash, "smirnof", "smirnof", 10, 5, "no description", store_name,
+                                             "alcohol")
     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
                                              "milky")
     utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
