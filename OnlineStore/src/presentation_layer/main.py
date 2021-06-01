@@ -863,7 +863,7 @@ if __name__ == '__main__':
     # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     # initialize_system()
     parser = argparse.ArgumentParser(description='Workshop 212')
-    parser.add_argument('--merge_yaml',action='store',default="init.json",help="Initialization file")
+    parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
     args = parser.parse_args()
     utils.initialize_system(file=args.merge_yaml)
     exit(0)
