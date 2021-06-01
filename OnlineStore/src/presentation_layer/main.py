@@ -384,16 +384,28 @@ def checkout():
     # print(f"from checkout: {session['user']}")
     price = utils.get_cart_info(session['user']).sum
     if request.method == 'POST':
-        cardNum = request.form.get('cardNum')
-        payment_info = {"card_number": cardNum}
-        delivery = request.form.get("delivery")
+        card_num = request.form.get('card_num')
+        year = request.form.get("year")
+        month = request.form.get("month")
+        ccv = request.form.get("ccv")
+        card_holder_id = request.form.get("card_holder_id")
+        city = request.form.get("city")
+        country = request.form.get("country")
+        zip_code = request.form.get("zip")
+        holder_name = request.form.get("holder_name")
+        address = request.form.get("address")
+
+        payment_info = {"card_number": card_num, "year": year, "month": month, "ccv": ccv, "id": card_holder_id,
+                        "holder": holder_name}
+        buyer_information = {"city": city, "country": country, "zip": zip_code, "address": address,
+                             "name": session["username"]}
         # if(not checkCartAvailability(session['user'])):
         #     return render_template("checkout.html", price=price,message= "Some items are missing")
         # if (not pay(cardNum)):
         #     return render_template("checkout.html", message="Card is not valid")
         # if (not delivery(session['user'])):
         #     return render_template("checkout.html", message="Delivery is not available")
-        ans = utils.purchase(session["user"], payment_info=payment_info, destination=delivery)
+        ans = utils.purchase(session["user"], payment_info=payment_info, buyer_information=buyer_information)
         if ans[0]:
             return render_template("checkout.html", message="Parchase done successfully", price=0)
         else:
@@ -736,6 +748,11 @@ def initialize_system():
     a = "a"
     manager1 = "manager1"
     b = "b"
+    payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                    "holder": "Niv"}
+    buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
+                         "address": "ziso 5/3 beer sheva, israel",
+                         "name": niv}
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
@@ -759,9 +776,9 @@ def initialize_system():
     utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
-    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 

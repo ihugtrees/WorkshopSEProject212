@@ -236,7 +236,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 
 # 2.9.0
-def purchase(user_name: str, payment_info: dict, destination: str):
+def purchase(user_name: str, payment_info: dict, buyer_information: dict):
     """
     Purchase all the items in the cart
 
@@ -257,14 +257,14 @@ def purchase(user_name: str, payment_info: dict, destination: str):
         store_handler.take_quantity(cart_dto)
         payment_done_delivery_done["quantity_taken"] = True
         cart_sum = store_handler.calculate_cart_sum(cart_dto)
-        payment_adapter.pay_for_cart(payment_info, cart_sum)
-        date = supply_adapter.supply_products_to_user(cart_dto, destination)
+        payment_transaction_id = payment_adapter.pay(payment_info)
+        supply_transaction_id = supply_adapter.supply(buyer_information=buyer_information)
         user_handler.empty_cart(user_name)
-        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, cart_sum, date, destination)
+        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, cart_sum, datetime.now(), buyer_information["address"])
         for store_name in cart_dto.basket_dict.keys():
             publisher.send_message_to_store_employees(f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store_name}) the following items:\n{cart_dto.basket_dict[store_name].products_dict}", store_name,
                                                       "buying product")
-        return date
+        return payment_transaction_id
     except Exception as e:
         if payment_done_delivery_done["quantity_taken"]:
             store_handler.return_quantity(cart_dto)

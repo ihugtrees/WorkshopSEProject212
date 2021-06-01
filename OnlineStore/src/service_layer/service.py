@@ -263,7 +263,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 # 2.9.0
 
-def purchase(user_name: str, payment_info: dict, destination: str):
+def purchase(user_name: str, payment_info: dict, buyer_information: dict):
     """
     Purchase all the items in the cart
 
@@ -274,11 +274,10 @@ def purchase(user_name: str, payment_info: dict, destination: str):
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
     :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
     """
-    payment_done_delivery_done = {"payment_done": False, "delivery_done": False, "quantity_taken": False}
 
     try:
         logging.info("Starting purchase " + user_name)
-        ans = domain_handler.purchase(user_name, payment_info, destination)
+        ans = domain_handler.purchase(user_name, payment_info, buyer_information)
         logging.info("Succesful purchase user name = " + user_name)
         return [True, ans]
     except Exception as e:

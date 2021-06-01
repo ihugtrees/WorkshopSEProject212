@@ -1,9 +1,9 @@
-import OnlineStore.src.external.payment_system_mock as payment_system
+import OnlineStore.src.external.payment_system as payment_system
 
 
-def pay_for_cart(payment_info: dict, sum: int):
-    return payment_system.address_payment_system(payment_info, sum)
+def pay(payment_info: dict):
+    payment_system.pay(payment_info)
 
 
-def return_for_cart(payment_info: dict, sum: int):
-    return payment_system.address_payment_system_return(payment_info, sum)
+def cancel_pay(transaction_id: int) -> None:
+    payment_system.cancel_pay(transaction_id)
