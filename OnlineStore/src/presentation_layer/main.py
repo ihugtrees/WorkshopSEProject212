@@ -742,6 +742,15 @@ def getEmployeePermissions():
 
 
 def initialize_system():
+    import os
+    if os.path.exists("database.sqlite"):
+        os.remove("database.sqlite")
+    else:
+        print("The file does not exist")
+
+    from OnlineStore.src.data_layer.user_entity import db
+    # db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
+    # db.generate_mapping(create_tables=True)
     store_name = "store"
     admin = "admin"
     niv = "niv"
@@ -792,5 +801,5 @@ if __name__ == '__main__':
     # eventlet.monkey_patch()
     # monkey.patch_all()
     initialize_system()
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     # socketio.run(app=app, debug=True)

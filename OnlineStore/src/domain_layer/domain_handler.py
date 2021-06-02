@@ -216,7 +216,8 @@ def add_product_to_cart(user_name, product_id, quantity, store_name):
 
     user_name = auth.get_username_from_hash(user_name)
     store_handler.check_product_exists_in_store(product_id, store_name)
-    return user_handler.add_product(user_name, store_name, product_id, quantity)
+    user_handler.add_product(user_name, store_name, product_id, quantity)
+    users.add_to_cart(store_name=store_name, user_name=user_name, quantity=quantity, product_name=product_id)
 
 
 # 2.8.3
@@ -232,7 +233,8 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
     :return: None
     """
     user_name = auth.get_username_from_hash(user_name)
-    return user_handler.remove_product(user_name, store_name, product_id, quantity)
+    user_handler.remove_product(user_name, store_name, product_id, quantity)
+    users.remove_from_cart(user_name, product_id, quantity, store_name)
 
 
 # 2.9.0
