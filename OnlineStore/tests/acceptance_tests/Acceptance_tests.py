@@ -3,6 +3,10 @@ from unittest import TestCase
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.domain_layer.store.store import Store
+from OnlineStore.src.external.payment_system import PaymentSystem
+from OnlineStore.src.external.payment_system_mock import MockPaymentSystem
+from OnlineStore.src.external.supply_system import SupplySystem
+from OnlineStore.src.external.supply_system_mock import MockSupplySystem
 from OnlineStore.src.service_layer import service
 from OnlineStore.src.security.authentication import Authentication
 from OnlineStore.src.domain_layer.store.buying_policy_mock import BuyingPolicyMock
@@ -13,6 +17,11 @@ import OnlineStore.src.data_layer.store_data as stores
 
 product_id: int = 0
 users_hash: dict = dict()
+payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                "holder": "Niv"}
+buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
+                     "address": "ziso 5/3 beer sheva, israel",
+                     "name": "niv"}
 
 filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
 
@@ -223,7 +232,7 @@ class TestService(TestCase):
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "123123"}, "Ziso 5/3, Beer Sheva")
+        ans = service.purchase(user_name, payment_info, buyer_information)
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -255,10 +264,14 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
         store_name = "store1"
         product_name = "product"
+        domain_handler.supply_adapter.supply_system = MockSupplySystem()
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "123"}, "haifa")
+        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                     "address": "ziso 5/3 beer sheva, israel",
+                     "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -282,10 +295,14 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
         store_name = "store1"
         product_name = "product"
+        domain_handler.payment_adapter.payment_system = MockPaymentSystem()
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "0000"}, "Tel Aviv")
+        ans = service.purchase(user_name, {"card_number": "0000", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                     "address": "ziso 5/3 beer sheva, israel",
+                     "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -313,7 +330,10 @@ class TestService(TestCase):
         #self.assertTrue(anst[0], anst[1])
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "312312"}, "Noga Hakalanit 26")
+        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
+                     "address": "ziso 5/3 beer sheva, israel",
+                     "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -338,13 +358,13 @@ class TestService(TestCase):
         service.add_product_to_cart(user_name3, product_name, 5, store_name)
 
         t1 = threading.Thread(target=service.purchase,
-                              args=(user_name0, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+                              args=(user_name0, payment_info, buyer_information,))
         t2 = threading.Thread(target=service.purchase,
-                              args=(user_name1, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+                              args=(user_name1, payment_info, buyer_information,))
         t3 = threading.Thread(target=service.purchase,
-                              args=(user_name2, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+                              args=(user_name2, payment_info, buyer_information,))
         t4 = threading.Thread(target=service.purchase,
-                              args=(user_name3, {"card_number": "1234"}, "Ziso 5/3, Beer Sheva",))
+                              args=(user_name3, payment_info, buyer_information,))
         t1.start()
         t2.start()
         t3.start()
@@ -399,7 +419,10 @@ class TestService(TestCase):
         ans = service.get_user_purchases_history(user_name)
         self.assertTrue(((ans[0] and (len(ans[1]) == 0)) or not ans[0]), ans[1])
 
-        ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
+        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                     "address": "ziso 5/3 beer sheva, israel",
+                     "name": "niv"})
         self.assertTrue(ans[0], ans[1])
 
         ans = service.get_user_purchases_history(user_name)
@@ -560,7 +583,7 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
         store_name = "store1"
 
-        ans = service.purchase(user_name, {"card_number": 1}, "Beer Sheva")
+        ans = service.purchase(user_name=user_name, payment_info=payment_info, buyer_information=buyer_information)
         self.assertTrue(ans[0], ans[1])
 
         ans = service.get_store_purchase_history(user_name, store_name)
@@ -619,7 +642,10 @@ class TestService(TestCase):
         service.assign_store_owner(users_hash[user_name1], user_name3, "store1")
         self.assertTrue(len(publisher.topics["store1"]) == 3)
         service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
-        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+        service.purchase(users_hash["user_name4"], {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                     "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
+                                        "address": "ziso 5/3 beer sheva, israel",
+                                        "name": "niv"})
         self.assertTrue(len(users.history_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
         self.assertTrue(len(users.history_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
         self.assertTrue(len(users.history_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
@@ -629,7 +655,10 @@ class TestService(TestCase):
         service.logout(users_hash[user_name3])
 
         service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
-        service.purchase(users_hash["user_name4"], {"card_number": 1}, "Beer Sheva")
+        service.purchase(users_hash["user_name4"], {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                     "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
+                                        "address": "ziso 5/3 beer sheva, israel",
+                                        "name": "niv"})
 
         self.assertTrue(len(users.pending_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
         self.assertTrue(len(users.pending_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
@@ -641,6 +670,8 @@ class TestService(TestCase):
 
 
     def tearDown(self):
+        domain_handler.supply_adapter.supply_system = SupplySystem()
+        domain_handler.payment_adapter.payment_system = PaymentSystem()
         users.users = dict()
         users.pending_messages = dict()
         users.history_messages = dict()

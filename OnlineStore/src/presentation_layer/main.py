@@ -385,15 +385,15 @@ def checkout():
     price = utils.get_cart_info(session['user']).sum
     if request.method == 'POST':
         card_num = request.form.get('card_num')
-        year = request.form.get("year")
-        month = request.form.get("month")
-        ccv = request.form.get("ccv")
-        card_holder_id = request.form.get("card_holder_id")
-        city = request.form.get("city")
-        country = request.form.get("country")
-        zip_code = request.form.get("zip")
-        holder_name = request.form.get("holder_name")
-        address = request.form.get("address")
+        year = request.form.get("year") if request.form.get("year") != '' else None
+        month = request.form.get("month") if request.form.get("month") != '' else None
+        ccv = request.form.get("ccv") if request.form.get("ccv") != '' else None
+        card_holder_id = request.form.get("card_holder_id") if request.form.get("card_holder_id") != '' else None
+        city = request.form.get("city") if request.form.get("city") != '' else None
+        country = request.form.get("country") if request.form.get("country") != '' else None
+        zip_code = request.form.get("zip") if request.form.get("zip") != '' else None
+        holder_name = request.form.get("holder_name") if request.form.get("holder_name") != '' else None
+        address = request.form.get("address") if request.form.get("address") != '' else None
 
         payment_info = {"card_number": card_num, "year": year, "month": month, "ccv": ccv, "id": card_holder_id,
                         "holder": holder_name}
@@ -792,5 +792,5 @@ if __name__ == '__main__':
     # eventlet.monkey_patch()
     # monkey.patch_all()
     initialize_system()
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     # socketio.run(app=app, debug=True)
