@@ -3,11 +3,14 @@ import OnlineStore.src.data_layer.purchase_data as purchase_handler
 import OnlineStore.src.data_layer.store_data as stores
 import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.domain_layer.user.action as action
-from OnlineStore.src.domain_layer.adapters import payment_adapter, supply_adapter
+from OnlineStore.src.domain_layer.adapters.payment_adapter import PaymentAdapter
+from OnlineStore.src.domain_layer.adapters.supply_adapter import SupplyAdapter
 from OnlineStore.src.domain_layer.permissions.permission_handler import PermissionHandler
 from OnlineStore.src.domain_layer.store.store_handler import StoreHandler
 from OnlineStore.src.domain_layer.user.action import Action
 from OnlineStore.src.domain_layer.user.user_handler import UserHandler
+from OnlineStore.src.external.payment_system import PaymentSystem
+from OnlineStore.src.external.supply_system import SupplySystem
 from OnlineStore.src.security.authentication import Authentication
 from datetime import datetime
 
@@ -15,6 +18,8 @@ user_handler = UserHandler()
 store_handler = StoreHandler()
 permission_handler = PermissionHandler()
 auth = Authentication()
+payment_adapter = PaymentAdapter(PaymentSystem())
+supply_adapter = SupplyAdapter(SupplySystem())
 
 
 # 2.1
