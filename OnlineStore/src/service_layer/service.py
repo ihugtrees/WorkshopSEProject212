@@ -865,8 +865,8 @@ def initialize_system(file):
                     if(not handle_command(com,logged_in)):
                         print("Initialization fail - commands")
                         return False
-            # else:
-                # return False TODO ask ilay
+            else:
+                return False
         return True
     else:
         print ("Init file missing")
