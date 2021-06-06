@@ -1,7 +1,7 @@
 {"database": "TODO",
   "admin": {"user": "admin","pass": "admin"},
   "external_systems" : [],
-  "commands": ["register(hilay,hilay,20)",
+  "commands": ["register(hilay)",
     "register(rina,rina,20)",
     "login(hilay,hilay)",
   "open_store(shoes, hilay)",
