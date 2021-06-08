@@ -749,8 +749,8 @@ def initialize_system():
         print("The file does not exist")
 
     from OnlineStore.src.data_layer.user_entity import db
-    # db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
-    # db.generate_mapping(create_tables=True)
+    db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
+    db.generate_mapping(create_tables=True)
     store_name = "store"
     admin = "admin"
     niv = "niv"
@@ -780,16 +780,16 @@ def initialize_system():
     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
                                              "milky")
-    utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
-    utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
-    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+    # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
+    # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
+    # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    #
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 
     utils.log_out(manager_hash)
     utils.log_out(admin_hash)

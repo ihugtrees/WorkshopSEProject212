@@ -13,8 +13,8 @@ history_messages: dict = dict()
 
 
 def take_user_data(user_name):
-    user_db = user_entity.User.get(user_name)
-    basket_db = user_entity.ProductToBuy.select(lambda p: p.user == user_name)
+    user_db = user_entity.User.get(user_name = user_name)
+    basket_db = user_entity.ProductToBuy.select(lambda p: p.user.user_name == user_name)
     stores = set()
     for p in basket_db:
         stores.add(p.store_name)
@@ -118,6 +118,7 @@ def get_user_message_history(user_name):
 def add_to_cart(user_name, product_name, quantity, store_name):
     product_user = user_entity.ProductToBuy.select(lambda p: p.user == user_name and
                                         p.product == product_name and p.store_name == store_name)
+
 
     # user_db = user_entity.User.get(user_name=user_name)
     # if user_db is None:

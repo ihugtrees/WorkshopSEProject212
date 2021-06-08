@@ -36,10 +36,12 @@ class StoreHandler:
         if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
         store.add_product_store(product_details)
+        stores.add_product_to_store(store_name, product_details)
 
     def remove_product_from_store_inventory(self, user_name, product_id, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        store.remove_product_store(product_id)
+        store.remove_product_store(product_id, store_name)
+        stores.remove_product_from_store(store_name, product_id)
 
     def get_information_about_products(self, store_name):
         store: Store = stores.get_store_by_name(store_name)

@@ -15,8 +15,8 @@ class Store:
         self.buying_policy: BuyingPolicy = buying_policy if buying_policy is not None else BuyingPolicy()
         self.discount_policy = discount_policy if discount_policy is not None else DiscountPolicy()
 
-    def remove_product_store(self, product_id):
-        self.inventory.remove_product_inventory(product_id)
+    def remove_product_store(self, product_id, store):
+        self.inventory.remove_product_inventory(product_id, store)
 
     def add_product_store(self, product_details):
         self.inventory.add_product_inventory(product_details)

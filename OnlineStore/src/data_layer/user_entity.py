@@ -34,28 +34,22 @@ class Appointees(db.Entity):
 class Store(db.Entity):
     name = PrimaryKey(str, auto=False)
     store_founder = Required(str)
-    inventory = Optional('Inventory')
     rating = Optional(int)
+    products = Set('Product')
     # buying_policy = Optional('BuyingPolicy')
     # discount_policy = Optional('DiscountPolicy')
 
 
-class Inventory(db.Entity):
-    store = Required(Store)
-    products = Set('Product')
-
-
 class Product(db.Entity):
-    inventory = Required(Inventory)
-    product_id = Required(int)
+    store = Required(Store)
+    product_id = Required(str)
     product_name = Required(str)
     quantity = Required(int)
     description = Optional(str)
-    discount_type = Optional(int)
-    buying_type = Optional(int)
     price = Required(int)
     category = Required(str)
     rating = Optional(int)
+    PrimaryKey(store, product_id)
 
 
 # class BuyingPolicy(db.Entity):
