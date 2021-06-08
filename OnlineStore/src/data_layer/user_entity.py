@@ -6,29 +6,18 @@ db = Database()
 class User(db.Entity):
     user_name = PrimaryKey(str)
     is_guest = Required(bool)
-    cart = Optional('Cart')
     is_admin = Required(bool)
     appointed_to_store = Optional('Appoint')
     age = Required(int)
+    productToBuy = Set("ProductToBuy")
 
 
-class Cart(db.Entity):
+class ProductToBuy(db.Entity):
     user = Required(User)
-    basket_dict = Set('Basket')
-
-
-class Basket(db.Entity):
-    cart = Required(Cart)
     store_name = Required(str)
-    products_dict = Set('BasketItem')
-    PrimaryKey(cart, store_name)
-
-
-class BasketItem(db.Entity):
-    basket = Required(Basket)
-    product_name = Required(str)
-    quantity = Required(int)
-    PrimaryKey(product_name, basket)
+    product = Required(str)
+    quantity = Required(str)
+    PrimaryKey(user, store_name, product)
 
 
 class Appoint(db.Entity):
