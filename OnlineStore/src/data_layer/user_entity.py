@@ -47,33 +47,39 @@ class Appointees(db.Entity):
 class Store(db.Entity):
     name = PrimaryKey(str, auto=False)
     store_founder = Required(str)
-    inventory = Optional('Inventory')
     rating = Optional(int)
-    # buying_policy = Optional('BuyingPolicy')
-    # discount_policy = Optional('DiscountPolicy')
-
-
-class Inventory(db.Entity):
-    store = Required(Store)
     products = Set('Product')
+    buying_policy = Set('BuyingPolicy')
+    discount_policy = Set('DiscountPolicy')
 
 
 class Product(db.Entity):
-    inventory = Required(Inventory)
-    product_id = Required(int)
+    store = Required(Store)
+    product_id = Required(str)
     product_name = Required(str)
     quantity = Required(int)
     description = Optional(str)
-    discount_type = Optional(int)
-    buying_type = Optional(int)
     price = Required(int)
     category = Required(str)
     rating = Optional(int)
+    PrimaryKey(store, product_id)
 
 
-# class BuyingPolicy(db.Entity):
-#     pass
-#     buying_policies = Set('BuyingTerm') TODO COMPLETE
+class BuyingPolicy(db.Entity):
+    name = PrimaryKey(str)
+    description = Required(str)
+    store = Required(Store)
+
+
+
+class DiscountPolicy(db.Entity):
+    name = PrimaryKey(str)
+    description = Required(str)
+    store = Required(Store)
+    value = Required(str)
+    category_flag_for_value = Optional(bool)
+
+
 #
 #
 # class BuyingTerm(db.Entity):
@@ -105,5 +111,7 @@ class PermissionsInStore(db.Entity):
     permissions = Required(int)
 
 
-
-
+# class Purchase(db.Entity):
+#     store = Required(str)
+#     user = Required(str)
+#
