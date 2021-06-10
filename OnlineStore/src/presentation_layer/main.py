@@ -783,16 +783,23 @@ def initialize_system():
     utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+
+    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+
+
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 
     utils.log_out(manager_hash)
     utils.log_out(admin_hash)
+
+    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
     utils.log_out(niv_hash)
     utils.log_out(a_hash)
 

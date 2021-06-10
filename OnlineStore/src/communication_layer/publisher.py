@@ -40,6 +40,7 @@ def send_messages(username):
             send_message(message=message_dict["message"],to=username,event=message_dict["event"])
             #socket_io.emit(data=message_dict["message"], room=username, event=message_dict["event"])
     except Exception as e:
+        print(e.args[0])
         return
 
 
