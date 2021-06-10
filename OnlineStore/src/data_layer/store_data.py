@@ -16,7 +16,7 @@ lock = Lock()
 
 @db_session
 def store_data_form_db(store_name):
-    store_db = user_entity.Store[store_name]
+    store_db = user_entity.Store.get(name=store_name)
     products = user_entity.Product.select(lambda p: p.store == store_name)
     product_dict = dict()
     for p in products:
@@ -78,16 +78,18 @@ def add_store(new_store: Store) -> None:
     user_entity.Store(name= new_store.name, store_founder= new_store.store_founder, rating = new_store.rating)
 
 @db_session
-def add_product_to_store(store_name, product_dict):
-    user_entity.Product(store = store_name,
-    product_id = product_dict["product_id"],
-    product_name = product_dict["product_name"],
-    quantity = product_dict["quantity"],
-    description = product_dict["description"],
-    price = product_dict["price"],
-    category = product_dict["category"],
+def add_product_to_store(store_name,product_details):
+    user_entity.Product(store=store_name,
+    product_id = product_details["product_id"],
+    product_name = product_details["product_name"],
+    quantity = product_details["quantity"],
+    description = "harta brata",
+    price = product_details["price"],
+    category = "hrata barta",
     rating = 0 ) # maybe not?
 
+
+@db_session
 def remove_product_from_store(store_name, product_id):
     user_entity.Product[store_name, product_id].delete()
 

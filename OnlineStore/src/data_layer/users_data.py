@@ -11,10 +11,9 @@ pending_messages: dict = dict()  # key: username, value: list of messages
 history_messages: dict = dict()
 
 
-@db_session
 def take_user_data(user_name):
-    user_db = user_entity.User.get(user_name = user_name)
-    basket_db = user_entity.ProductToBuy.select(lambda p: p.user.user_name == user_name)
+    user_db = user_entity.User.get(user_name=user_name)
+    basket_db = user_entity.ProductInCart.select(lambda p: p.user.user_name == user_name)
     stores = set()
     for p in basket_db:
         stores.add(p.store_name)
