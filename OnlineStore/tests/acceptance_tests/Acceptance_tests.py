@@ -29,15 +29,16 @@ class TestService(TestCase):
         global users_hash
         product_id = 0
 
-        import os
-        if os.path.exists("database.sqlite"):
-            os.remove("database.sqlite")
-        else:
-            print("The file does not exist")
-
         from OnlineStore.src.data_layer.user_entity import db
-        db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
-        db.generate_mapping(create_tables=True)
+        try:
+            db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
+        except Exception as e:
+            # print(e.args[0])
+            pass
+        else:
+            db.generate_mapping(check_tables=False)
+        db.drop_all_tables(with_all_data=True)
+        db.create_tables()
 
         for i in range(0, 10):
             service.get_into_site()
@@ -59,7 +60,7 @@ class TestService(TestCase):
             service.add_new_product_to_store_inventory(user_name_hash, product, store_name)
 
             service.add_product_to_cart(user_name_hash, "product", 5, store_name)
-            service.add_product_to_cart(user_name_hash, "product", 5, store_name)
+            # service.add_product_to_cart(user_name_hash, "product", 5, store_name)
 
             product_id += 1
 
@@ -662,6 +663,4 @@ class TestService(TestCase):
         permissions.permissions = dict()
         publisher.topics = dict()
 
-        from OnlineStore.src.data_layer.user_entity import db
-        db.disconnect()
 
