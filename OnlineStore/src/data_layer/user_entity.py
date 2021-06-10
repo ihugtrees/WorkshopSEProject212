@@ -9,14 +9,27 @@ class User(db.Entity):
     is_admin = Required(bool)
     appointed_to_store = Optional('Appoint')
     age = Required(int)
-    productToBuy = Set("ProductToBuy")
+    productInCart = Set("ProductInCart")
+    pendingMessages = Set("PendingMessages")
+    historyMessages = Set("HistoryMessages")
 
+class PendingMessages(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    user = Required(User)
+    message_content = Required(str)
+    event = Required(str)
 
-class ProductToBuy(db.Entity):
+class HistoryMessages(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    user = Required(User)
+    message_content = Required(str)
+    event = Required(str)
+
+class ProductInCart(db.Entity):
     user = Required(User)
     store_name = Required(str)
     product = Required(str)
-    quantity = Required(str)
+    quantity = Required(int)
     PrimaryKey(user, store_name, product)
 
 
@@ -74,16 +87,16 @@ class DiscountPolicy(db.Entity):
 #     term_name = Required(str) TODO COMPLETE
 
 
-class PendingMessage(db.Entity):
-    user_name = Required(str)
-    msg = Required(str)
-    event = Required(str)
-
-
-class Message(db.Entity):
-    user_name = Required(str)
-    msg = Required(str)
-    event = Required(str)
+    # class PendingMessage(db.Entity):
+    #     user_name = Required(str)
+    #     msg = Required(str)
+    #     event = Required(str)
+    #
+    #
+    # class Message(db.Entity):
+    #     user_name = Required(str)
+    #     msg = Required(str)
+    #     event = Required(str)
 
 
 class UserPermissions(db.Entity):

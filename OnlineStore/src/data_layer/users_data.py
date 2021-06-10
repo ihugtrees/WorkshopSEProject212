@@ -11,7 +11,7 @@ pending_messages: dict = dict()  # key: username, value: list of messages
 history_messages: dict = dict()
 
 
-
+@db_session
 def take_user_data(user_name):
     user_db = user_entity.User.get(user_name = user_name)
     basket_db = user_entity.ProductToBuy.select(lambda p: p.user.user_name == user_name)
@@ -45,21 +45,21 @@ def take_user_data(user_name):
 #     return cart
 
 
-def db_appoint_to_user_appoint(appointed_to_store: user_entity.Appoint):
-    domain_appoint = user.Appoint()
-    for appointee in (appointed_to_store.appointed_by_me if appointed_to_store is not None else list()):
-        for store_employee_name in appointee.appointees:
-            domain_appoint.assign_store_employee(new_store_owner_name=store_employee_name,
-                                                 store_name=appointee.store_name)
-    return domain_appoint
+# def db_appoint_to_user_appoint(appointed_to_store: user_entity.Appoint):
+#     domain_appoint = user.Appoint()
+#     for appointee in (appointed_to_store.appointed_by_me if appointed_to_store is not None else list()):
+#         for store_employee_name in appointee.appointees:
+#             domain_appoint.assign_store_employee(new_store_owner_name=store_employee_name,
+#                                                  store_name=appointee.store_name)
+#     return domain_appoint
+#
+#
+# def user_db_to_domain_user(user_db: user_entity.User):
+#     return user.User(user_name=user_db.user_name, is_admin=user_db.is_admin,
+#                      guest=user_db.is_guest, cart=cart_db_to_domain_cart(user_db.cart), age=user_db.age,
+#                      appointed_to_store=db_appoint_to_user_appoint(user_db.appointed_to_store))
 
-
-def user_db_to_domain_user(user_db: user_entity.User):
-    return user.User(user_name=user_db.user_name, is_admin=user_db.is_admin,
-                     guest=user_db.is_guest, cart=cart_db_to_domain_cart(user_db.cart), age=user_db.age,
-                     appointed_to_store=db_appoint_to_user_appoint(user_db.appointed_to_store))
-
-
+# TODO check
 @db_session
 def get_user_by_name(user_name) -> user.User:
     if user_name in users:
@@ -67,14 +67,15 @@ def get_user_by_name(user_name) -> user.User:
     else:
         return take_user_data(user_name)
 
-
+# TODO check
 @db_session
 def add_user(usr: user.User) -> None:
     user_db = user_entity.User.get(user_name=usr.user_name)
     if user_db is not None:
         raise Exception("user already exists")
-    db_user = user_entity.User(user_name=usr.user_name, is_guest=usr.is_guest,
-                               is_admin=usr.is_admin, age=usr.age)
+    if usr.is_guest == False:
+        db_user = user_entity.User(user_name=usr.user_name, is_guest=usr.is_guest,
+                                   is_admin=usr.is_admin, age=usr.age)
 
 
 def remove_user(user_name: str) -> None:
@@ -82,73 +83,83 @@ def remove_user(user_name: str) -> None:
         raise Exception("cannot remove: user already does not exist in the system")
     users.pop(user_name)
 
-
+# TODO check
+@db_session
 def pop_user_messages(username: str) -> list:
     """
 
     :param username:
     :return: list of messages (message = {"message": str, "event": str})
     """
-    if username not in pending_messages:
+    real_pend_list=list()
+    try:
+        pend_list = user_entity.User.get(user_name=username).pendingMessages
+        for message in pend_list:
+            real_pend_list.append({"message": message.message_content,"event": message.event})
+        user_entity.User.get(user_name=username).pendingMessages=[]
+    except Exception as e:
+        print(e.args[0])
+   # if username not in pending_messages:
         # raise Exception("User does not have messages")
-        return list()
-    return pending_messages.pop(username)
+   #     return list()
+    #return pending_messages.pop(username)
+    return real_pend_list
 
-
+# TODO check
+@db_session
 def add_message(username, message, event) -> None:
-    if username not in pending_messages:
-        pending_messages[username] = list()
-    pending_messages[username].append({"message": message, "event": event})
+    try:
+        user_entity.PendingMessages(user=username,message_content= message,event=event)
+    except Exception as e:
+        print(e.args[0])
+    # if username not in pending_messages:
+    #     pending_messages[username] = list()
+    # pending_messages[username].append({"message": message, "event": event})
 
-
+# TODO check
+@db_session
 def add_message_to_history(username, message, event) -> None:
-    if username not in history_messages:
-        history_messages[username] = list()
-    history_messages[username].append({"message": message, "event": event})
+    try:
+        user_entity.HistoryMessages(user=username,message_content= message,event=event)
+    except Exception as e:
+        print(e.args[0])
+    # if username not in history_messages:
+    #     history_messages[username] = list()
+    # history_messages[username].append({"message": message, "event": event})
 
-
+# TODO work with DB
+@db_session
 def get_user_message_history(user_name):
-    if user_name not in history_messages:
-        return list()
-    else:
-        return history_messages[user_name]
+    try:
+        hist_list = list()
+        message_history = user_entity.User.get(user_name=user_name).historyMessages
+        for message in message_history:
+            hist_list.append({"message": message.message_content, "event": message.event})
+        return hist_list
+    except Exception as e:
+        print(e.args[0])
+    # if user_name not in history_messages:
+    #     return list()
+    # else:
+    #     return history_messages[user_name]
 
-
+# TODO check
 @db_session
 def add_to_cart(user_name, product_name, quantity, store_name):
-    product_user = user_entity.ProductToBuy.select(lambda p: p.user == user_name and
-                                        p.product == product_name and p.store_name == store_name)
+    product = user_entity.ProductInCart.select(lambda p: p.user.user_name == user_name and
+                                                              p.product == product_name and p.store_name == store_name)
 
+    user_db = user_entity.User.get(user_name=user_name)
+    if len(product) == 0:
+        user_entity.ProductInCart(user=user_db, store_name=store_name, quantity=quantity, product=product_name)
+    else:
+        user_entity.ProductInCart[user_name,store_name,product_name ].quantity += quantity
 
-    # user_db = user_entity.User.get(user_name=user_name)
-    # if user_db is None:
-    #     raise Exception("user does not exist")
-    # user_db.cart = user_db.cart if user_db.cart is not None else user_entity.Cart(user=user_db, basket_dict=[])
-    # try:
-    #     new_basket = user_entity.Basket(cart=user_db.cart, store_name=store_name, products_dict=[])
-    #     new_basket.products_dict.add(user_entity.BasketItem(basket=new_basket, product_name=product_name, quantity=quantity))
-    # except Exception as e:
-    #     new_basket = user_entity.Basket.get(cart=user_db.cart, store_name=store_name)
-    #     basket_item = user_entity.BasketItem.get(basket=new_basket, product_name=product_name)
-    #     if basket_item is None:
-    #         new_basket.products_dict.add(user_entity.BasketItem(basket=new_basket, product_name=product_name, quantity=quantity))
-    #     else:
-    #         basket_item.set(quantity=(basket_item.quantity + quantity))
-
-
+# TODO check
 def remove_from_cart(user_name, product_name, quantity, store_name):
-    product_user = user_entity.ProductToBuy.select(lambda p: p.user == user_name and
-            p.product == product_name and p.store_name == store_name)
-    # if user_db is None:
-    #     raise Exception("user does not exist")
-    # if user_db.cart is None:
-    #     raise Exception("Cart does not exist!")
-    # basket = user_entity.Basket.get(cart=user_db.cart, store_name=store_name)
-    # if basket is None:
-    #     raise Exception("basket does not exist!")
-    # basket_item = user_entity.BasketItem(basket=basket, product_name=product_name)
-    # if basket_item is None:
-    #     raise Exception("Product is not in the cart")
-    # if (basket_item.quantity-quantity) < 0:
-    #     raise Exception("Quantity violation")
-    # basket_item.set(quantity=(basket_item.quantity - quantity))
+    product = user_entity.ProductInCart[user_name,store_name,product_name]
+    if(product.quantity- quantity <=0):
+        product.delete()
+    else:
+        product.quantity -= quantity
+
