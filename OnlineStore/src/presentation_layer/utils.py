@@ -100,8 +100,8 @@ def get_cart_info(user_name):
     # return 10
 
 
-def purchase(user_name, payment_info, destination):
-    return service.purchase(user_name, payment_info, destination)
+def purchase(user_name, payment_info, buyer_information):
+    return service.purchase(user_name, payment_info, buyer_information)
 
 
 # def pay(cardNum):

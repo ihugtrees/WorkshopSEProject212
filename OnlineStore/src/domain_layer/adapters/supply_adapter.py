@@ -1,7 +1,11 @@
-from OnlineStore.src.dto.cart_dto import CartDTO
-import OnlineStore.src.external.supply_system_mock as supply_system
 
+class SupplyAdapter:
 
-def supply_products_to_user(cart: CartDTO, des: str):
-    return supply_system.address_supply_system(cart, des)
+    def __init__(self, supply_system):
+        self.supply_system = supply_system
 
+    def supply(self, buyer_information: dict):
+        return self.supply_system.supply(buyer_information)
+
+    def cancel_supply(self, transaction_id):
+        return self.supply_system.supply(transaction_id)

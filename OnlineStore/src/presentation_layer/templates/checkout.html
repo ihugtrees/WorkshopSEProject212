@@ -5,15 +5,25 @@
     <p>Checkout</p>
 </head>
 <body>
-    <form action="/checkout.html" method="POST">
+    <form action="/checkout" method="POST">
         <p>Price:{{price}}</p>
         <p>Card Number : </p>
-        <p><input type="text" name="cardNum" autofocus="True" /></p>
-        <p>delivery address : </p>
-        <p><input type="text" name="delivery" /></p>
+        <p><input type="text" name="card_num" autofocus="True" /></p>
+        <p>Expiration Date: <input type="text" name="month" /> / <input type="text" name="year" /></p>
+        <p>ccv: <input type="text" name="ccv" /></p>
+        <p>Card Holder ID:</p>
+        <p><input type="text" name="card_holder_id" /></p>
+        <p>Card Holder Name:</p>
+        <p><input type="text" name="holder_name" /></p>
+        <p>Address:</p>
+        <p><input type="text" name="address" /></p>
+        <p>City</p>
+        <p><input type="text" name="city" /></p>
+        <p>Country:</p>
+        <p><input type="text" name="country" /></p>
+        <p>Zip Code:</p>
+        <p><input type="text" name="zip" /></p>
         <p>{{message}}</p>
-    </form>
-        <form action="/checkout" method="POST">
         <p><input type="submit" value="Pay" /></p>
     </form>
     <form action="/dashboard" method="GET">
