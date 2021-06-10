@@ -1,3 +1,4 @@
+from OnlineStore.src.domain_layer.store.buying_offer import BuyingOffer
 from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.discont_policy.discount_policy import DiscountPolicy
 from OnlineStore.src.domain_layer.store.inventory import Inventory
@@ -14,6 +15,7 @@ class Store:
         self.rating = 0
         self.buying_policy: BuyingPolicy = buying_policy if buying_policy is not None else BuyingPolicy()
         self.discount_policy = discount_policy if discount_policy is not None else DiscountPolicy()
+        self.buying_offers = dict()   # key product_name val BuyingOffer
 
     def remove_product_store(self, product_id, store):
         self.inventory.remove_product_inventory(product_id, store)
@@ -72,6 +74,26 @@ class Store:
     def add_buying_policy(self, policy_name: str, s_term: str, no_flag=False):
         self.buying_policy.add_buying_term(policy_name, s_term, no_flag=no_flag, store=self.name)
 
+    def open_product_to_offer(self, product_name, minimum):
+        b = BuyingOffer(product_name, minimum)
+        if product_name in self.buying_offers:
+            raise Exception("the product already in type offer")
+        if product_name not in self.inventory.products_dict:
+            raise Exception("the product not in store")
+        self.buying_offers[product_name] = b
+
+    def make_offer(self, user_name, product_name, quantity, price, payment_detial, buyer_information):
+        if product_name not in self.buying_offers:
+            raise Exception("the product not open for offers")
+        if quantity > self.inventory.products_dict[product_name].quantity:
+            raise Exception("no such quantity")
+        if price < self.buying_offers[product_name].minimum:
+            raise Exception("the minimum price is: " + self.buying_offers[product_name].minimum)
+        self.buying_offers[product_name].offers[user_name] = (quantity, price)
+        self.buying_offers[product_name].payment_detial[user_name] = payment_detial
+        self.buying_offers[product_name].buyer_information[user_name] = buyer_information
+
+
     def delete_buying_policy(self, term_name):
         self.buying_policy.delete_buying_term(term_name)
 
@@ -83,3 +105,12 @@ class Store:
         ans["age"] = user_dto.age
         ans["user_name"] = user_dto.user_name
         return ans
+
+    def accept_offer(self, product_name, user_name):
+        if product_name not in self.buying_offers:
+            raise Exception(product_name + " is not for offers")
+        if user_name not in self.buying_offers[product_name].offers:
+            raise Exception(user_name + " does not have offer")
+        payment_info = self.buying_offers[product_name].payment_detial
+        buyer_info = self.buying_offers[product_name].buyer_information
+
