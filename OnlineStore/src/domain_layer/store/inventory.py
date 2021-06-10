@@ -1,17 +1,20 @@
 from OnlineStore.src.domain_layer.store.product import Product
 from OnlineStore.src.domain_layer.user.basket import Basket
+import OnlineStore.src.data_layer.store_data as stores
+
 from threading import Lock
 
 
 class Inventory:
     def __init__(self, products_dict):
-        self.products_dict = products_dict  # {String: Product}
+        self.products_dict = products_dict  # {product_name: Product}
         self.lock = Lock()
 
-    def remove_product_inventory(self, product_id):
+    def remove_product_inventory(self, product_id, store_name):
         if self.products_dict.get(product_id) is None:
             raise Exception("Product does not exist in the store")
         self.products_dict.pop(product_id)
+
 
     def add_product_inventory(self, product_details):
         self.lock.acquire()

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Buying Offer</title>
+    <p>Create Buying Offer</p>
+</head>
+<body>
+    <form action="/createBuyingOffer" method="POST">
+         <p>Enter Product Name:</p>
+        <p><input type="text" name="product_name" autofocus="True" /></p>
+         <p>Enter Minimum Price:</p>
+        <p><input type="text" name="minimum_price" /></p>
+        <p><input type="submit" value="Create Buying Offer" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

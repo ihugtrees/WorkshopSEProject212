@@ -36,10 +36,12 @@ class StoreHandler:
         if store.inventory.products_dict.get(product_details["product_id"]) is not None:
             raise Exception("product id already exists in the store")
         store.add_product_store(product_details)
+        stores.add_product_to_store(store_name, product_details)
 
     def remove_product_from_store_inventory(self, user_name, product_id, store_name):
         store: Store = stores.get_store_by_name(store_name)
-        store.remove_product_store(product_id)
+        store.remove_product_store(product_id, store_name)
+        stores.remove_product_from_store(store_name, product_id)
 
     def get_information_about_products(self, store_name):
         store: Store = stores.get_store_by_name(store_name)
@@ -164,7 +166,7 @@ class StoreHandler:
         return product_list
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):
-        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)
+        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term, store=store)
 
     def combine_discount(self, store, d1_name, d2_name, operator: str, new_name):
         return stores.get_store_by_name(store).combine_discount(d1_name, d2_name, operator, new_name)
@@ -177,6 +179,12 @@ class StoreHandler:
 
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
         return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
+
+    def open_product_to_offer(self, store, product_name, minimum):
+        return stores.get_store_by_name(store).open_product_to_offer(product_name, minimum)
+
+    def make_offer(self, user_name, store, product_name , quantity, price, payment_detial, buyer_information):
+        return stores.get_store_by_name(store).make_offer(user_name, product_name, quantity, price, payment_detial, buyer_information)
 
     def delete_buying_policy(self, store, policy_name):
         return stores.get_store_by_name(store).delete_buying_policy(policy_name)

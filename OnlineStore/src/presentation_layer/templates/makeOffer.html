@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Checkout</title>
-    <p>Checkout</p>
+    <title>Make Offer</title>
+    <p>Make Offer</p>
 </head>
 <body>
-    <form action="/checkout" method="POST">
-        <p>Price:{{price}}</p>
+    <form action="/makeOffer" method="POST">
+      <p>Enter Store Name:</p>
+        <p><input type="text" name="store_name" autofocus="True" /></p>
+         <p>Enter Product Name:</p>
+        <p><input type="text" name="product_name" autofocus="True" /></p>
+         <p>Enter Price:</p>
+        <p><input type="text" name="price" /></p>
+        <p>Enter quantity:</p>
+        <p><input type="text" name="quantity" /></p>
         <p>Card Number : </p>
         <p><input type="text" name="card_num" autofocus="True" /></p>
         <p>Expiration Date: <input type="text" name="month" /> / <input type="text" name="year" /></p>
@@ -24,10 +31,12 @@
         <p>Zip Code:</p>
         <p><input type="text" name="zip" /></p>
         <p>{{message}}</p>
-        <p><input type="submit" value="Pay" /></p>
+        <p><input type="submit" value="Make Offer" /></p>
     </form>
     <form action="/dashboard" method="GET">
-        <p><input type="submit" value="return to dashboard" /></p>
+        <p><input type="submit" value="Back To Dashboard" /></p>
     </form>
+
+
 </body>
 </html>
