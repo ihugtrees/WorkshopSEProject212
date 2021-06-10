@@ -166,7 +166,7 @@ class StoreHandler:
         return product_list
 
     def add_discount(self, store, discount_name, discount_value, discount_term=None):
-        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term)
+        return stores.get_store_by_name(store).add_discount(discount_name, discount_value, discount_term=discount_term, store=store)
 
     def combine_discount(self, store, d1_name, d2_name, operator: str, new_name):
         return stores.get_store_by_name(store).combine_discount(d1_name, d2_name, operator, new_name)

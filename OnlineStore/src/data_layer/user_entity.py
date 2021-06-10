@@ -36,8 +36,8 @@ class Store(db.Entity):
     store_founder = Required(str)
     rating = Optional(int)
     products = Set('Product')
-    # buying_policy = Optional('BuyingPolicy')
-    # discount_policy = Optional('DiscountPolicy')
+    buying_policy = Set('BuyingPolicy')
+    discount_policy = Set('DiscountPolicy')
 
 
 class Product(db.Entity):
@@ -52,9 +52,21 @@ class Product(db.Entity):
     PrimaryKey(store, product_id)
 
 
-# class BuyingPolicy(db.Entity):
-#     pass
-#     buying_policies = Set('BuyingTerm') TODO COMPLETE
+class BuyingPolicy(db.Entity):
+    name = PrimaryKey(str)
+    description = Required(str)
+    store = Required(Store)
+
+
+
+class DiscountPolicy(db.Entity):
+    name = PrimaryKey(str)
+    description = Required(str)
+    store = Required(Store)
+    value = Required(str)
+    category_flag_for_value = Optional(bool)
+
+
 #
 #
 # class BuyingTerm(db.Entity):
@@ -86,5 +98,7 @@ class PermissionsInStore(db.Entity):
     permissions = Required(int)
 
 
-
-
+# class Purchase(db.Entity):
+#     store = Required(str)
+#     user = Required(str)
+#

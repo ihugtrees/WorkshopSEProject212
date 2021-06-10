@@ -1,3 +1,4 @@
+from OnlineStore.src.data_layer import user_entity, store_data
 from OnlineStore.src.domain_layer.store.discont_policy.composite_discount_value import CompositeDiscountValue
 from OnlineStore.src.domain_layer.store.discont_policy.composite_term import CompositeTerm
 from OnlineStore.src.domain_layer.store.discont_policy.term_discount import TermDiscount
@@ -10,19 +11,20 @@ class DiscountPolicy:
         self.discount_dict = dict()  # key - discount name, value- (TermDiscount, description)
 
     def add_discount(self, discount_name: str, discount_value: str, discount_term: str = None,
-                     discount_value_type: str = False):
+                     discount_value_type: bool = False, store=None):
         if discount_name in self.discount_dict:
             raise Exception("discount name already exist")
-        if discount_term is None:
+        if discount_term is None or discount_term == "None":
             self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
                                                               discount_description_products=discount_value,
                                                               discount_description_categories=discount_value_type),
                                                  "term: " + "None" + ", value: " + discount_value)
+            store_data.add_discount_policy(store, discount_name, "None", discount_value, category_flag=discount_value_type)
         else:
             self.discount_dict[discount_name] = (TermDiscount(term_string=discount_term,
             discount_description_products=discount_value, discount_description_categories = discount_value_type),
                                              "term: " + discount_term+ ", value: " + discount_value)
-
+            store_data.add_discount_policy(store, discount_name, discount_term, discount_value, category_flag=discount_value_type)
 
     def combine_discount(self, d1_name, d2_name, operator: str, new_name):
         if new_name in self.discount_dict:

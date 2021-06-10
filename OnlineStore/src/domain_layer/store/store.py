@@ -56,9 +56,9 @@ class Store:
         return dict_ans
 
     def add_discount(self, discount_name: str, discount_value: str, discount_term: str = None,
-                     discount_value_type: str = False):
+                     discount_value_type: str = False, store= None):
         self.discount_policy.add_discount(discount_name, discount_value, discount_term=discount_term,
-                                          discount_value_type=discount_value_type)
+                                          discount_value_type=discount_value_type, store=store)
 
     def combine_discount(self, d1_name, d2_name, operator: str, new_name):
         self.discount_policy.combine_discount(d1_name, d2_name, operator, new_name)
@@ -70,7 +70,7 @@ class Store:
         return self.discount_policy.delete_discount(discount_name)
 
     def add_buying_policy(self, policy_name: str, s_term: str, no_flag=False):
-        self.buying_policy.add_buying_term(policy_name, s_term, no_flag=no_flag)
+        self.buying_policy.add_buying_term(policy_name, s_term, no_flag=no_flag, store=self.name)
 
     def delete_buying_policy(self, term_name):
         self.buying_policy.delete_buying_term(term_name)
