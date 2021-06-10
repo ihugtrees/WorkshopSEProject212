@@ -1,6 +1,8 @@
 import eventlet
 from flask import (Flask, render_template, request, redirect, session)
 from flask_socketio import SocketIO, join_room
+import argparse
+import json
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
@@ -791,6 +793,11 @@ def initialize_system():
 if __name__ == '__main__':
     # eventlet.monkey_patch()
     # monkey.patch_all()
-    initialize_system()
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+#     initialize_system()
+#     socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+    parser = argparse.ArgumentParser(description='Workshop 212')
+    parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
+    args = parser.parse_args()
+    utils.initialize_system(file=args.init_file)
+    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
     # socketio.run(app=app, debug=True)
