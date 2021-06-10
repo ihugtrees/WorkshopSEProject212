@@ -412,6 +412,34 @@ def checkout():
             return render_template("checkout.html", message=ans[1])
     return render_template("checkout.html", price=price)
 
+@app.route('/makeOffer', methods=['POST', 'GET'])
+def makeOffer():
+    price = utils.get_cart_info(session['user']).sum
+    if request.method == 'POST':
+        card_num = request.form.get('card_num')
+        year = request.form.get("year")
+        month = request.form.get("month")
+        ccv = request.form.get("ccv")
+        card_holder_id = request.form.get("card_holder_id")
+        city = request.form.get("city")
+        country = request.form.get("country")
+        zip_code = request.form.get("zip")
+        holder_name = request.form.get("holder_name")
+        address = request.form.get("address")
+        store = request.form.get("store_name")
+        product = request.form.get("product_name")
+        quantity = request.form.get("quantity")
+        price = request.form.get("price")
+
+        payment_info = {"card_number": card_num, "year": year, "month": month, "ccv": ccv, "id": card_holder_id,
+                        "holder": holder_name}
+        buyer_information = {"city": city, "country": country, "zip": zip_code, "address": address,
+                             "name": session["username"]}
+
+        return render_template("makeOffer.html", message=
+        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info, buyer_information)[1]))
+    return render_template("makeOffer.html", price=price)
+
 
 @app.route('/openStore', methods=['POST', 'GET'])
 def openStore():
@@ -575,6 +603,18 @@ def addPurchasePolicy():
                                message=display_answer(
                                    utils.add_buying_policy(session["user"], storeID, policy_name, details)[1]))
     return render_template("addPurchasePolicy.html")
+
+
+@app.route('/createBuyingOffer', methods=['POST', 'GET'])
+def createBuyingOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        minimum = request.form.get("minimum_price")
+        return render_template("createBuyingOffer.html",
+                               message=display_answer(
+                                   utils.open_product_to_offer(session["user"], storeID, product_name, minimum)[1]))
+    return render_template("createBuyingOffer.html")
 
 
 @app.route('/addNewProduct', methods=['POST', 'GET'])

@@ -180,6 +180,12 @@ class StoreHandler:
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
         return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
 
+    def open_product_to_offer(self, store, product_name, minimum):
+        return stores.get_store_by_name(store).open_product_to_offer(product_name, minimum)
+
+    def make_offer(self, user_name, store, product_name , quantity, price, payment_detial, buyer_information):
+        return stores.get_store_by_name(store).make_offer(user_name, product_name, quantity, price, payment_detial, buyer_information)
+
     def delete_buying_policy(self, store, policy_name):
         return stores.get_store_by_name(store).delete_buying_policy(policy_name)
 

@@ -588,6 +588,18 @@ def add_policy(user_name, store, policy_name: str, s_term: str, no_flag=False):
                                        store)  # TODO ask niv gadol for permissions
     store_handler.add_policy(store, policy_name, s_term, no_flag=no_flag)
 
+def open_product_to_offer(user_name, store, product_name, minimum):
+    user_name = auth.get_username_from_hash(user_name)
+    permission_handler.is_permmited_to(user_name, Action.ADD_DISCOUNT.value,
+                                       store)  # TODO ask niv gadol for permissions
+    return store_handler.open_product_to_offer(store, product_name, minimum)
+
+
+def make_offer(user_name, store, product_name , quantity, price, payment_detial, buyer_information):
+    user_name = auth.get_username_from_hash(user_name)
+    publisher.send_message_to_store_employees(user_name + "send offer on " + product_name, store, "offer")
+    return store_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)
+
 
 def delete_policy(user_name, store, policy_name: str):
     user_name = auth.get_username_from_hash(user_name)
