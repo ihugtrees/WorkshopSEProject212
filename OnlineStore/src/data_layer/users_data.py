@@ -107,24 +107,18 @@ def pop_user_messages(username: str) -> list:
 # TODO check
 @db_session
 def add_message(username, message, event) -> None:
-    try:
-        user_entity.PendingMessages(user=username,message_content= message,event=event)
-    except Exception as e:
-        print(e.args[0])
-    # if username not in pending_messages:
-    #     pending_messages[username] = list()
-    # pending_messages[username].append({"message": message, "event": event})
+    user_entity.PendingMessages(user=username,message_content= message,event=event)
+    if username not in pending_messages:
+        pending_messages[username] = list()
+    pending_messages[username].append({"message": message, "event": event})
 
 # TODO check
 @db_session
 def add_message_to_history(username, message, event) -> None:
-    try:
-        user_entity.HistoryMessages(user=username,message_content= message,event=event)
-    except Exception as e:
-        print(e.args[0])
-    # if username not in history_messages:
-    #     history_messages[username] = list()
-    # history_messages[username].append({"message": message, "event": event})
+    user_entity.HistoryMessages(user=username,message_content= message,event=event)
+    if username not in history_messages:
+        history_messages[username] = list()
+    history_messages[username].append({"message": message, "event": event})
 
 # TODO work with DB
 @db_session

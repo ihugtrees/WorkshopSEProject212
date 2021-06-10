@@ -654,10 +654,7 @@ class TestService(TestCase):
         service.assign_store_owner(users_hash[user_name1], user_name3, "store1")
         self.assertTrue(len(publisher.topics["store1"]) == 3)
         service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
-        service.purchase(users_hash["user_name4"], {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                     "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
-                                        "address": "ziso 5/3 beer sheva, israel",
-                                        "name": "niv"})
+        service.purchase(users_hash["user_name4"], payment_info, buyer_information)
         self.assertTrue(len(users.history_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
         self.assertTrue(len(users.history_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
         self.assertTrue(len(users.history_messages[user_name3]) == 1, f"len(list) of {user_name3} should be 1")
@@ -667,10 +664,7 @@ class TestService(TestCase):
         service.logout(users_hash[user_name3])
 
         service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
-        service.purchase(users_hash["user_name4"], {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                     "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
-                                        "address": "ziso 5/3 beer sheva, israel",
-                                        "name": "niv"})
+        service.purchase(users_hash["user_name4"], payment_info, buyer_information)
 
         self.assertTrue(len(users.pending_messages[user_name1]) == 1, f"len(list) of {user_name1} should be 1")
         self.assertTrue(len(users.pending_messages[user_name2]) == 1, f"len(list) of {user_name2} should be 1")
