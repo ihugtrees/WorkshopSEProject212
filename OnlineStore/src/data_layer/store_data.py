@@ -17,7 +17,7 @@ lock = Lock()
 @db_session
 def store_data_form_db(store_name):
     store_db = user_entity.Store.get(name=store_name)
-    products = user_entity.Product.select(lambda p: p.store == store_name)
+    products = user_entity.Product.select(lambda p: p.store.name == store_name)
     product_dict = dict()
     for p in products:
         product = Product(p.product_id, p.product_name, p.quantity, p.price, p.category)

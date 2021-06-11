@@ -4,6 +4,7 @@ import OnlineStore.src.data_layer.user_entity as user_entity
 from OnlineStore.src.domain_layer.user.basket import Basket
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.domain_layer.user.user import User
+from OnlineStore.src.domain_layer.user.appoint import Appoint
 from OnlineStore.src.dto import user_dto, cart_dto
 
 users: dict = dict()  # key - user name, value User
@@ -68,13 +69,13 @@ def get_user_by_name(user_name) -> user.User:
 
 
 @db_session
-def add_user(usr: user.User) -> None:
+def add_user(usr: user.User, permissions: int) -> None:
     user_db = user_entity.User.get(user_name=usr.user_name)
     if user_db is not None:
         raise Exception("user already exists")
     if usr.is_guest == False:
         db_user = user_entity.User(user_name=usr.user_name, is_guest=usr.is_guest,
-                                   is_admin=usr.is_admin, age=usr.age)
+                                   is_admin=usr.is_admin, age=usr.age, permissions=permissions)
 
 
 def remove_user(user_name: str) -> None:
@@ -156,3 +157,18 @@ def remove_from_cart(user_name, product_name, quantity, store_name):
     else:
         product.quantity -= quantity
 
+@db_session
+def empty_cart(user_name):
+    user_entity.User.get(user_name=user_name).productInCart = []
+
+
+@db_session
+def get_appoint_by_user(user_name):
+    appoint = user_entity.User.get(user_name=user_name).appoint
+    new_dict = dict()
+    for a in appoint:
+        try:
+            new_dict[a.store_name].append(a.appointee)
+        except:
+            new_dict[a.store_name] = [a.appointee]
+    return Appoint()
