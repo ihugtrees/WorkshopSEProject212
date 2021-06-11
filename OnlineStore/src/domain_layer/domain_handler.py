@@ -35,6 +35,7 @@ def get_into_site():
 
     ans = user_handler.get_guest_unique_user_name(action.GUEST_PERMISSIONS)
     auth.guest_registering(ans)
+    user_handler.register_guest(ans)
     return ans
 
 
@@ -465,7 +466,7 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_permmited_to(user_name, Action.REMOVE_MANAGER.value, store_name)
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
-    permission_handler.remove_employee(to_remove, store_name, store_manager_name)
+    permission_handler.remove_employee(to_remove, store_name, store_manager_name,user_name)
     for store_employee_name in to_remove:
         publisher.send_remove_employee_msg(
             f"You are no longer an employee in {store_name} you have been removed by {user_name}",

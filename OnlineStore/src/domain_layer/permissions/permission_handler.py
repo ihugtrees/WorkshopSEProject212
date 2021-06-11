@@ -19,7 +19,7 @@ class PermissionHandler:
             :param store_name:
         """
 
-        user_permissions: UserPermissions = permissions.get_permissions_by_user_name(user_name, store_name)
+        user_permissions: UserPermissions = permissions.get_permissions_by_user_name(user_name)
         user_permissions.is_permmited_to(action, store_name)
 
     def set_permissions(self, new_permissions: int, user_name: str, store_name: str) -> None:
@@ -34,8 +34,8 @@ class PermissionHandler:
         permissions.get_permissions_by_user_name(user_name).is_working_in_store(store_name)
 
     @db_session
-    def remove_employee(self, to_remove: list, store_name: str, the_one_appointed_by_me: str):
-        permissions.remove_appointed_by_me(the_one_appointed_by_me)
+    def remove_employee(self, to_remove: list, store_name: str, the_one_appointed_by_me: str,user_name):
+        permissions.remove_appointed_by_me(user_name, store_name,the_one_appointed_by_me)
         for store_employee_name in to_remove:
             permissions.remove_employee(store_employee_name, store_name)
 

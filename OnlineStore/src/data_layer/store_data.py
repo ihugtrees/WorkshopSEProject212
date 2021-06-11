@@ -21,7 +21,7 @@ def store_data_form_db(store_name):
     product_dict = dict()
     for p in products:
         product = Product(p.product_id, p.product_name, p.quantity, p.price, p.category)
-        product_dict[products.product_name] = product
+        product_dict[p.product_name] = product
     inventory = Inventory(product_dict)
     store = Store(store_name, store_db.store_founder)
     store.inventory = inventory
@@ -30,29 +30,35 @@ def store_data_form_db(store_name):
     store.buying_policy = BuyingPolicy()
     store.buying_policy.terms_dict = get_all_buying_policy_data(store_name)
     store.discount_policy = DiscountPolicy()
-    store.discount_policy.discount_dict = get_all_discount_policy_data
+    store.discount_policy.discount_dict = get_all_discount_policy_data(store_name)
     return store
 
 @db_session
 def get_all_buying_policy_data(store):
-    policies = user_entity.Store.select(lambda p: p.store == store)
-    policies_dict = dict()
-    for p in policies:
-        c: CreateBuyingTerm = CreateBuyingTerm(p.description)
-        policies_dict[p.name] = (c.term, p.description)
+    try:
+        policies = user_entity.BuyingPolicy.select(lambda p: p.store.name == store)
+        policies_dict = dict()
+        for p in policies:
+            c: CreateBuyingTerm = CreateBuyingTerm(p.description)
+            policies_dict[p.name] = (c.term, p.description)
+    except Exception as e:
+        return dict()
     return policies_dict
 
 @db_session
 def get_all_discount_policy_data(store):
-    discounts = user_entity.Store.select(lambda d: d.store == store)
-    discounts_dict = dict()
-    for d in discounts:
-        t = TermDiscount(term_string=d.description, discount_description_products=d.value,
-                                        discount_description_categories=d.category_flag)
-        if t.term == None:
-            discounts_dict[d.name] = (t, "term: " + "None" + ", value: " + d.value)
-        else:
-            discounts_dict[d.name] = (t, "term: " + d.description + ", value: " + d.value)
+    try:
+        discounts = user_entity.DiscountPolicy.select(lambda d: d.store.name == store)
+        discounts_dict = dict()
+        for d in discounts:
+            t = TermDiscount(term_string=d.description, discount_description_products=d.value,
+                                            discount_description_categories=d.category_flag_for_value)
+            if t.term == None:
+                discounts_dict[d.name] = (t, "term: " + "None" + ", value: " + d.value)
+            else:
+                discounts_dict[d.name] = (t, "term: " + d.description + ", value: " + d.value)
+    except Exception as e:
+        return dict()
     return discounts_dict
 
 

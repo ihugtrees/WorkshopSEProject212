@@ -14,7 +14,7 @@ def get_permissions_by_user_name(user_name: str) -> UserPermissions:
         raise Exception("The user does not exist or something went wrong!")
     new_dict = dict()
     for p in user_perm:
-        new_dict[p.store_name] = p.store_permmisions
+        new_dict[p.store_name] = p.store_permissions
     return UserPermissions(user_name, user_permissions, new_dict)
 
 
@@ -30,9 +30,14 @@ def set_permmisions(new_permissions, user_name, store_name):
 @db_session
 def remove_employee(store_employee_name, store_name):
     user_entity.UserPermissions.get(user_name=store_employee_name, store_name=store_name).delete()
-    user_entity.Appoint.get(user_name=store_employee_name, store_name=store_name).delete()
+    try:
+        user_entity.Appoint.get(user_name=store_employee_name, store_name=store_name).delete()
+    except Exception as e:
+        pass
+
 
 
 @db_session
 def remove_appointed_by_me(user_name, store_name, the_one_appointed_by_me):
     user_entity.Appoint.get(user_name=user_name, store_name=store_name, appointee=the_one_appointed_by_me).delete()
+

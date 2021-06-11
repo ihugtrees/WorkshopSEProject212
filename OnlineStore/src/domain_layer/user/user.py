@@ -33,7 +33,8 @@ class User:
         users.get_appoint_by_user(self.user_name).is_appointed_by_me(store_name, store_manager_name)
 
     def assign_store_employee(self, new_store_owner_name: str, store_name: str) -> None:
-        users.get_appoint_by_user(self.user_name).assign_store_employee(new_store_owner_name, store_name)
+        # users.get_appoint_by_user(self.user_name).assign_store_employee(new_store_owner_name, store_name)
+        users.add_appointee(self.user_name, new_store_owner_name, store_name)
 
     def remove_employee(self, store_employee: str, store_name: str) -> None:
         users.get_appoint_by_user(self.user_name).remove_appointed(store_employee, store_name)
@@ -42,4 +43,4 @@ class User:
         return users.get_appoint_by_user(self.user_name).get_all_appointed(store_name)
 
     def remove_store_from_appoint(self, store_name):
-        users.get_appoint_by_user(self.user_name).remove_store-_from_appoint(store_name)
+        users.get_appoint_by_user(self.user_name).remove_store_from_appoint(store_name)

@@ -29,7 +29,10 @@ def take_user_data(user_name):
         basket_dict[s] = basket
     cart = Cart()
     cart.basket_dict = basket_dict
-    new_user = User(user_db.user_name, cart, user_db.is_admin, user_db.appointed_to_store, age= user_db.age)
+    try:
+        new_user = User(user_db.user_name, cart, user_db.is_admin, user_db.appoint, age= user_db.age)
+    except Exception as e:
+        print(e)
     users[user_name] = new_user
     return new_user
 
@@ -171,4 +174,16 @@ def get_appoint_by_user(user_name):
             new_dict[a.store_name].append(a.appointee)
         except:
             new_dict[a.store_name] = [a.appointee]
-    return Appoint()
+    return Appoint(new_dict)
+
+@db_session
+def add_appointee(user_name, new_store_owner_name, store_name):
+    user_entity.Appoint(user_name=user_name, appointee=new_store_owner_name, store_name=store_name)
+
+
+def remove_guest(guest_name):
+    users.pop(guest_name)
+
+
+def register_guest(guest_name):
+    users[guest_name] = User(guest_name)

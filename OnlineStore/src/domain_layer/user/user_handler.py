@@ -50,7 +50,7 @@ class UserHandler:
         users.get_user_by_name(user_name).logout()
 
     def exit_the_site(self, guest_name):
-        users.remove_user(guest_name)
+        users.remove_guest(guest_name)
 
     def add_product(self, user_name, store_id, product_id, quantity):
         users.get_user_by_name(user_name).add_product_to_user(store_id, product_id, quantity)
@@ -101,9 +101,9 @@ class UserHandler:
         self.is_assigned_by_me(user_name, store_employee, store_name)
         employee: User = users.get_user_by_name(store_employee)
         to_remove: list = employee.get_all_appointed(store_name)
-        users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
+        # users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
         ls: list = self.__remove_employee_rec(to_remove, store_name)
-        employee.remove_store_from_appoint(store_name)
+        # employee.remove_store_from_appoint(store_name)
         ls.append(store_employee)
         return ls
 
@@ -115,8 +115,11 @@ class UserHandler:
             list_em.extend(
                 self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name),
                                            store_name))
-            users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
+            # users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
         return list_em
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
+
+    def register_guest(self, guest_name):
+        users.register_guest(guest_name)
