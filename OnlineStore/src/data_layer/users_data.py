@@ -58,7 +58,7 @@ def take_user_data(user_name):
 #                      guest=user_db.is_guest, cart=cart_db_to_domain_cart(user_db.cart), age=user_db.age,
 #                      appointed_to_store=db_appoint_to_user_appoint(user_db.appointed_to_store))
 
-# TODO check
+
 @db_session
 def get_user_by_name(user_name) -> user.User:
     if user_name in users:
@@ -66,7 +66,7 @@ def get_user_by_name(user_name) -> user.User:
     else:
         return take_user_data(user_name)
 
-# TODO check
+
 @db_session
 def add_user(usr: user.User) -> None:
     user_db = user_entity.User.get(user_name=usr.user_name)
@@ -82,7 +82,7 @@ def remove_user(user_name: str) -> None:
         raise Exception("cannot remove: user already does not exist in the system")
     users.pop(user_name)
 
-# TODO check
+
 @db_session
 def pop_user_messages(username: str) -> list:
     """
@@ -104,7 +104,7 @@ def pop_user_messages(username: str) -> list:
     #return pending_messages.pop(username)
     return real_pend_list
 
-# TODO check
+
 @db_session
 def add_message(username, message, event) -> None:
     user_entity.PendingMessages(user=username,message_content= message,event=event)
@@ -112,7 +112,7 @@ def add_message(username, message, event) -> None:
         pending_messages[username] = list()
     pending_messages[username].append({"message": message, "event": event})
 
-# TODO check
+
 @db_session
 def add_message_to_history(username, message, event) -> None:
     user_entity.HistoryMessages(user=username,message_content= message,event=event)
@@ -120,7 +120,7 @@ def add_message_to_history(username, message, event) -> None:
         history_messages[username] = list()
     history_messages[username].append({"message": message, "event": event})
 
-# TODO work with DB
+
 @db_session
 def get_user_message_history(user_name):
     try:
@@ -136,7 +136,7 @@ def get_user_message_history(user_name):
     # else:
     #     return history_messages[user_name]
 
-# TODO check
+
 @db_session
 def add_to_cart(user_name, product_name, quantity, store_name):
     product = user_entity.ProductInCart.select(lambda p: p.user.user_name == user_name and
@@ -148,7 +148,7 @@ def add_to_cart(user_name, product_name, quantity, store_name):
     else:
         user_entity.ProductInCart[user_name,store_name,product_name ].quantity += quantity
 
-# TODO check
+
 def remove_from_cart(user_name, product_name, quantity, store_name):
     product = user_entity.ProductInCart[user_name,store_name,product_name]
     if(product.quantity- quantity <=0):

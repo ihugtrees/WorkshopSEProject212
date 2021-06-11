@@ -14,12 +14,17 @@ class Product:
         self.category = category
         self.rating = 0
         self.lock = Lock()
+    #TODO work with db
 
     def take_quantity(self, num_to_take):
-        if num_to_take <= 0 or self.quantity < num_to_take:
+        if num_to_take <= 0:
+            raise Exception("Negative or zero quantity\n")
+        # quan_in_db =
+        if self.quantity < num_to_take:
             raise Exception("There are only " + str(self.quantity) + " from " + self.product_name + " in the store.\n")
         self.quantity -= num_to_take
 
+    # TODO work with db
     def return_quantity(self, num_to_take):
         if num_to_take <= 0:
             raise Exception("impossible to return negative amount")
@@ -31,12 +36,16 @@ class Product:
         # TODO FOR NOW ONLY QUANTITY*PRICE
         return self.price * quantity
 
+    # TODO work with db
     def add_quantity(self, quant):
         if quant <= 0:
             raise Exception("cant add less than one quantity")
         self.quantity += quant
 
+
     def edit_product_description(self, product_description):
         if type(product_description) != str:
             raise Exception("description must be string")
         self.description = product_description
+
+    def change_quantity(self, store_name,product_name, quantity, ):

@@ -45,12 +45,12 @@ def add_receipt(receipt: Receipt) -> None:
     store_purchases[receipt.store_name] = purchase_obj
 
 
-def add_all_basket_purchases_to_history(cart: CartDTO, user_name, cart_sum, date, destination):
+def add_all_basket_purchases_to_history(cart: CartDTO, user_name, cart_sum, date, destination, transaction_id):
     for store_name, basket in cart.basket_dict.items():
         while True:
             try:
                 receipt = Receipt(get_random_string(20), user_name, store_name, cart_sum, date, destination,
-                                  basket.products_dict)
+                                  basket.products_dict,transaction_id)
                 add_receipt(receipt)
                 break
             except:

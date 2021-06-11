@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pony.orm import *
 
 db = Database()
@@ -12,6 +14,7 @@ class User(db.Entity):
     productInCart = Set("ProductInCart")
     pendingMessages = Set("PendingMessages")
     historyMessages = Set("HistoryMessages")
+    userPurchaseHistory = Set("UserPurchaseHistory")
 
 class PendingMessages(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -111,7 +114,19 @@ class PermissionsInStore(db.Entity):
     permissions = Required(int)
 
 
-# class Purchase(db.Entity):
-#     store = Required(str)
-#     user = Required(str)
-#
+class UserPurchaseHistory(db.Entity):
+    store_name = Required(str)
+    receipt_id = Required(str)
+    user_name = Required(User)
+    total_sum = Required(int)
+    date = Required(datetime)
+    destination = Required(str)
+    products = Set("ProductInHistory")
+    transaction_id = Required(int)
+    PrimaryKey(user_name, receipt_id)
+
+
+class ProductInHistory(db.Entity):
+    product_name = Required(str)
+    quantity = Required(int)
+    user_purchase_history = Required(UserPurchaseHistory)
