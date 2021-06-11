@@ -7,3 +7,4 @@ class BuyingOffer:
         self.payment_detial = dict()
         self.buyer_information = dict()
         self.minimum = int(minimum)
+        self.all_acceptance = set()

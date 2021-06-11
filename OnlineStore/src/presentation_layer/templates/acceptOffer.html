@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accept Offer</title>
+    <p>Accept Offer</p>
+</head>
+<body>
+    <form action="/acceptOffer" method="POST">
+         <p>Enter Product Name:</p>
+        <p><input type="text" name="product_name" autofocus="True" /></p>
+         <p>Offer from?:</p>
+        <p><input type="text" name="user_name" /></p>
+        <p><input type="submit" value="Accept Offer" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>

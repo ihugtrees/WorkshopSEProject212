@@ -106,11 +106,19 @@ class Store:
         ans["user_name"] = user_dto.user_name
         return ans
 
-    def accept_offer(self, product_name, user_name):
+    def accept_offer(self, product_name, user_name, owner_name, num_of_acceptance):
         if product_name not in self.buying_offers:
             raise Exception(product_name + " is not for offers")
         if user_name not in self.buying_offers[product_name].offers:
             raise Exception(user_name + " does not have offer")
-        payment_info = self.buying_offers[product_name].payment_detial
-        buyer_info = self.buying_offers[product_name].buyer_information
+        if owner_name in self.buying_offers[product_name].all_acceptance:
+            raise Exception("yoe already accept")
+        self.buying_offers[product_name].all_acceptance.add(owner_name)
+        price = self.buying_offers[product_name].offers[user_name][1]
+        quantity = self.buying_offers[product_name].offers[user_name][0]
+        if len(self.buying_offers[product_name].all_acceptance) == num_of_acceptance:
+            payment_info = self.buying_offers[product_name].payment_detial
+            buyer_info = self.buying_offers[product_name].buyer_information
+            return payment_info, buyer_info, quantity, price
+
 

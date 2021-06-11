@@ -282,6 +282,42 @@ def purchase(user_name: str, payment_info: dict, buyer_information: dict):
         raise Exception(e.args[0])
 
 
+def purchase_special(user_name: str, store, payment_info: dict, buyer_information: dict, price, quantity, product):
+    """
+    Purchase all the items in the cart
+
+    :param delivery_success:
+    :param payment_success:
+    :param destination: the address of the customer
+    :param user_name: user name
+    :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
+    :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
+    """
+    payment_done_delivery_done = {"payment_done": False, "delivery_done": False, "quantity_taken": False}
+
+    try:
+        store_handler.take_quantity_from_store(store, product, quantity)
+        payment_done_delivery_done["quantity_taken"] = True
+        payment_transaction_id = payment_adapter.pay(payment_info)
+        supply_transaction_id = supply_adapter.supply(buyer_information=buyer_information)
+        # add to history todo
+
+        publisher.send_message_to_store_employees(
+            f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store}) the following items: "+ product,
+            store,
+            "buying product")
+        publisher.send_message(store + " accept your offer, " + product + " in delivery", user_name, "offer")
+        return payment_transaction_id
+    except Exception as e:
+        # if payment_done_delivery_done["quantity_taken"]:
+        #     store_handler.return_quantity(cart_dto)
+        #     payment_done_delivery_done["quantity_taken"] = False
+        # if payment_done_delivery_done["payment_done"]:
+        #     payment_adapter.return_for_cart(payment_info, cart_sum)
+        #     payment_done_delivery_done["payment_done"] = False
+        raise Exception(e.args[0])
+
+
 # 3.1
 
 def logout(user_name_hash):
@@ -604,6 +640,16 @@ def make_offer(user_name, store, product_name , quantity, price, payment_detial,
     user_name = auth.get_username_from_hash(user_name)
     publisher.send_message_to_store_employees(user_name + "send offer on " + product_name, store, "offer")
     return store_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)
+
+
+def accept_offer(store, product_name, user_name, owner_name):
+    owner_name = auth.get_username_from_hash(owner_name)
+    permission_handler.is_permmited_to(owner_name, Action.ADD_DISCOUNT.value, store)
+    num_of_acc = len(publisher.topics[store])
+    ans = store_handler.accept_offer(store, product_name, user_name, owner_name, num_of_acc)
+    if ans is not None:
+        (payment_info, buyer_info, quantity, price) = ans
+        return purchase_special(user_name, store, ans[0], ans[1], ans[3], ans[2], product_name)
 
 
 def delete_policy(user_name, store, policy_name: str):

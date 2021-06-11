@@ -619,6 +619,18 @@ def createBuyingOffer():
     return render_template("createBuyingOffer.html")
 
 
+@app.route('/acceptOffer', methods=['POST', 'GET'])
+def acceptOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        user_name = request.form.get("user_name")
+        return render_template("acceptOffer.html",
+                               message=display_answer(
+                                   utils.accept_offer(storeID, product_name, user_name, session["user"])[1]))
+    return render_template("acceptOffer.html")
+
+
 @app.route('/addNewProduct', methods=['POST', 'GET'])
 def addNewProduct():
     if (request.method == 'POST'):
@@ -816,8 +828,8 @@ def initialize_system():
 
     utils.open_store("store1", manager_hash)
     utils.open_store(store_name, admin_hash)
-    utils.assign_store_owner(admin_hash, a, store_name)
-    utils.assign_store_owner(a_hash, b, store_name)
+    #utils.assign_store_owner(admin_hash, a, store_name)
+    #utils.assign_store_owner(a_hash, b, store_name)
     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,

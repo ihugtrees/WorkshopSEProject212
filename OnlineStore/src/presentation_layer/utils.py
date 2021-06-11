@@ -199,6 +199,10 @@ def make_offer(user_name, store_name, product_name, quantity, price, payment_det
     return service.make_offer(user_name, store_name, product_name, quantity, price, payment_detial, buyer_information)
 
 
+def accept_offer(store, product_name, user_name, owner_name):
+    return service.accept_offer(store, product_name, user_name, owner_name)
+
+
 def delete_buying_policy(user_name, store_name, policy_name):
     return service.delete_buying_policy(user_name, store_name, policy_name)
 
