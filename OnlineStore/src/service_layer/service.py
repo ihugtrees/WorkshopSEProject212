@@ -1,7 +1,8 @@
+import json
+import os.path
+
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.service_layer.logger import Logger
-import os.path
-import json
 
 logging = Logger()
 
@@ -24,10 +25,10 @@ def exit_the_site(guest_name):
         return [False, e.args[0]]
 
 
-def register(user_name: str, password: str, age):
+def register(user_name: str, password: str, age, is_admin):
     try:
         logging.info("register " + user_name)
-        domain_handler.register(user_name, password, age)
+        domain_handler.register(user_name, password, age, is_admin)
         return [True, "New user has been added successfully"]
     except Exception as e:
         logging.error("fail in register: " + e.args[0])
@@ -576,7 +577,7 @@ def get_store_purchase_history(user_name, store_name):
 def get_store_purchase_history_admin(user_name, store_name):
     try:
         logging.info("Get Store purchase history admin: " + user_name + " from store: " + store_name)
-        return [True, domain_handler.get_store_purchase_history_admin(user_name, store_name)]
+        return [True, domain_handler.get_store_purchase_history_admin(store_name)]
     except Exception as e:
         logging.error("Get Store purchase history admin failed due: " + e.args[0])
         return [False, e.args[0]]
@@ -594,7 +595,7 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     """
     try:
         logging.info("Get user purchase history admin: " + user_name + " from user: " + other_user_name)
-        return [True, domain_handler.get_user_purchase_history_admin(user_name, other_user_name)]
+        return [True, domain_handler.get_user_purchase_history_admin(other_user_name)]
     except Exception as e:
         logging.error("get_user_purchase_history_admin " + e.args[0])
         return [False, e.args[0]]
@@ -665,8 +666,15 @@ def get_employee_details(user_name, store_name, employeeid):
 
 def is_user_guest(user_name):
     try:
-        # logging.info("add new discount")
         return [True, domain_handler.is_user_guest(user_name)]
+    except Exception as e:
+        logging.error("is_user_guest " + e.args[0])
+        return [False, e.args[0]]
+
+
+def is_user_admin(user_name):
+    try:
+        return [True, domain_handler.is_user_admin(user_name)]
     except Exception as e:
         logging.error("is_user_guest " + e.args[0])
         return [False, e.args[0]]
@@ -719,14 +727,14 @@ def open_product_to_offer(user_name, store, product_name, minimum):
         return [False, e.args[0]]
 
 
-def make_offer(user_name, store, product_name , quantity, price, payment_detial, buyer_information):
+def make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information):
     try:
         logging.info("make offer")
-        return [True, domain_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)]
+        return [True, domain_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial,
+                                                buyer_information)]
     except Exception as e:
         logging.error(e.args[0])
         return [False, e.args[0]]
-
 
 
 def delete_buying_policy(user_name, store, policy_name: str):
@@ -793,81 +801,89 @@ def get_user_history_message(user_name):
         logging.error("get message history " + e.args[0])
         return [False, e.args[0]]
 
-def handle_command(command,logged_in):
-    if("(" in command):
+
+def handle_command(command, logged_in):
+    if ("(" in command):
         prefix = command[:command.find("(")]
-        args = command [command.find("(")+1:command.rfind(")")].split(",")
+        args = command[command.find("(") + 1:command.rfind(")")].split(",")
         args = [x.strip(' ') for x in args]
-        if(prefix == "register" and len(args)>2):
-            return register(args[0],args[1],args[2])[0]
-        elif(prefix == "login" and len(args)>1):
-            output =login(args[0],args[1])
-            if(output[0]):
+        if (prefix == "register" and len(args) > 2):
+            return register(args[0], args[1], args[2])[0]
+        elif (prefix == "login" and len(args) > 1):
+            output = login(args[0], args[1])
+            if (output[0]):
                 logged_in[args[0].strip()] = output[1]
             return output[0]
         elif (prefix == "open_store" and len(args) > 1):
             return open_store(args[0], logged_in[args[1]])[0]
         elif (prefix == "assign_store_manager" and len(args) > 2):
-            return assign_store_manager(logged_in[args[0]],args[1],args[2])
+            return assign_store_manager(logged_in[args[0]], args[1], args[2])
         elif (prefix == "assign_store_owner" and len(args) > 2):
-            return assign_store_owner(logged_in[args[0]],args[1],args[2])
+            return assign_store_owner(logged_in[args[0]], args[1], args[2])
         elif (prefix == "add_new_product_to_store_inventory" and len(args) > 7):
-            return add_new_product_to_store_inventory(logged_in[args[0]],{"product_id": args[1], "product_name": args[2], "quantity": args[3], "description": args[4], "price": args[5], "category": args[6]},args[7])
+            return add_new_product_to_store_inventory(logged_in[args[0]],
+                                                      {"product_id": args[1], "product_name": args[2],
+                                                       "quantity": args[3], "description": args[4], "price": args[5],
+                                                       "category": args[6]}, args[7])
         elif (prefix == "add_simple_discount" and len(args) > 3):
-            return add_simple_discount(logged_in[args[0]],args[1],args[2],args[3])
+            return add_simple_discount(logged_in[args[0]], args[1], args[2], args[3])
         elif (prefix == "add_product_to_cart" and len(args) > 3):
-            return add_product_to_cart(logged_in[args[0]],args[1],args[2],args[3])
+            return add_product_to_cart(logged_in[args[0]], args[1], args[2], args[3])
         elif (prefix == "purchase" and len(args) > 2):
-            return purchase(logged_in[args[0]],{"card_number": args[1]},args[2])
+            return purchase(logged_in[args[0]], {"card_number": args[1]}, args[2])
         elif (prefix == "logout" and len(args) > 0):
             return logout(logged_in[args[0]])
         else:
-            print ("Prefix is not valid "+prefix)
+            print("Prefix is not valid " + prefix)
             return False
     else:
         return False
     return True
 
-def connect_to_database (data):
-    #TODO
+
+def connect_to_database(data):
+    # TODO
     return True
+
 
 def handle_external_systems(system):
-    #TODO
-    print (system)
+    # TODO
+    print(system)
     return True
 
+
 def set_admin(admin):
-    if("user" in admin and "pass" in admin):
-        return register(admin["user"],admin["pass"][0],20)
+    if ("user" in admin and "pass" in admin):
+        return register(admin["user"], admin["pass"][0], 20, is_admin=True)
     return False
 
+
 def initialize_system(file):
-    if(os.path.isfile(file)):
+    if (os.path.isfile(file)):
         with open(file) as f:
-            logged_in={}
+            logged_in = {}
             data = json.load(f)
             if ("database" in data):
-                    if (not connect_to_database(data["database"])):
-                        print("Initialization fail - database")
-                        return False
-            if ("admin" in data):
-                if(not set_admin(data["admin"])):
-                    print ("Initialization fail - admin")
+                if (not connect_to_database(data["database"])):
+                    print("Initialization fail - database")
                     return False
-            if("external_systems" in data):
+            if ("admin" in data):
+                if (not set_admin(data["admin"])):
+                    print("Initialization fail - admin")
+                    return False
+            if ("external_systems" in data):
                 for system in data["external_systems"]:
-                    if(not handle_external_systems(system)):
+                    if (not handle_external_systems(system)):
                         print("Initialization fail - external_systems")
                         return False
-            if("commands" in data):
+            if ("commands" in data):
                 for com in data["commands"]:
-                    if(not handle_command(com,logged_in)):
+                    if (not handle_command(com, logged_in)):
                         print("Initialization fail - commands")
                         return False
             else:
                 return False
         return True
     else:
-        print ("Init file missing")
+        print("Init file missing")
         return False
