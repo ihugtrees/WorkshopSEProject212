@@ -6,7 +6,6 @@ from OnlineStore.src.service_layer.logger import Logger
 
 logging = Logger()
 
-
 def get_into_site():
     try:
         logging.info("get_into_site")
@@ -834,56 +833,83 @@ def handle_command(command, logged_in):
         elif (prefix == "logout" and len(args) > 0):
             return logout(logged_in[args[0]])
         else:
-            print("Prefix is not valid " + prefix)
+            logging.error ("Prefix is not valid "+prefix)
             return False
     else:
         return False
     return True
+def connect_to_database (data, clean_db):
+    if("provider" in data and "filename" in data):
+        try:
+            from OnlineStore.src.data_layer.user_entity import db
+            db.bind(provider=data["provider"], filename=f"{os.getcwd()}/{data['filename']}", create_db=True)
+            db.generate_mapping(create_tables=True)
+            if clean_db:
+                db.drop_all_tables(with_all_data=True)
+                db.create_tables()
+            return True
+        except Exception as e:
+            return False
+    return False
 
-
-def connect_to_database(data):
-    # TODO
-    return True
-
-
-def handle_external_systems(system):
-    # TODO
-    print(system)
-    return True
+def handle_external_systems(data):
+    from OnlineStore.src.external.urlVar import supply_url,payment_url
+    if ("payment" in data and "supply" in data):
+        if("url" in data["payment"] and "url" in data["supply"]):
+            payment_url = data["payment"]["url"]
+            supply_url = data["supply"]["url"]
+            return True
+    logging.error ("External systems missing")
+    return False
 
 
 def set_admin(admin):
     if ("user" in admin and "pass" in admin):
         return register(admin["user"], admin["pass"][0], 20, is_admin=True)
     return False
-
-
-def initialize_system(file):
-    if (os.path.isfile(file)):
-        with open(file) as f:
-            logged_in = {}
+  
+def initialize_system(init_file,config_file, clean_db):
+    if(os.path.isfile(config_file)):
+        with open(config_file) as f:
             data = json.load(f)
             if ("database" in data):
-                if (not connect_to_database(data["database"])):
-                    print("Initialization fail - database")
-                    return False
-            if ("admin" in data):
-                if (not set_admin(data["admin"])):
-                    print("Initialization fail - admin")
-                    return False
-            if ("external_systems" in data):
-                for system in data["external_systems"]:
-                    if (not handle_external_systems(system)):
-                        print("Initialization fail - external_systems")
-                        return False
-            if ("commands" in data):
-                for com in data["commands"]:
-                    if (not handle_command(com, logged_in)):
-                        print("Initialization fail - commands")
+                    if (not connect_to_database(data["database"], clean_db)):
+                        logging.error("Initialization fail - database")
                         return False
             else:
+                logging.error("Initialization fail - database is missing")
+                return False
+            if ("admin" in data):
+                if(not set_admin(data["admin"])):
+                    logging.error ("Initialization fail - admin")
+                    return False
+            else:
+                logging.error("Initialization fail - admin is missing")
+                return False
+            if("external_systems" in data):
+                if(not handle_external_systems(data["external_systems"])):
+                    logging.error("Initialization fail - external_systems")
+                    return False
+            else:
+                logging.error("Initialization fail - external_systems is missing")
+                return False
+    else:
+        logging.error ("Config file missing")
+        return False
+    if(os.path.isfile(init_file)):
+        with open(init_file) as f:
+            logged_in={}
+            data = json.load(f)
+            if("commands" in data):
+                for com in data["commands"]:
+                    if(not handle_command(com,logged_in)):
+                        logging.error("Initialization fail - commands")
+                        return False
+            else:
+                logging.error("Initialization fail - commands are missing")
                 return False
         return True
     else:
-        print("Init file missing")
+        logging.error ("Init file missing")
         return False
+    return True

@@ -874,18 +874,13 @@ if __name__ == '__main__':
     # eventlet.monkey_patch()
     # monkey.patch_all()
     # initialize_system()
-    # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
-    initialize_system()
-
-    # parser = argparse.ArgumentParser(description='Workshop 212')
-    # parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
-    # args = parser.parse_args()
-    # utils.initialize_system(file=args.init_file)
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
-
-    # parser = argparse.ArgumentParser(description='Workshop 212')
-    # parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
-    # args = parser.parse_args()
-    # utils.initialize_system(file=args.init_file)
-    # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    parser = argparse.ArgumentParser(description='Workshop 212')
+    parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
+    parser.add_argument('--config_file',action='store',default="config.json",help="Config file")
+    parser.add_argument('--clean',action='store_true',default="false",help="clean database")
+    args = parser.parse_args()
+    if(utils.initialize_system(init_file=args.init_file,config_file=args.config_file, clean_db=args.clean)):
+        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+    else:
+        print ("Error - initialization")
     # socketio.run(app=app, debug=True)

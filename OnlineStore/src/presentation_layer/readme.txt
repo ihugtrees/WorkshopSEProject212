@@ -1,9 +1,15 @@
-Initilize system -
-The initilization of the system done by json file, the default file is "init.json" but another file can be used by init_file flag.
+The initilization of the system done by 2 files.
+1. config file -
+The default file is "config.json" but another file can be used by init_file flag.
 The json file should contain these keys -
-database -
+database - provider & file name needed
 admin - proporties of the administrator of the system.
-external_systems - #TODO
+external_systems - url for each system (payment,supply).
+
+
+2. init file system -
+The default file is "init.json" but another file can be used by init_file flag.
+The json file should contain this key -
 commands - list of commands to get to a specific state. The supported commands are :
 register(user_name,password,age)
 login(user_name,password)
