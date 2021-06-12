@@ -1,8 +1,5 @@
-import eventlet
 from flask import (Flask, render_template, request, redirect, session)
 from flask_socketio import SocketIO, join_room
-import argparse
-import json
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
@@ -103,8 +100,13 @@ def dashboard():
         if utils.userIsStoreManager(user, store_id)[0]:
             session["store"] = store_id
             return render_template("dashboardStoreManager.html")
-        return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
+        if utils.is_user_admin(session['user'])[0]:
+            return render_template("dashboardAdmin.html", welcome=f"Hi {session['username']} What would You like to do?")
+        else:
+            return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
+        if utils.is_user_admin(session['user'])[0]:
+            return render_template("dashboardAdmin.html", welcome=f"Hi {session['username']} What would You like to do?")
         session["store"] = "None" if "store" not in session else session["store"]
         return render_template("dashboard.html", message=session["store"],
                                welcome=f"Hi {session['username']} What would You like to do?")
@@ -414,6 +416,7 @@ def checkout():
             return render_template("checkout.html", message=ans[1])
     return render_template("checkout.html", price=price)
 
+
 @app.route('/makeOffer', methods=['POST', 'GET'])
 def makeOffer():
     price = utils.get_cart_info(session['user']).sum
@@ -439,7 +442,8 @@ def makeOffer():
                              "name": session["username"]}
 
         return render_template("makeOffer.html", message=
-        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info, buyer_information)[1]))
+        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info,
+                                        buyer_information)[1]))
     return render_template("makeOffer.html", price=price)
 
 
@@ -459,24 +463,35 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    purchase_list = utils.get_user_purchases_history(session['user'])
-    if purchase_list[0]:
-        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
+    purchase_list = None
+    if request.method == 'GET' and 'user' in session and session["user"] is not None:
+        purchase_list = utils.get_user_purchases_history(session["user"])
+    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+        purchase_list = utils.get_user_purchase_history_admin(session['user'], request.form["username"])
+    if purchase_list is not None:
+        if purchase_list[0]:
+            return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
+        else:
+            return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
     else:
-        return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
+        return render_template("pastPurchases.html", message="Error: user isn't admin or user not in session")
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if 'store' in session and session["store"] is not None:
+    purchase_list = None
+    if request.method == 'GET' and 'store' in session and session["store"] is not None:
         purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
+    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+        purchase_list = utils.get_store_purchase_history_admin(session["user"], request.form['store'])
+    if purchase_list is not None:
         if purchase_list[0]:
             return render_template("pastStorePurchases.html",
                                    message="Purchase history", purchase_list=purchase_list[1])
         else:
             return render_template("pastStorePurchases.html", message="Error: " + purchase_list[1])
-
-    return render_template("pastStorePurchases.html")
+    else:
+        return render_template("pastStorePurchases.html", message="Error: user isn't admin or store not in session")
 
 
 # @app.route('/addNewProduct', methods=['POST', 'GET'])
@@ -804,7 +819,7 @@ def initialize_system():
     buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
                          "address": "ziso 5/3 beer sheva, israel",
                          "name": niv}
-    utils.register(admin, admin, 20)
+    utils.register(admin, admin, 20, True)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
     utils.register(manager1, manager1, 20)
@@ -832,7 +847,6 @@ def initialize_system():
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-
 
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")

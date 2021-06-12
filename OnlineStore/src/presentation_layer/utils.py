@@ -24,8 +24,8 @@ def log_out(username):
 
 
 # return true for successful sign up
-def register(user_name, password, age):
-    return service.register(user_name, password, age)
+def register(user_name, password, age, is_admin=False):
+    return service.register(user_name, password, age, is_admin)
 
 
 def change_password(user_name, old_password, new_password):
@@ -60,8 +60,12 @@ def get_store_info(store_name):
     return service.get_store_info(store_name)
 
 
-def is_user_guest(user_name):  # TODO return admin/store_owner/store_manager/guest
+def is_user_guest(user_name):
     return service.is_user_guest(user_name)
+
+
+def is_user_admin(user_name):
+    return service.is_user_admin(user_name)
 
 
 # return all prodect that match all the filters
@@ -138,6 +142,14 @@ def get_user_purchases_history(user_name):
 
 def get_store_purchase_history(user_name, store_name):
     return service.get_store_purchase_history(user_name, store_name)
+
+
+def get_store_purchase_history_admin(admin_name, store_name):
+    return service.get_store_purchase_history_admin(admin_name, store_name)
+
+
+def get_user_purchase_history_admin(admin_name, username):
+    return service.get_user_purchase_history_admin(admin_name, username)
 
 
 def add_new_product_to_store_inventory(user_name, product_id, product_name, price, quantity, description, store_name,
@@ -488,12 +500,10 @@ def search_product_by_category(category, filters):
 
 def search_product_by_name(name, filters):
     return service.search_product_by_name(name, filters)
-
+  
 
 def search_product_by_keyword(keyword, filters):
     return service.search_product_by_keyword(keyword, filters)
-
-
 def initialize_system(init_file, config_file, clean_db):
     return service.initialize_system(init_file, config_file, clean_db)
 

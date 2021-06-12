@@ -29,9 +29,9 @@ class UserHandler:
     # def print_users(self):
     #     print(self.users_dict)
 
-    def register(self, user_name, age, perm):
+    def register(self, user_name, age, is_admin, perm):
         self.lock.acquire()
-        user = User(user_name, Cart(), guest=False, age=age)
+        user = User(user_name, Cart(), guest=False, age=age, is_admin=is_admin)
         try:
             users.add_user(user, perm)
             self.lock.release()
@@ -121,5 +121,8 @@ class UserHandler:
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
 
+    def is_user_admin(self, user_name):
+        return users.get_user_by_name(user_name).is_admin()
+    
     def register_guest(self, guest_name):
         users.register_guest(guest_name)

@@ -53,17 +53,22 @@ def exit_the_site(guest_name):
 
 
 # 2.3
-def register(user_name: str, password: str, age=20):
+def register(user_name: str, password: str, age, is_admin):
     """
     Registers new user to the system
 
+    :param is_admin:
     :param age:
     :param user_name: user name
     :param password: password
     :return: None
     """
+    try:
+        age = int(age)
+    except:
+        age = 20
     auth.register(user_name, password)
-    user_handler.register(user_name, age, action.REGISTERED_PERMMISIONS)
+    user_handler.register(user_name, age, is_admin, action.REGISTERED_PERMMISIONS)
 
 
 def change_password(user_name: str, old_password: str, new_password):
@@ -536,13 +541,13 @@ def get_store_purchase_history(user_name, store_name):
 
 # 6.4.1
 
-def get_store_purchase_history_admin(user_name, store_name):
-    return get_store_purchase_history(user_name, store_name)
+def get_store_purchase_history_admin(store_name):
+    return purchase_handler.get_store_history_purchases(store_name)
 
 
 # 6.4.2
 
-def get_user_purchase_history_admin(user_name, other_user_name):
+def get_user_purchase_history_admin(other_user_name):
     """
     Get user purchase history (only for admins function)
 
@@ -550,10 +555,6 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     :param other_user_name: the user name of the client we want to see his purchase history
     :return:
     """
-
-    user_name = auth.get_username_from_hash(user_name)
-    # user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
-    # check if admin
     return purchase_handler.get_user_purchase_history(other_user_name)
 
 
@@ -568,6 +569,11 @@ def get_user_for_tests(user_name):
 
 def is_user_guest(user_name):
     return user_handler.is_user_guest(user_name)
+
+
+def is_user_admin(user_name):
+    user_name = auth.get_username_from_hash(user_name)
+    return user_handler.is_user_admin(user_name)
 
 
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term=None):
