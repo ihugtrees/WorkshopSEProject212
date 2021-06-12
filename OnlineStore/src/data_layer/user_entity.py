@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pony.orm import *
 
 db = Database()
@@ -7,11 +9,15 @@ class User(db.Entity):
     user_name = PrimaryKey(str)
     is_guest = Required(bool)
     is_admin = Required(bool)
-    appointed_to_store = Optional('Appoint')
     age = Required(int)
+    permissions = Required(int)
     productInCart = Set("ProductInCart")
     pendingMessages = Set("PendingMessages")
     historyMessages = Set("HistoryMessages")
+    userPurchaseHistory = Set("UserPurchaseHistory")
+    userPermissions = Set('UserPermissions')
+    appoint = Set('Appoint')
+
 
 class PendingMessages(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -19,11 +25,13 @@ class PendingMessages(db.Entity):
     message_content = Required(str)
     event = Required(str)
 
+
 class HistoryMessages(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required(User)
     message_content = Required(str)
     event = Required(str)
+
 
 class ProductInCart(db.Entity):
     user = Required(User)
@@ -31,17 +39,6 @@ class ProductInCart(db.Entity):
     product = Required(str)
     quantity = Required(int)
     PrimaryKey(user, store_name, product)
-
-
-class Appoint(db.Entity):
-    user = Required(User)
-    appointed_by_me = Set('Appointees')
-
-
-class Appointees(db.Entity):
-    appoint = Required(Appoint)
-    store_name = Required(str)
-    appointees = Optional(StrArray)
 
 
 class Store(db.Entity):
@@ -71,7 +68,6 @@ class BuyingPolicy(db.Entity):
     store = Required(Store)
 
 
-
 class DiscountPolicy(db.Entity):
     name = PrimaryKey(str)
     description = Required(str)
@@ -86,32 +82,33 @@ class DiscountPolicy(db.Entity):
 #     pass
 #     term_name = Required(str) TODO COMPLETE
 
-
-    # class PendingMessage(db.Entity):
-    #     user_name = Required(str)
-    #     msg = Required(str)
-    #     event = Required(str)
-    #
-    #
-    # class Message(db.Entity):
-    #     user_name = Required(str)
-    #     msg = Required(str)
-    #     event = Required(str)
-
-
 class UserPermissions(db.Entity):
-    user_name = Required(str)
-    permissions = Required(int)
-    permissions_in_store = Set('PermissionsInStore')
-
-
-class PermissionsInStore(db.Entity):
-    user_permissions = Required(UserPermissions)
+    user_name = Required(User)
     store_name = Required(str)
-    permissions = Required(int)
+    store_permissions = Required(int)
+    PrimaryKey(user_name, store_name)
 
 
-# class Purchase(db.Entity):
-#     store = Required(str)
-#     user = Required(str)
-#
+class Appoint(db.Entity):
+    user_name = Required(User)
+    store_name = Required(str)
+    appointee = Required(str)
+    PrimaryKey(user_name, store_name, appointee)
+
+
+class UserPurchaseHistory(db.Entity):
+    store_name = Required(str)
+    receipt_id = Required(str)
+    user_name = Required(User)
+    total_sum = Required(int)
+    date = Required(datetime)
+    destination = Required(str)
+    products = Set("ProductInHistory")
+    transaction_id = Required(int)
+    PrimaryKey(user_name, receipt_id)
+
+
+class ProductInHistory(db.Entity):
+    product_name = Required(str)
+    quantity = Required(int)
+    user_purchase_history = Required(UserPurchaseHistory)

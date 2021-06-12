@@ -26,7 +26,6 @@ class UserPermissions:
 
         if store_name in self.__permissions_in_store.keys():
             raise Exception("Already is an employee of the store!")
-        self.__permissions_in_store[store_name] = new_permissions
 
     def is_working_in_store(self, store_name: str) -> None:
         if store_name not in self.__permissions_in_store.keys():

@@ -6,7 +6,7 @@ class PaymentAdapter:
         self.payment_system = payment_system
 
     def pay(self, payment_info: dict):
-        self.payment_system.pay(payment_info)
+        return self.payment_system.pay(payment_info)
 
     def cancel_pay(self, transaction_id: int) -> None:
         self.payment_system.cancel_pay(transaction_id)

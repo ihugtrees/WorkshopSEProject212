@@ -1,4 +1,4 @@
-{"commands": ["register(hilay,hilay,20)",
+{"commandsBroke": ["register(hilay,hilay,20)",
     "register(rina,rina,20)",
     "login(hilay,hilay)",
   "open_store(shoes, hilay)",

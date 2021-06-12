@@ -2,6 +2,8 @@ import random
 import string
 from threading import Lock
 
+from pony.orm import db_session
+
 import OnlineStore.src.data_layer.store_data as stores
 from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.domain_layer.user.cart import Cart
@@ -81,17 +83,18 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             ans = ans and store.is_policies_eligible(user)
         return ans
-
+    @db_session
     def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
-            store.inventory.take_quantity(cart.basket_dict.get(store.name))
+            store.inventory.take_quantity(cart.basket_dict.get(store.name), store.name)
 
     def take_quantity_from_store(self, store, product, quantity):
         stores.get_store_by_name(store).inventory.take_quantity_for_one_product(product, quantity)
 
+    @db_session
     def return_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
-            store.inventory.return_quantity(cart.basket_dict.get(store.name))
+            store.inventory.return_quantity(cart.basket_dict.get(store.name), store.name)
 
     def calculate_cart_sum(self, cart: CartDTO) -> int:
         money_sum = 0

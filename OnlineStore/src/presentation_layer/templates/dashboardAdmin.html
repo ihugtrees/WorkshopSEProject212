@@ -2,53 +2,119 @@
 <html>
 <head>
     <title>Dashboard</title>
+    <style>
+        .multiline {
+            white-space: pre-wrap;
+        }
+
+        .popup .overlay {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            display: none;
+        }
+
+        .popup .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #fff;
+            width: 95%;
+            max-width: 500px;
+            height: 250px;
+            z-index: 2;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: "Open Sans", sans-serif;
+        }
+
+        .popup .close-btn {
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 30px;
+            height: 30px;
+            background: #222;
+            color: #fff;
+            font-size: 25px;
+            font-weight: 600;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+        }
+
+        .popup.active .overlay {
+            display: block;
+        }
+
+        .popup.active .content {
+            transition: all 300ms ease-in-out;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #222;
+            color: #222;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: #fff;
+        }
+    </style>
 </head>
 <body>
-<h1 style="color:blue;">Dashboard</h1>
+<h1 style="color:blue;">{{welcome}}</h1>
+<div class="popup" id="popup-1">
+    <div class="overlay"></div>
+    <div class="content">
+        <div class="close-btn" onclick="togglePopup()">×</div>
+        <h1>Messages PopUp</h1>
+        <div class="multiline" id="data"></div>
+    </div>
+</div>
+<form action="/storesProducts" method="POST">
+    <p><input type="submit" value="Stores & Products"/></p>
+</form>
+<form action="/manageCart" method="POST">
+    <p><input type="submit" value="Manage Cart"/></p>
+</form>
 
-    <form action="/storesProducts" method="POST">
-        <p><input type="submit" value="Stores & Products" /></p>
-    </form>
-    <form action="/manageCart" method="POST">
-        <p><input type="submit" value="Manage Cart" /></p>
-    </form>
-    <form action="/manageStore" method="POST">
-        <p><input type="submit" value="Manage Store" /></p>
-    </form>
-    <form action="/logout" method="GET">
-        <p><input type="submit" value="Log Out" /></p>
-    </form>
+<form action="/dashboard" method="POST">
+    <p>Enter storeID:</p>
+    <p><input type="text" name="storeID" value="{{ message }}" autofocus="True"/></p>
+    <p><input type="submit" value="Manage Store"/></p>
+</form>
 
-    <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
-    <script>
-    var socket = io()
-    console.log(socket.uri)
-    socket.on('connect', function() {
-        console.log("Connected to the server\n")
-        socket.emit('join', {});
-        socket.emit('send messages',{})
-    });
-    socket.on('open store',function(json) {
-        console.log(json);
-    });
-    socket.on('close store',function(json) {
-        console.log(json);
-    });
-    socket.on('remove employee',function(json) {
-        console.log(json);
-    });
-    socket.on('buying product',function(json) {
-        console.log(json);
-    });
+<form action="/adminHistory" method="GET">
+    <p><input type="submit" value="History"/></p>
+</form>
 
-    socket.on('message',function(json) {
-        console.log(json);
-    });
-    socket.on('close',function() {
-        console.log("close connection");
-        emit('close',{})
-    });
-
-    </script>
+<form action="/openStore" method="GET">
+    <p><input type="submit" value="Open Store"/></p>
+<form action="/messageBox" method="POST">
+    <p><input type="submit" value="Message Box"/></p>
+</form>
+<form action="/changePassword" method="GET">
+    <p><input type="submit" value="Change Password"/></p>
+</form>
+<form action="/logout" method="GET">
+    <p><input type="submit" value="Log Out"/></p>
+</form>
+<script src="https://cdn.socket.io/4.1.1/socket.io.min.js"
+        integrity="sha384-cdrFIqe3RasCMNE0jeFG9xJHog/tgOVC1E9Lzve8LQN1g5WUHo0Kvk1mawWjxX7a"
+        crossorigin="anonymous"></script>
+<script src="static/js/script.js"></script>
 </body>
 </html>

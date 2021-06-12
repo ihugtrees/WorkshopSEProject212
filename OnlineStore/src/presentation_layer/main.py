@@ -1,8 +1,7 @@
-import eventlet
+import argparse
+
 from flask import (Flask, render_template, request, redirect, session)
 from flask_socketio import SocketIO, join_room
-import argparse
-import json
 
 import OnlineStore.src.presentation_layer.utils as utils
 from OnlineStore.src.communication_layer import publisher
@@ -103,8 +102,15 @@ def dashboard():
         if utils.userIsStoreManager(user, store_id)[0]:
             session["store"] = store_id
             return render_template("dashboardStoreManager.html")
-        return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
+        if utils.is_user_admin(session['user'])[0]:
+            return render_template("dashboardAdmin.html",
+                                   welcome=f"Hi {session['username']} What would You like to do?")
+        else:
+            return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
+        if utils.is_user_admin(session['user'])[0]:
+            return render_template("dashboardAdmin.html",
+                                   welcome=f"Hi {session['username']} What would You like to do?")
         session["store"] = "None" if "store" not in session else session["store"]
         return render_template("dashboard.html", message=session["store"],
                                welcome=f"Hi {session['username']} What would You like to do?")
@@ -120,6 +126,11 @@ def guest_dashboard():
         return render_template("dashboardGuest.html")
     else:
         return redirect('/wronglogin')
+
+
+@app.route('/adminHistory', methods=['POST', 'GET'])
+def admin_history():
+    return render_template("adminHistory.html")
 
 
 @app.route('/storesProducts', methods=['POST', 'GET'])
@@ -179,7 +190,7 @@ def signup():
 
 @app.route('/changePassword', methods=['POST', 'GET'])
 def changePassword():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         old_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
         return render_template("changePassword.html", message=display_answer(
@@ -189,7 +200,7 @@ def changePassword():
 
 @app.route('/addstoremanager', methods=['POST', 'GET'])
 def addstoremanager():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         userid = request.form.get('userid')
         storeid = session["store"]
         return render_template("addstoremanager.html",
@@ -414,6 +425,7 @@ def checkout():
             return render_template("checkout.html", message=ans[1])
     return render_template("checkout.html", price=price)
 
+
 @app.route('/makeOffer', methods=['POST', 'GET'])
 def makeOffer():
     price = utils.get_cart_info(session['user']).sum
@@ -439,7 +451,8 @@ def makeOffer():
                              "name": session["username"]}
 
         return render_template("makeOffer.html", message=
-        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info, buyer_information)[1]))
+        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info,
+                                        buyer_information)[1]))
     return render_template("makeOffer.html", price=price)
 
 
@@ -459,24 +472,36 @@ def openStore():
 
 @app.route('/pastPurchases', methods=['POST', 'GET'])
 def pastPurchases():
-    purchase_list = utils.get_user_purchases_history(session['user'])
-    if purchase_list[0]:
-        return render_template("pastPurchases.html", message="Your purchase history", purchase_list=purchase_list[1])
+    purchase_list = None
+    if request.method == 'GET' and 'user' in session and session["user"] is not None:
+        purchase_list = utils.get_user_purchases_history(session["user"])
+    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+        purchase_list = utils.get_user_purchase_history_admin(session['user'], request.form["username"])
+    if purchase_list is not None:
+        if purchase_list[0]:
+            return render_template("pastPurchases.html", message="Your purchase history",
+                                   purchase_list=purchase_list[1])
+        else:
+            return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
     else:
-        return render_template("pastPurchases.html", message="Error: " + purchase_list[1])
+        return render_template("pastPurchases.html", message="Error: user isn't admin or user not in session")
 
 
 @app.route('/pastStorePurchases', methods=['POST', 'GET'])
 def pastStorePurchases():
-    if 'store' in session and session["store"] is not None:
+    purchase_list = None
+    if request.method == 'GET' and 'store' in session and session["store"] is not None:
         purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
+    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+        purchase_list = utils.get_store_purchase_history_admin(session["user"], request.form['store'])
+    if purchase_list is not None:
         if purchase_list[0]:
             return render_template("pastStorePurchases.html",
                                    message="Purchase history", purchase_list=purchase_list[1])
         else:
             return render_template("pastStorePurchases.html", message="Error: " + purchase_list[1])
-
-    return render_template("pastStorePurchases.html")
+    else:
+        return render_template("pastStorePurchases.html", message="Error: user isn't admin or store not in session")
 
 
 # @app.route('/addNewProduct', methods=['POST', 'GET'])
@@ -810,32 +835,25 @@ def getEmployeePermissions():
 
 
 def initialize_system():
-    import os
-    if os.path.exists("database.sqlite"):
-        os.remove("database.sqlite")
-    else:
-        print("The file does not exist")
-
-    from OnlineStore.src.data_layer.user_entity import db
-    db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
-    db.generate_mapping(create_tables=True)
-    store_name = "store"
-    admin = "admin"
+    igor = "igor"
     niv = "niv"
     a = "a"
-    manager1 = "manager1"
     b = "b"
+    manager1 = "manager1"
+    store = "store"
+    store1 = 'store1'
     payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
                     "holder": "Niv"}
     buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
                          "address": "ziso 5/3 beer sheva, israel",
                          "name": niv}
-    utils.register(admin, admin, 20)
+
+    utils.register(igor, igor, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
-    utils.register(manager1, manager1, 20)
     utils.register(b, b, 20)
-    admin_hash = utils.log_in(admin, admin)[1]
+    utils.register(manager1, manager1, 20)
+    igor_hash = utils.log_in(igor, igor)[1]
     niv_hash = utils.log_in(niv, niv)[1]
     a_hash = utils.log_in(a, a)[1]
     manager_hash = utils.log_in(manager1, manager1)[1]
@@ -847,37 +865,50 @@ def initialize_system():
     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
-                                             "milky")
-    utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
-    utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
-    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
 
-    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#     utils.open_store(store, igor_hash)
+#     utils.open_store(store1, manager_hash)
+#     utils.assign_store_owner(igor_hash, a, store)
+#     utils.assign_store_owner(a_hash, b, store)
+#     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", store1, "dairy")
+#     utils.add_new_product_to_store_inventory(igor_hash, "1", "1", 1, 50, "no description", store, "dairy")
+#     utils.add_new_product_to_store_inventory(igor_hash, "milk", "milk", 50, 50, "milk description", store,
+                                             "milky")
+    utils.add_simple_discount(igor_hash, store, "a", "milk 20")
+    utils.add_simple_discount(igor_hash, store, "b", "milk 30")
+    # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+    # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+
+    # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+    # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
 
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
 
 
     #utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+
     # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     #
     #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 
     utils.log_out(manager_hash)
-    utils.log_out(admin_hash)
+    utils.log_out(igor_hash)
 
     #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store1, product_id="1", quantity=1)
     utils.log_out(niv_hash)
     utils.log_out(a_hash)
 
@@ -885,21 +916,13 @@ def initialize_system():
 if __name__ == '__main__':
     # eventlet.monkey_patch()
     # monkey.patch_all()
-    # initialize_system()
-    # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
-    initialize_system()
-
-
-    # parser = argparse.ArgumentParser(description='Workshop 212')
-    # parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
-    # args = parser.parse_args()
-    # utils.initialize_system(file=args.init_file)
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
-
-
-    # parser = argparse.ArgumentParser(description='Workshop 212')
-    # parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
-    # args = parser.parse_args()
-    # utils.initialize_system(file=args.init_file)
-    # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
-    # socketio.run(app=app, debug=True)
+    parser = argparse.ArgumentParser(description='Workshop 212')
+    parser.add_argument('--init_file', action='store', default="init.json", help="Initialization file")
+    parser.add_argument('--config_file', action='store', default="config.json", help="Config file")
+    parser.add_argument('--clean', action='store_true', default="false", help="clean database")
+    args = parser.parse_args()
+    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
+     #   initialize_system()
+        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+    else:
+        print("Error - initialization")

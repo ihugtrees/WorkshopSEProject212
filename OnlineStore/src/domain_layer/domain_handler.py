@@ -13,7 +13,7 @@ from OnlineStore.src.external.payment_system import PaymentSystem
 from OnlineStore.src.external.supply_system import SupplySystem
 from OnlineStore.src.security.authentication import Authentication
 from datetime import datetime
-
+from pony.orm import *
 user_handler = UserHandler()
 store_handler = StoreHandler()
 permission_handler = PermissionHandler()
@@ -29,11 +29,13 @@ def get_into_site():
     Should call this function right when entering the site
     register the new client as a guest
 
+
     :return: guest username
     """
 
-    ans = user_handler.get_guest_unique_user_name()
+    ans = user_handler.get_guest_unique_user_name(action.GUEST_PERMISSIONS)
     auth.guest_registering(ans)
+    user_handler.register_guest(ans)
     return ans
 
 
@@ -51,17 +53,22 @@ def exit_the_site(guest_name):
 
 
 # 2.3
-def register(user_name: str, password: str, age=20):
+def register(user_name: str, password: str, age, is_admin):
     """
     Registers new user to the system
 
+    :param is_admin:
     :param age:
     :param user_name: user name
     :param password: password
     :return: None
     """
+    try:
+        age = int(age)
+    except:
+        age = 20
     auth.register(user_name, password)
-    user_handler.register(user_name, age)
+    user_handler.register(user_name, age, is_admin, action.REGISTERED_PERMMISIONS)
 
 
 def change_password(user_name: str, old_password: str, new_password):
@@ -243,6 +250,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 
 # 2.9.0
+@db_session
 def purchase(user_name: str, payment_info: dict, buyer_information: dict):
     """
     Purchase all the items in the cart
@@ -267,7 +275,8 @@ def purchase(user_name: str, payment_info: dict, buyer_information: dict):
         payment_transaction_id = payment_adapter.pay(payment_info)
         supply_transaction_id = supply_adapter.supply(buyer_information=buyer_information)
         user_handler.empty_cart(user_name)
-        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, cart_sum, datetime.now(), buyer_information["address"])
+
+        purchase_handler.add_all_basket_purchases_to_history(cart_dto, user_name, cart_sum, datetime.now(), buyer_information["address"],payment_transaction_id)
         for store_name in cart_dto.basket_dict.keys():
             publisher.send_message_to_store_employees(f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store_name}) the following items:\n{cart_dto.basket_dict[store_name].products_dict}", store_name,
                                                       "buying product")
@@ -345,7 +354,7 @@ def open_store(store_name, user_name):
     """
 
     user_name = auth.get_username_from_hash(user_name)
-    permission_handler.is_permmited_to(user_name=user_name, action=Action.OPEN_STORE.value)
+    permission_handler.is_permmited_to(user_name=user_name, action=Action.OPEN_STORE.value, store_name=store_name)
     user_handler.check_permission_to_open_store(
         user_name)  # just checks if user is logged in need to see if to change name
     store_handler.open_store(store_name, user_name)
@@ -499,7 +508,7 @@ def remove_store_manager(user_name: str, store_manager_name: str, store_name: st
     permission_handler.is_permmited_to(user_name, Action.REMOVE_MANAGER.value, store_name)
     permission_handler.is_working_in_store(store_manager_name, store_name)
     to_remove: list = user_handler.remove_employee(user_name, store_manager_name, store_name)
-    permission_handler.remove_employee(to_remove, store_name)
+    permission_handler.remove_employee(to_remove, store_name, store_manager_name,user_name)
     for store_employee_name in to_remove:
         publisher.send_remove_employee_msg(
             f"You are no longer an employee in {store_name} you have been removed by {user_name}",
@@ -569,13 +578,13 @@ def get_store_purchase_history(user_name, store_name):
 
 # 6.4.1
 
-def get_store_purchase_history_admin(user_name, store_name):
-    return get_store_purchase_history(user_name, store_name)
+def get_store_purchase_history_admin(store_name):
+    return purchase_handler.get_store_history_purchases(store_name)
 
 
 # 6.4.2
 
-def get_user_purchase_history_admin(user_name, other_user_name):
+def get_user_purchase_history_admin(other_user_name):
     """
     Get user purchase history (only for admins function)
 
@@ -583,10 +592,6 @@ def get_user_purchase_history_admin(user_name, other_user_name):
     :param other_user_name: the user name of the client we want to see his purchase history
     :return:
     """
-
-    user_name = auth.get_username_from_hash(user_name)
-    # user_handler.is_permitted_to_do(user_name, None, 1 << Action.USER_PURCHASE_HISTORY.value)
-    # check if admin
     return purchase_handler.get_user_purchase_history(other_user_name)
 
 
@@ -601,6 +606,11 @@ def get_user_for_tests(user_name):
 
 def is_user_guest(user_name):
     return user_handler.is_user_guest(user_name)
+
+
+def is_user_admin(user_name):
+    user_name = auth.get_username_from_hash(user_name)
+    return user_handler.is_user_admin(user_name)
 
 
 def add_term_discount(user_name, store, discount_name, discount_value, discount_term=None):

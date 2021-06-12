@@ -1,4 +1,5 @@
 from OnlineStore.src.dto.cart_dto import CartDTO
+from OnlineStore.src.external.urlVar import supply_url
 import http
 import requests
 
@@ -6,7 +7,7 @@ import requests
 class SupplySystem:
 
     def supply(self, buyer_information: dict) -> str:
-        url = 'https://cs-bgu-wsep.herokuapp.com/'
+        url = supply_url
         response = requests.post(url=url, data={"action_type": "handshake"})
         # print(str(response.content))
         if str(response.content) != "b'OK'":
@@ -22,7 +23,7 @@ class SupplySystem:
 
 
     def cancel_supply(self, transaction_id: int) -> None:
-        url = 'https://cs-bgu-wsep.herokuapp.com/'
+        url = supply_url
         response = requests.post(url=url, data={"action_type": "cancel_supply", "transaction_id": transaction_id})
         if str(response.content) != "b'OK'":
             raise Exception("Handshake went wrong")

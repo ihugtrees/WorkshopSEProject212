@@ -27,13 +27,13 @@ class Inventory:
                                                                     product_details["price"])
         self.lock.release()
 
-    def take_quantity(self, basket: Basket):
+    def take_quantity(self, basket: Basket, store_name):
         exception_string = ""
         self.lock.acquire()
         for product_name in basket.products_dict.keys():
             try:
                 self.products_dict.get(product_name).take_quantity(
-                    basket.products_dict.get(product_name))
+                    basket.products_dict.get(product_name), store_name)
             except Exception as e:
                 exception_string += e.args[0]
 
@@ -46,12 +46,12 @@ class Inventory:
     def take_quantity_for_one_product(self, product, quantity):
         self.products_dict.get(product).take_quantity(quantity)
 
-    def return_quantity(self, basket: Basket):
+    def return_quantity(self, basket: Basket, store_name):
         exception_string = ""
         for product_name in basket.products_dict.keys():
             try:
                 self.products_dict.get(product_name).return_quantity(
-                    basket.products_dict.get(product_name))
+                    basket.products_dict.get(product_name), store_name)
             except Exception as e:
                 exception_string += e.args[0]
 

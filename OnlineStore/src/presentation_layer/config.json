@@ -1,0 +1,18 @@
+{
+  "database": {
+    "provider": "sqlite",
+    "filename": "database.sqlite"
+  },
+  "admin": {
+    "user": "admin",
+    "pass": "admin"
+  },
+  "external_systems": {
+    "payment": {
+      "url": "https://cs-bgu-wsep.herokuapp.com/"
+    },
+    "supply": {
+      "url": "https://cs-bgu-wsep.herokuapp.com/"
+    }
+  }
+}

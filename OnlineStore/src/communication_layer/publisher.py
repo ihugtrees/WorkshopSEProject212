@@ -5,7 +5,7 @@ from OnlineStore.src.data_layer import users_data
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 import OnlineStore.src.data_layer.users_data as user_data_handler
 
-topics = dict()
+topics = dict() # key = store_name , value = everyone who has permission
 
 
 def send_message(message, to, event):

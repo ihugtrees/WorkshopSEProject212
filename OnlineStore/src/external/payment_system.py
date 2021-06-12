@@ -1,10 +1,14 @@
 import requests
-
+from OnlineStore.src.external.urlVar import payment_url
 
 class PaymentSystem:
+    url = None
+
+    def setUrl(self,url):
+        self.url=url
 
     def pay(self, payment_info: dict) -> str:
-        url = 'https://cs-bgu-wsep.herokuapp.com/'
+        url = payment_url
         response = requests.post(url=url, data={"action_type": "handshake"})
         if str(response.content) != "b'OK'":
             raise Exception("Handshake went wrong")
@@ -19,7 +23,7 @@ class PaymentSystem:
         return transaction_id
 
     def cancel_pay(self, transaction_id: int) -> None:
-        url = 'https://cs-bgu-wsep.herokuapp.com/'
+        url = payment_url
         response = requests.post(url=url, data={"action_type": "handshake"})
         if str(response.content) != "b'OK'":
             raise Exception("Handshake went wrong")
