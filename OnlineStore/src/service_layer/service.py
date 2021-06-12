@@ -828,32 +828,49 @@ def set_admin(admin):
         return register(admin["user"],admin["pass"][0],20)
     return False
 
-def initialize_system(file):
-    if(os.path.isfile(file)):
-        with open(file) as f:
-            logged_in={}
+def initialize_system(init_file,config_file):
+    if(os.path.isfile(config_file)):
+        with open(config_file) as f:
             data = json.load(f)
             if ("database" in data):
                     if (not connect_to_database(data["database"])):
                         print("Initialization fail - database")
                         return False
+            else:
+                print("Initialization fail - database is missing")
+                return False
             if ("admin" in data):
                 if(not set_admin(data["admin"])):
                     print ("Initialization fail - admin")
                     return False
+            else:
+                print("Initialization fail - admin is missing")
+                return False
             if("external_systems" in data):
                 for system in data["external_systems"]:
                     if(not handle_external_systems(system)):
                         print("Initialization fail - external_systems")
                         return False
+            else:
+                print("Initialization fail - external_systems is missing")
+                return False
+    else:
+        print ("Config file missing")
+        return False
+    if(os.path.isfile(init_file)):
+        with open(init_file) as f:
+            logged_in={}
+            data = json.load(f)
             if("commands" in data):
                 for com in data["commands"]:
                     if(not handle_command(com,logged_in)):
                         print("Initialization fail - commands")
                         return False
             else:
+                print("Initialization fail - commands are missing")
                 return False
         return True
     else:
         print ("Init file missing")
         return False
+    return True

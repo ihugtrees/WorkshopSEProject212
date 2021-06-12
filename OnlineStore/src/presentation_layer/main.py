@@ -779,7 +779,10 @@ if __name__ == '__main__':
     # initialize_system()
     parser = argparse.ArgumentParser(description='Workshop 212')
     parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
+    parser.add_argument('--config_file',action='store',default="config.json",help="Config file")
     args = parser.parse_args()
-    utils.initialize_system(file=args.init_file)
-    socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    if(utils.initialize_system(init_file=args.init_file,config_file=args.config_file)):
+        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    else:
+        print ("Error - initialization")
     # socketio.run(app=app, debug=True)
