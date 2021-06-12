@@ -5,7 +5,6 @@ import json
 
 logging = Logger()
 
-
 def get_into_site():
     try:
         logging.info("get_into_site")
@@ -265,7 +264,7 @@ def remove_product_from_cart(user_name, product_id, quantity, store_name):
 
 # 2.9.0
 
-def purchase(user_name: str, payment_info: dict, destination: str):
+def purchase(user_name: str, payment_info: dict, buyer_information: dict):
     """
     Purchase all the items in the cart
 
@@ -276,11 +275,10 @@ def purchase(user_name: str, payment_info: dict, destination: str):
     :param payment_info: {credit_num: str, three_digits: str, expiration_date: date}
     :return: [boolean, T] -> if boolean is false T is a string representation of the problem if boolean is true T is expected time of delivery
     """
-    payment_done_delivery_done = {"payment_done": False, "delivery_done": False, "quantity_taken": False}
 
     try:
         logging.info("Starting purchase " + user_name)
-        ans = domain_handler.purchase(user_name, payment_info, destination)
+        ans = domain_handler.purchase(user_name, payment_info, buyer_information)
         logging.info("Succesful purchase user name = " + user_name)
         return [True, ans]
     except Exception as e:
@@ -644,10 +642,6 @@ def get_buying_policy(user_name, store_name):
     return [False, "Not implemented yet8"]
 
 
-def add_buying_policy(user_name, store_name, details):
-    return [False, "Not implemented yet9"]
-
-
 def edit_buying_policy(user_name, store_name, buying_policy, details):
     return [False, "Not implemented yet10"]
 
@@ -664,8 +658,8 @@ def get_employee_details(user_name, store_name, employeeid):
     return [False, "Not implemented yet13"]
 
 
-def get_employee_permissions(user_name, store_name, employeeid):
-    return [False, "Not implemented yet14"]
+# def get_employee_permissions(user_name, store_name, employeeid):
+#     return [False, "Not implemented yet14"]
 
 
 def is_user_guest(user_name):
@@ -713,6 +707,25 @@ def add_buying_policy(user_name, store, policy_name: str, s_term: str, no_flag=F
     except Exception as e:
         logging.error("add new policy " + e.args[0])
         return [False, e.args[0]]
+
+
+def open_product_to_offer(user_name, store, product_name, minimum):
+    try:
+        logging.info("product change type to offer selling")
+        return [True, domain_handler.open_product_to_offer(user_name, store, product_name, minimum)]
+    except Exception as e:
+        logging.error(e.args[0])
+        return [False, e.args[0]]
+
+
+def make_offer(user_name, store, product_name , quantity, price, payment_detial, buyer_information):
+    try:
+        logging.info("make offer")
+        return [True, domain_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)]
+    except Exception as e:
+        logging.error(e.args[0])
+        return [False, e.args[0]]
+
 
 
 def delete_buying_policy(user_name, store, policy_name: str):
@@ -815,13 +828,25 @@ def handle_command(command,logged_in):
     return True
 
 def connect_to_database (data):
-    #TODO
-    return True
+    if("provider" in data and "filename" in data):
+        try:
+            from OnlineStore.src.data_layer.user_entity import db
+            db.bind(provider=data["provider"], filename=data["filename"], create_db=True)
+            db.generate_mapping(create_tables=True)
+            return True
+        except Exception as e:
+            return False
+    return False
 
-def handle_external_systems(system):
-    #TODO
-    print (system)
-    return True
+def handle_external_systems(data):
+    from OnlineStore.src.external.urlVar import supply_url,payment_url
+    if ("payment" in data and "supply" in data):
+        if("url" in data["payment"] and "url" in data["supply"]):
+            payment_url = data["payment"]["url"]
+            supply_url = data["supply"]["url"]
+            return True
+    print ("External systems missing")
+    return False
 
 def set_admin(admin):
     if("user" in admin and "pass" in admin):
@@ -847,10 +872,9 @@ def initialize_system(init_file,config_file):
                 print("Initialization fail - admin is missing")
                 return False
             if("external_systems" in data):
-                for system in data["external_systems"]:
-                    if(not handle_external_systems(system)):
-                        print("Initialization fail - external_systems")
-                        return False
+                if(not handle_external_systems(data["external_systems"])):
+                    print("Initialization fail - external_systems")
+                    return False
             else:
                 print("Initialization fail - external_systems is missing")
                 return False

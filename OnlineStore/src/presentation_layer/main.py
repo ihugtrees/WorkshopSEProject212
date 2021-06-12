@@ -386,21 +386,61 @@ def checkout():
     # print(f"from checkout: {session['user']}")
     price = utils.get_cart_info(session['user']).sum
     if request.method == 'POST':
-        cardNum = request.form.get('cardNum')
-        payment_info = {"card_number": cardNum}
-        delivery = request.form.get("delivery")
+        card_num = request.form.get('card_num')
+        year = request.form.get("year") if request.form.get("year") != '' else None
+        month = request.form.get("month") if request.form.get("month") != '' else None
+        ccv = request.form.get("ccv") if request.form.get("ccv") != '' else None
+        card_holder_id = request.form.get("card_holder_id") if request.form.get("card_holder_id") != '' else None
+        city = request.form.get("city") if request.form.get("city") != '' else None
+        country = request.form.get("country") if request.form.get("country") != '' else None
+        zip_code = request.form.get("zip") if request.form.get("zip") != '' else None
+        holder_name = request.form.get("holder_name") if request.form.get("holder_name") != '' else None
+        address = request.form.get("address") if request.form.get("address") != '' else None
+
+        payment_info = {"card_number": card_num, "year": year, "month": month, "ccv": ccv, "id": card_holder_id,
+                        "holder": holder_name}
+        buyer_information = {"city": city, "country": country, "zip": zip_code, "address": address,
+                             "name": session["username"]}
         # if(not checkCartAvailability(session['user'])):
         #     return render_template("checkout.html", price=price,message= "Some items are missing")
         # if (not pay(cardNum)):
         #     return render_template("checkout.html", message="Card is not valid")
         # if (not delivery(session['user'])):
         #     return render_template("checkout.html", message="Delivery is not available")
-        ans = utils.purchase(session["user"], payment_info=payment_info, destination=delivery)
+        ans = utils.purchase(session["user"], payment_info=payment_info, buyer_information=buyer_information)
         if ans[0]:
             return render_template("checkout.html", message="Parchase done successfully", price=0)
         else:
             return render_template("checkout.html", message=ans[1])
     return render_template("checkout.html", price=price)
+
+@app.route('/makeOffer', methods=['POST', 'GET'])
+def makeOffer():
+    price = utils.get_cart_info(session['user']).sum
+    if request.method == 'POST':
+        card_num = request.form.get('card_num')
+        year = request.form.get("year")
+        month = request.form.get("month")
+        ccv = request.form.get("ccv")
+        card_holder_id = request.form.get("card_holder_id")
+        city = request.form.get("city")
+        country = request.form.get("country")
+        zip_code = request.form.get("zip")
+        holder_name = request.form.get("holder_name")
+        address = request.form.get("address")
+        store = request.form.get("store_name")
+        product = request.form.get("product_name")
+        quantity = request.form.get("quantity")
+        price = request.form.get("price")
+
+        payment_info = {"card_number": card_num, "year": year, "month": month, "ccv": ccv, "id": card_holder_id,
+                        "holder": holder_name}
+        buyer_information = {"city": city, "country": country, "zip": zip_code, "address": address,
+                             "name": session["username"]}
+
+        return render_template("makeOffer.html", message=
+        display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info, buyer_information)[1]))
+    return render_template("makeOffer.html", price=price)
 
 
 @app.route('/openStore', methods=['POST', 'GET'])
@@ -565,6 +605,18 @@ def addPurchasePolicy():
                                message=display_answer(
                                    utils.add_buying_policy(session["user"], storeID, policy_name, details)[1]))
     return render_template("addPurchasePolicy.html")
+
+
+@app.route('/createBuyingOffer', methods=['POST', 'GET'])
+def createBuyingOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        minimum = request.form.get("minimum_price")
+        return render_template("createBuyingOffer.html",
+                               message=display_answer(
+                                   utils.open_product_to_offer(session["user"], storeID, product_name, minimum)[1]))
+    return render_template("createBuyingOffer.html")
 
 
 @app.route('/addNewProduct', methods=['POST', 'GET'])
@@ -732,12 +784,26 @@ def getEmployeePermissions():
 
 
 def initialize_system():
+    import os
+    if os.path.exists("database.sqlite"):
+        os.remove("database.sqlite")
+    else:
+        print("The file does not exist")
+
+    from OnlineStore.src.data_layer.user_entity import db
+    db.bind(provider='sqlite', filename='database.sqlite', create_db=True)
+    db.generate_mapping(create_tables=True)
     store_name = "store"
     admin = "admin"
     niv = "niv"
     a = "a"
     manager1 = "manager1"
     b = "b"
+    payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                    "holder": "Niv"}
+    buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
+                         "address": "ziso 5/3 beer sheva, israel",
+                         "name": niv}
     utils.register(admin, admin, 20)
     utils.register(niv, niv, 20)
     utils.register(a, a, 20)
@@ -759,16 +825,33 @@ def initialize_system():
     utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+
+    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    utils.remove_product_from_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
 
-    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+
+
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.purchase(user_name=niv_hash, payment_info={"card_number": "123123"}, destination="Ziso 5/3, Beer Sheva")
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+    # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
+    # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
+    # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    #
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    # utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
 
     utils.log_out(manager_hash)
     utils.log_out(admin_hash)
+
+    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
     utils.log_out(niv_hash)
     utils.log_out(a_hash)
 

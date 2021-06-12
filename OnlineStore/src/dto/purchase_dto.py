@@ -6,3 +6,4 @@ class ReceiptDTO:
         self.purchase_id = receipt.receipt_id
         self.user_name = receipt.user_name
         self.store_name = receipt.store_name
+        self.transaction_id = receipt.transaction_id

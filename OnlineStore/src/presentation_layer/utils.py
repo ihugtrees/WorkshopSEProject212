@@ -100,8 +100,8 @@ def get_cart_info(user_name):
     # return 10
 
 
-def purchase(user_name, payment_info, destination):
-    return service.purchase(user_name, payment_info, destination)
+def purchase(user_name, payment_info, buyer_information):
+    return service.purchase(user_name, payment_info, buyer_information)
 
 
 # def pay(cardNum):
@@ -189,6 +189,14 @@ def get_buying_policy(user_name, store_name):
 
 def add_buying_policy(user_name, store_name, policy_name, details):
     return service.add_buying_policy(user_name, store_name, policy_name, details)
+
+
+def open_product_to_offer(user_name, store_name, product_name, minimum):
+    return service.open_product_to_offer(user_name, store_name, product_name, minimum)
+
+
+def make_offer(user_name, store_name, product_name, quantity, price, payment_detial, buyer_information):
+    return service.make_offer(user_name, store_name, product_name, quantity, price, payment_detial, buyer_information)
 
 
 def delete_buying_policy(user_name, store_name, policy_name):

@@ -1,15 +1,19 @@
 import datetime
 
 from OnlineStore.src.dto.cart_dto import CartDTO
+import random
 
 
-# the supply system rejects all the deliveries to haifa
+class MockSupplySystem:
+    # the supply system rejects all the deliveries to haifa
 
-def address_supply_system(cart: CartDTO, user_information) -> str:
-    if user_information == "haifa":
-        raise Exception("Delivery system rejected the delivery")
-    else:
-        return (datetime.datetime.today() + datetime.timedelta(days=1)).strftime("%d/%m/%Y, %H:%M")
+    def supply(self, buyer_info: dict) -> str:
+        if buyer_info["city"] == "Haifa":
+            raise Exception("Delivery system rejected the delivery")
+        else:
+            return random.randint(0, 100000)
 
-
-# print(address_supply_system(None, 'lol'))
+    def cancel_supply(self, transaction_id):
+        if transaction_id == 1111:
+            raise Exception("cancel supply failed")
+    # print(address_supply_system(None, 'lol'))

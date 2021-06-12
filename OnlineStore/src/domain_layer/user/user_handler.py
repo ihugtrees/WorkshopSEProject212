@@ -29,12 +29,11 @@ class UserHandler:
     # def print_users(self):
     #     print(self.users_dict)
 
-    def register(self, user_name, age):
+    def register(self, user_name, age, perm):
         self.lock.acquire()
         user = User(user_name, Cart(), guest=False, age=age)
         try:
-            users.add_user(user)
-            permissions.add_permission(user_name, REGISTERED_PERMMISIONS)
+            users.add_user(user, perm)
             self.lock.release()
         except Exception as e:
             self.lock.release()
@@ -51,7 +50,7 @@ class UserHandler:
         users.get_user_by_name(user_name).logout()
 
     def exit_the_site(self, guest_name):
-        users.remove_user(guest_name)
+        users.remove_guest(guest_name)
 
     def add_product(self, user_name, store_id, product_id, quantity):
         users.get_user_by_name(user_name).add_product_to_user(store_id, product_id, quantity)
@@ -59,21 +58,25 @@ class UserHandler:
     def remove_product(self, user_name, store_id, product_id, quantity):
         users.get_user_by_name(user_name).remove_product_from_user(store_id, product_id, quantity)
 
-    def get_guest_unique_user_name(self):
+    def get_guest_unique_user_name(self, permissions):
         new_user_name = get_random_string(GUEST_NAME_LENGTH)
         while True:
             new_user_name = get_random_string(GUEST_NAME_LENGTH)
             try:
-                users.add_user(User(new_user_name, 0, Cart()))
+                users.add_user(User(new_user_name, 0, Cart()), permissions)
                 break
             except:
                 continue
         return new_user_name
 
+
     def check_permission_to_open_store(self, user_name):
         user = users.get_user_by_name(user_name)
+        if len(user.user_name) == 20:
+            raise Exception("You are a guest you have no permissions to open store!")
         # if user.is_logged is False:
         #     raise Exception("the current user is not logged in, so he cannot open a store")
+
 
     def get_employee_information(self, employee_name: str):
         return self.get_user_dto_by_name(employee_name)
@@ -82,24 +85,29 @@ class UserHandler:
         return UserDTO(users.get_user_by_name(user_name))
 
     def empty_cart(self, user_name):
+        users.empty_cart(user_name)
         users.get_user_by_name(user_name).empty_cart()
 
+    # TODO work with db
     def is_assigned_by_me(self, user_name: str, store_manager_name: str, store_name: str) -> None:
         users.get_user_by_name(user_name).is_assigned_by_me(store_manager_name, store_name)
 
+    # TODO work with db
     def assign_store_employee(self, user_name: str, new_store_owner_name: str, store_name: str) -> None:
         users.get_user_by_name(user_name).assign_store_employee(new_store_owner_name, store_name)
 
+    # TODO work with db
     def remove_employee(self, user_name: str, store_employee: str, store_name: str) -> list:
         self.is_assigned_by_me(user_name, store_employee, store_name)
         employee: User = users.get_user_by_name(store_employee)
         to_remove: list = employee.get_all_appointed(store_name)
-        users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
+        # users.get_user_by_name(user_name).remove_employee(store_employee, store_name)
         ls: list = self.__remove_employee_rec(to_remove, store_name)
-        employee.remove_store_from_appoint(store_name)
+        # employee.remove_store_from_appoint(store_name)
         ls.append(store_employee)
         return ls
 
+    # TODO work with db
     def __remove_employee_rec(self, store_employee_list: list, store_name):
         list_em: list = list()
         list_em.extend(store_employee_list)
@@ -107,8 +115,11 @@ class UserHandler:
             list_em.extend(
                 self.__remove_employee_rec(users.get_user_by_name(employee_name).get_all_appointed(store_name),
                                            store_name))
-            users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
+            # users.get_user_by_name(employee_name).remove_store_from_appoint(store_name)
         return list_em
 
     def is_user_guest(self, user_name):
         return users.get_user_by_name(user_name).is_guest()
+
+    def register_guest(self, guest_name):
+        users.register_guest(guest_name)
