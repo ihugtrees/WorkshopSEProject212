@@ -4,6 +4,7 @@ import OnlineStore.src.data_layer.user_entity as user_entity
 from OnlineStore.src.domain_layer.user.basket import Basket
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.domain_layer.user.user import User
+from OnlineStore.src.domain_layer.user.appoint import Appoint
 from OnlineStore.src.dto import user_dto, cart_dto
 
 users: dict = dict()  # key - user name, value User
@@ -28,7 +29,10 @@ def take_user_data(user_name):
         basket_dict[s] = basket
     cart = Cart()
     cart.basket_dict = basket_dict
-    new_user = User(user_db.user_name, cart, user_db.is_admin, user_db.appointed_to_store, age= user_db.age)
+    try:
+        new_user = User(user_db.user_name, cart, user_db.is_admin, user_db.appoint, age= user_db.age)
+    except Exception as e:
+        print(e)
     users[user_name] = new_user
     return new_user
 
@@ -58,7 +62,7 @@ def take_user_data(user_name):
 #                      guest=user_db.is_guest, cart=cart_db_to_domain_cart(user_db.cart), age=user_db.age,
 #                      appointed_to_store=db_appoint_to_user_appoint(user_db.appointed_to_store))
 
-# TODO check
+
 @db_session
 def get_user_by_name(user_name) -> user.User:
     if user_name in users:
@@ -66,15 +70,15 @@ def get_user_by_name(user_name) -> user.User:
     else:
         return take_user_data(user_name)
 
-# TODO check
+
 @db_session
-def add_user(usr: user.User) -> None:
+def add_user(usr: user.User, permissions: int) -> None:
     user_db = user_entity.User.get(user_name=usr.user_name)
     if user_db is not None:
         raise Exception("user already exists")
     if usr.is_guest == False:
         db_user = user_entity.User(user_name=usr.user_name, is_guest=usr.is_guest,
-                                   is_admin=usr.is_admin, age=usr.age)
+                                   is_admin=usr.is_admin, age=usr.age, permissions=permissions)
 
 
 def remove_user(user_name: str) -> None:
@@ -82,7 +86,7 @@ def remove_user(user_name: str) -> None:
         raise Exception("cannot remove: user already does not exist in the system")
     users.pop(user_name)
 
-# TODO check
+
 @db_session
 def pop_user_messages(username: str) -> list:
     """
@@ -104,7 +108,7 @@ def pop_user_messages(username: str) -> list:
     #return pending_messages.pop(username)
     return real_pend_list
 
-# TODO check
+
 @db_session
 def add_message(username, message, event) -> None:
     user_entity.PendingMessages(user=username,message_content= message,event=event)
@@ -112,7 +116,7 @@ def add_message(username, message, event) -> None:
         pending_messages[username] = list()
     pending_messages[username].append({"message": message, "event": event})
 
-# TODO check
+
 @db_session
 def add_message_to_history(username, message, event) -> None:
     user_entity.HistoryMessages(user=username,message_content= message,event=event)
@@ -120,7 +124,7 @@ def add_message_to_history(username, message, event) -> None:
         history_messages[username] = list()
     history_messages[username].append({"message": message, "event": event})
 
-# TODO work with DB
+
 @db_session
 def get_user_message_history(user_name):
     try:
@@ -136,7 +140,7 @@ def get_user_message_history(user_name):
     # else:
     #     return history_messages[user_name]
 
-# TODO check
+
 @db_session
 def add_to_cart(user_name, product_name, quantity, store_name):
     product = user_entity.ProductInCart.select(lambda p: p.user.user_name == user_name and
@@ -148,7 +152,7 @@ def add_to_cart(user_name, product_name, quantity, store_name):
     else:
         user_entity.ProductInCart[user_name,store_name,product_name ].quantity += quantity
 
-# TODO check
+
 def remove_from_cart(user_name, product_name, quantity, store_name):
     product = user_entity.ProductInCart[user_name,store_name,product_name]
     if(product.quantity- quantity <=0):
@@ -156,3 +160,30 @@ def remove_from_cart(user_name, product_name, quantity, store_name):
     else:
         product.quantity -= quantity
 
+@db_session
+def empty_cart(user_name):
+    user_entity.User.get(user_name=user_name).productInCart = []
+
+
+@db_session
+def get_appoint_by_user(user_name):
+    appoint = user_entity.User.get(user_name=user_name).appoint
+    new_dict = dict()
+    for a in appoint:
+        try:
+            new_dict[a.store_name].append(a.appointee)
+        except:
+            new_dict[a.store_name] = [a.appointee]
+    return Appoint(new_dict)
+
+@db_session
+def add_appointee(user_name, new_store_owner_name, store_name):
+    user_entity.Appoint(user_name=user_name, appointee=new_store_owner_name, store_name=store_name)
+
+
+def remove_guest(guest_name):
+    users.pop(guest_name)
+
+
+def register_guest(guest_name):
+    users[guest_name] = User(guest_name)

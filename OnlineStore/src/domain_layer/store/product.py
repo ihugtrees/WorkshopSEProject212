@@ -1,5 +1,7 @@
 from threading import Lock
 
+from OnlineStore.src.data_layer import user_entity
+
 
 class Product:
     def __init__(self, product_id, product_name, quantity, price, category="null", discount_type=None,
@@ -15,15 +17,24 @@ class Product:
         self.rating = 0
         self.lock = Lock()
 
-    def take_quantity(self, num_to_take):
-        if num_to_take <= 0 or self.quantity < num_to_take:
+    # TODO work with db
+
+    def take_quantity(self, num_to_take, store_name):
+        if num_to_take <= 0:
+            raise Exception("Negative or zero quantity\n")
+        self.quantity = user_entity.Product.get(store=store_name, product_id=self.product_name).quantity
+        print(self.quantity)
+        if self.quantity < num_to_take:
             raise Exception("There are only " + str(self.quantity) + " from " + self.product_name + " in the store.\n")
         self.quantity -= num_to_take
+        user_entity.Product.get(store=store_name, product_id=self.product_name).quantity -= num_to_take
 
-    def return_quantity(self, num_to_take):
+    # TODO work with db
+    def return_quantity(self, num_to_take, store_name):
         if num_to_take <= 0:
             raise Exception("impossible to return negative amount")
         self.lock.acquire()
+        user_entity.Product.get(store=store_name, product_id=self.product_name).quantity += num_to_take
         self.quantity += num_to_take
         self.lock.release()
 
@@ -31,6 +42,7 @@ class Product:
         # TODO FOR NOW ONLY QUANTITY*PRICE
         return self.price * quantity
 
+    # TODO work with db
     def add_quantity(self, quant):
         if quant <= 0:
             raise Exception("cant add less than one quantity")
@@ -40,3 +52,6 @@ class Product:
         if type(product_description) != str:
             raise Exception("description must be string")
         self.description = product_description
+
+    def change_quantity(self, store_name, product_name, quantity, ):
+        pass
