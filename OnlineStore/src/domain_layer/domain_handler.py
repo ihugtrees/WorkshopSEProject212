@@ -301,6 +301,7 @@ def purchase_special(user_name: str, store, payment_info: dict, buyer_informatio
         payment_transaction_id = payment_adapter.pay(payment_info)
         supply_transaction_id = supply_adapter.supply(buyer_information=buyer_information)
         # add to history todo
+        #purchase_handler.
 
         publisher.send_message_to_store_employees(
             f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store}) the following items: "+ product,
@@ -650,6 +651,14 @@ def accept_offer(store, product_name, user_name, owner_name):
     if ans is not None:
         (payment_info, buyer_info, quantity, price) = ans
         return purchase_special(user_name, store, ans[0], ans[1], ans[3], ans[2], product_name)
+
+
+def reject_offer(store, user_name, owner_name, product_name, counter_offer= 0):
+    owner_name = auth.get_username_from_hash(owner_name)
+    permission_handler.is_permmited_to(owner_name, Action.ADD_DISCOUNT.value, store)
+    if counter_offer != "":
+        publisher.send_message(store + " reject your offer on " + product_name + " and offer you a counter offer equal to " + counter_offer, user_name, "offer")
+    return store_handler.reject_offer(store, user_name, product_name)
 
 
 def delete_policy(user_name, store, policy_name: str):

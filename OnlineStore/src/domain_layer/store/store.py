@@ -92,6 +92,7 @@ class Store:
         self.buying_offers[product_name].offers[user_name] = (quantity, price)
         self.buying_offers[product_name].payment_detial[user_name] = payment_detial
         self.buying_offers[product_name].buyer_information[user_name] = buyer_information
+        self.buying_offers[product_name].all_acceptance[user_name] = set()
 
 
     def delete_buying_policy(self, term_name):
@@ -113,12 +114,22 @@ class Store:
             raise Exception(user_name + " does not have offer")
         if owner_name in self.buying_offers[product_name].all_acceptance:
             raise Exception("yoe already accept")
-        self.buying_offers[product_name].all_acceptance.add(owner_name)
+        self.buying_offers[product_name].all_acceptance[user_name].add(owner_name)
         price = self.buying_offers[product_name].offers[user_name][1]
         quantity = self.buying_offers[product_name].offers[user_name][0]
-        if len(self.buying_offers[product_name].all_acceptance) == num_of_acceptance:
-            payment_info = self.buying_offers[product_name].payment_detial
-            buyer_info = self.buying_offers[product_name].buyer_information
+        if len(self.buying_offers[product_name].all_acceptance[user_name]) == num_of_acceptance:
+            payment_info = self.buying_offers[product_name].payment_detial[user_name]
+            buyer_info = self.buying_offers[product_name].buyer_information[user_name]
+            self.buying_offers[product_name].offers.pop(user_name)
+            self.buying_offers[product_name].all_acceptance.pop(user_name)
+            self.buying_offers[product_name].buyer_information.pop(user_name)
+            self.buying_offers[product_name].payment_detial.pop(user_name)
             return payment_info, buyer_info, quantity, price
 
+    def reject_offer(self, user_name, product_name):
+        if product_name not in self.buying_offers:
+            raise Exception(product_name + " is not for offers")
+        if user_name not in self.buying_offers[product_name].offers:
+            raise Exception(user_name + " does not have offer")
+        self.buying_offers[product_name].offers.pop(user_name)
 

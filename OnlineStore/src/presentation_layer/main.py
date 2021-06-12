@@ -631,6 +631,20 @@ def acceptOffer():
     return render_template("acceptOffer.html")
 
 
+@app.route('/rejectOffer', methods=['POST', 'GET'])
+def rejectOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        user_name = request.form.get("user_name")
+        counter_offer = request.form.get("counter_Offer")
+        return render_template("rejectOffer.html",
+                               message=display_answer(
+                                   utils.reject_offer(storeID,user_name, session["user"], product_name,counter_offer )[1]))
+    return render_template("rejectOffer.html")
+
+
+
 @app.route('/addNewProduct', methods=['POST', 'GET'])
 def addNewProduct():
     if (request.method == 'POST'):
@@ -846,13 +860,13 @@ def initialize_system():
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
 
 
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    #utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     #
-    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
@@ -861,7 +875,7 @@ def initialize_system():
     utils.log_out(manager_hash)
     utils.log_out(admin_hash)
 
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
     utils.log_out(niv_hash)

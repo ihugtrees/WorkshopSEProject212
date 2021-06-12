@@ -197,3 +197,6 @@ class StoreHandler:
 
     def accept_offer(self, store, product_name, user_name, owner_name, num_of_acceptance):
         return stores.get_store_by_name(store).accept_offer(product_name, user_name, owner_name, num_of_acceptance)
+
+    def reject_offer(self, store, user_name, product_name):
+        return stores.get_store_by_name(store).reject_offer(user_name, product_name)
