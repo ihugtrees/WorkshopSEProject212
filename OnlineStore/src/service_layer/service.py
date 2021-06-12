@@ -6,6 +6,7 @@ from OnlineStore.src.service_layer.logger import Logger
 
 logging = Logger()
 
+
 def get_into_site():
     try:
         logging.info("get_into_site")
@@ -24,7 +25,7 @@ def exit_the_site(guest_name):
         return [False, e.args[0]]
 
 
-def register(user_name: str, password: str, age, is_admin):
+def register(user_name: str, password: str, age, is_admin=False):
     try:
         logging.info("register " + user_name)
         domain_handler.register(user_name, password, age, is_admin)
@@ -675,7 +676,7 @@ def is_user_admin(user_name):
     try:
         return [True, domain_handler.is_user_admin(user_name)]
     except Exception as e:
-        logging.error("is_user_guest " + e.args[0])
+        logging.error("is_user_admin " + e.args[0])
         return [False, e.args[0]]
 
 
@@ -833,13 +834,15 @@ def handle_command(command, logged_in):
         elif (prefix == "logout" and len(args) > 0):
             return logout(logged_in[args[0]])
         else:
-            logging.error ("Prefix is not valid "+prefix)
+            logging.error("Prefix is not valid " + prefix)
             return False
     else:
         return False
     return True
-def connect_to_database (data, clean_db):
-    if("provider" in data and "filename" in data):
+
+
+def connect_to_database(data, clean_db):
+    if "provider" in data and "filename" in data:
         try:
             from OnlineStore.src.data_layer.user_entity import db
             db.bind(provider=data["provider"], filename=f"{os.getcwd()}/{data['filename']}", create_db=True)
@@ -852,57 +855,58 @@ def connect_to_database (data, clean_db):
             return False
     return False
 
+
 def handle_external_systems(data):
-    from OnlineStore.src.external.urlVar import supply_url,payment_url
-    if ("payment" in data and "supply" in data):
-        if("url" in data["payment"] and "url" in data["supply"]):
+    if "payment" in data and "supply" in data:
+        if "url" in data["payment"] and "url" in data["supply"]:
             payment_url = data["payment"]["url"]
             supply_url = data["supply"]["url"]
             return True
-    logging.error ("External systems missing")
+    logging.error("External systems missing")
     return False
 
 
 def set_admin(admin):
-    if ("user" in admin and "pass" in admin):
-        return register(admin["user"], admin["pass"][0], 20, is_admin=True)
+    if "user" in admin and "pass" in admin:
+        return register(admin["user"], admin["pass"], 20, is_admin=True)
     return False
-  
-def initialize_system(init_file,config_file, clean_db):
-    if(os.path.isfile(config_file)):
+
+
+def initialize_system(init_file, config_file, clean_db):
+    if os.path.isfile(config_file):
         with open(config_file) as f:
             data = json.load(f)
-            if ("database" in data):
-                    if (not connect_to_database(data["database"], clean_db)):
-                        logging.error("Initialization fail - database")
-                        return False
+            if "database" in data:
+                if not connect_to_database(data["database"], clean_db):
+                    logging.error("Initialization fail - database")
+                    return False
             else:
                 logging.error("Initialization fail - database is missing")
                 return False
-            if ("admin" in data):
-                if(not set_admin(data["admin"])):
-                    logging.error ("Initialization fail - admin")
+            if "admin" in data:
+                if not set_admin(data["admin"]):
+                    logging.error("Initialization fail - admin")
                     return False
             else:
                 logging.error("Initialization fail - admin is missing")
                 return False
-            if("external_systems" in data):
-                if(not handle_external_systems(data["external_systems"])):
+            if "external_systems" in data:
+                if not handle_external_systems(data["external_systems"]):
                     logging.error("Initialization fail - external_systems")
                     return False
             else:
                 logging.error("Initialization fail - external_systems is missing")
                 return False
     else:
-        logging.error ("Config file missing")
+        logging.error("Config file missing")
         return False
-    if(os.path.isfile(init_file)):
+    if os.path.isfile(init_file):
         with open(init_file) as f:
-            logged_in={}
+            logged_in = {}
             data = json.load(f)
-            if("commands" in data):
+            if "commands" in data:
                 for com in data["commands"]:
-                    if(not handle_command(com,logged_in)):
+                    if not handle_command(com, logged_in):
                         logging.error("Initialization fail - commands")
                         return False
             else:
@@ -910,6 +914,6 @@ def initialize_system(init_file,config_file, clean_db):
                 return False
         return True
     else:
-        logging.error ("Init file missing")
+        logging.error("Init file missing")
         return False
     return True

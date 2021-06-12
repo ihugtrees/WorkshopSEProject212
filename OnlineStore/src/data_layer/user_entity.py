@@ -18,17 +18,20 @@ class User(db.Entity):
     userPermissions = Set('UserPermissions')
     appoint = Set('Appoint')
 
+
 class PendingMessages(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required(User)
     message_content = Required(str)
     event = Required(str)
 
+
 class HistoryMessages(db.Entity):
     id = PrimaryKey(int, auto=True)
     user = Required(User)
     message_content = Required(str)
     event = Required(str)
+
 
 class ProductInCart(db.Entity):
     user = Required(User)
@@ -63,7 +66,6 @@ class BuyingPolicy(db.Entity):
     name = PrimaryKey(str)
     description = Required(str)
     store = Required(Store)
-
 
 
 class DiscountPolicy(db.Entity):

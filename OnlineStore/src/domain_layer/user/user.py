@@ -14,12 +14,6 @@ class User:
         self.appointed_to_store = appointed_to_store if appointed_to_store is not None else Appoint()
         self.age = age
 
-    def is_admin(self):
-        return self.is_admin
-
-    def is_guest(self):
-        return self.is_guest
-
     def add_product_to_user(self, store, product_id: int, quantity: int):
         self.cart.add_product_to_cart(store, product_id, quantity)
 

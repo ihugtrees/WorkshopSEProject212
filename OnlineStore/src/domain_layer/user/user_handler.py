@@ -69,14 +69,12 @@ class UserHandler:
                 continue
         return new_user_name
 
-
     def check_permission_to_open_store(self, user_name):
         user = users.get_user_by_name(user_name)
         if len(user.user_name) == 20:
             raise Exception("You are a guest you have no permissions to open store!")
         # if user.is_logged is False:
         #     raise Exception("the current user is not logged in, so he cannot open a store")
-
 
     def get_employee_information(self, employee_name: str):
         return self.get_user_dto_by_name(employee_name)
@@ -119,10 +117,10 @@ class UserHandler:
         return list_em
 
     def is_user_guest(self, user_name):
-        return users.get_user_by_name(user_name).is_guest()
+        return users.get_user_by_name(user_name).is_guest
 
     def is_user_admin(self, user_name):
-        return users.get_user_by_name(user_name).is_admin()
-    
+        return users.get_user_by_name(user_name).is_admin
+
     def register_guest(self, guest_name):
         users.register_guest(guest_name)

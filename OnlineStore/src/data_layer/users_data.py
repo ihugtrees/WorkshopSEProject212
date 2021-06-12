@@ -1,6 +1,9 @@
 import OnlineStore.src.domain_layer.user.user as user
 from pony.orm import *
+
 import OnlineStore.src.data_layer.user_entity as user_entity
+import OnlineStore.src.domain_layer.user.user as user
+from OnlineStore.src.domain_layer.user.appoint import Appoint
 from OnlineStore.src.domain_layer.user.basket import Basket
 from OnlineStore.src.domain_layer.user.cart import Cart
 from OnlineStore.src.domain_layer.user.user import User
@@ -30,12 +33,12 @@ def take_user_data(user_name):
     cart = Cart()
     cart.basket_dict = basket_dict
     try:
-        new_user = User(user_db.user_name, cart, user_db.is_admin, user_db.appoint, age= user_db.age)
+        new_user = User(user_db.user_name, cart=cart, is_admin=user_db.is_admin, appointed_to_store=user_db.appoint,
+                        age=user_db.age, guest=user_db.is_guest)
+        users[user_name] = new_user
+        return new_user
     except Exception as e:
         print(e)
-    users[user_name] = new_user
-    return new_user
-
 
 
 # def cart_db_to_domain_cart(db_cart: user_entity.Cart):
@@ -79,6 +82,7 @@ def add_user(usr: user.User, permissions: int) -> None:
     if usr.is_guest == False:
         db_user = user_entity.User(user_name=usr.user_name, is_guest=usr.is_guest,
                                    is_admin=usr.is_admin, age=usr.age, permissions=permissions)
+        # users[usr.user_name] = usr
 
 
 def remove_user(user_name: str) -> None:
@@ -94,24 +98,24 @@ def pop_user_messages(username: str) -> list:
     :param username:
     :return: list of messages (message = {"message": str, "event": str})
     """
-    real_pend_list=list()
+    real_pend_list = list()
     try:
         pend_list = user_entity.User.get(user_name=username).pendingMessages
         for message in pend_list:
-            real_pend_list.append({"message": message.message_content,"event": message.event})
-        user_entity.User.get(user_name=username).pendingMessages=[]
+            real_pend_list.append({"message": message.message_content, "event": message.event})
+        user_entity.User.get(user_name=username).pendingMessages = []
     except Exception as e:
         print(e.args[0])
-   # if username not in pending_messages:
-        # raise Exception("User does not have messages")
-   #     return list()
-    #return pending_messages.pop(username)
+    # if username not in pending_messages:
+    # raise Exception("User does not have messages")
+    #     return list()
+    # return pending_messages.pop(username)
     return real_pend_list
 
 
 @db_session
 def add_message(username, message, event) -> None:
-    user_entity.PendingMessages(user=username,message_content= message,event=event)
+    user_entity.PendingMessages(user=username, message_content=message, event=event)
     if username not in pending_messages:
         pending_messages[username] = list()
     pending_messages[username].append({"message": message, "event": event})
@@ -119,7 +123,7 @@ def add_message(username, message, event) -> None:
 
 @db_session
 def add_message_to_history(username, message, event) -> None:
-    user_entity.HistoryMessages(user=username,message_content= message,event=event)
+    user_entity.HistoryMessages(user=username, message_content=message, event=event)
     if username not in history_messages:
         history_messages[username] = list()
     history_messages[username].append({"message": message, "event": event})
@@ -144,21 +148,22 @@ def get_user_message_history(user_name):
 @db_session
 def add_to_cart(user_name, product_name, quantity, store_name):
     product = user_entity.ProductInCart.select(lambda p: p.user.user_name == user_name and
-                                                              p.product == product_name and p.store_name == store_name)
+                                                         p.product == product_name and p.store_name == store_name)
 
     user_db = user_entity.User.get(user_name=user_name)
     if len(product) == 0:
         user_entity.ProductInCart(user=user_db, store_name=store_name, quantity=quantity, product=product_name)
     else:
-        user_entity.ProductInCart[user_name,store_name,product_name ].quantity += quantity
+        user_entity.ProductInCart[user_name, store_name, product_name].quantity += quantity
 
 
 def remove_from_cart(user_name, product_name, quantity, store_name):
-    product = user_entity.ProductInCart[user_name,store_name,product_name]
-    if(product.quantity- quantity <=0):
+    product = user_entity.ProductInCart[user_name, store_name, product_name]
+    if (product.quantity - quantity <= 0):
         product.delete()
     else:
         product.quantity -= quantity
+
 
 @db_session
 def empty_cart(user_name):
@@ -175,6 +180,7 @@ def get_appoint_by_user(user_name):
         except:
             new_dict[a.store_name] = [a.appointee]
     return Appoint(new_dict)
+
 
 @db_session
 def add_appointee(user_name, new_store_owner_name, store_name):
