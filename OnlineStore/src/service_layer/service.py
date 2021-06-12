@@ -821,7 +821,7 @@ def handle_command(command,logged_in):
         elif (prefix == "logout" and len(args) > 0):
             return logout(logged_in[args[0]])
         else:
-            print ("Prefix is not valid "+prefix)
+            logging.error ("Prefix is not valid "+prefix)
             return False
     else:
         return False
@@ -848,7 +848,7 @@ def handle_external_systems(data):
             payment_url = data["payment"]["url"]
             supply_url = data["supply"]["url"]
             return True
-    print ("External systems missing")
+    logging.error ("External systems missing")
     return False
 
 def set_admin(admin):
@@ -862,27 +862,27 @@ def initialize_system(init_file,config_file, clean_db):
             data = json.load(f)
             if ("database" in data):
                     if (not connect_to_database(data["database"], clean_db)):
-                        print("Initialization fail - database")
+                        logging.error("Initialization fail - database")
                         return False
             else:
-                print("Initialization fail - database is missing")
+                logging.error("Initialization fail - database is missing")
                 return False
             if ("admin" in data):
                 if(not set_admin(data["admin"])):
-                    print ("Initialization fail - admin")
+                    logging.error ("Initialization fail - admin")
                     return False
             else:
-                print("Initialization fail - admin is missing")
+                logging.error("Initialization fail - admin is missing")
                 return False
             if("external_systems" in data):
                 if(not handle_external_systems(data["external_systems"])):
-                    print("Initialization fail - external_systems")
+                    logging.error("Initialization fail - external_systems")
                     return False
             else:
-                print("Initialization fail - external_systems is missing")
+                logging.error("Initialization fail - external_systems is missing")
                 return False
     else:
-        print ("Config file missing")
+        logging.error ("Config file missing")
         return False
     if(os.path.isfile(init_file)):
         with open(init_file) as f:
@@ -891,13 +891,13 @@ def initialize_system(init_file,config_file, clean_db):
             if("commands" in data):
                 for com in data["commands"]:
                     if(not handle_command(com,logged_in)):
-                        print("Initialization fail - commands")
+                        logging.error("Initialization fail - commands")
                         return False
             else:
-                print("Initialization fail - commands are missing")
+                logging.error("Initialization fail - commands are missing")
                 return False
         return True
     else:
-        print ("Init file missing")
+        logging.error ("Init file missing")
         return False
     return True
