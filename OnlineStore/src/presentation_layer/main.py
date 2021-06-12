@@ -863,9 +863,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Workshop 212')
     parser.add_argument('--init_file',action='store',default="init.json",help="Initialization file")
     parser.add_argument('--config_file',action='store',default="config.json",help="Config file")
+    parser.add_argument('--clean',action='store_true',default="false",help="clean database")
     args = parser.parse_args()
-    if(utils.initialize_system(init_file=args.init_file,config_file=args.config_file)):
-        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443)
+    if(utils.initialize_system(init_file=args.init_file,config_file=args.config_file, clean_db=args.clean)):
+        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     else:
         print ("Error - initialization")
     # socketio.run(app=app, debug=True)

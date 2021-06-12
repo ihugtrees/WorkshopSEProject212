@@ -827,12 +827,15 @@ def handle_command(command,logged_in):
         return False
     return True
 
-def connect_to_database (data):
+def connect_to_database (data, clean_db):
     if("provider" in data and "filename" in data):
         try:
             from OnlineStore.src.data_layer.user_entity import db
-            db.bind(provider=data["provider"], filename=data["filename"], create_db=True)
+            db.bind(provider=data["provider"], filename=f"{os.getcwd()}/{data['filename']}", create_db=True)
             db.generate_mapping(create_tables=True)
+            if clean_db:
+                db.drop_all_tables(with_all_data=True)
+                db.create_tables()
             return True
         except Exception as e:
             return False
@@ -853,12 +856,12 @@ def set_admin(admin):
         return register(admin["user"],admin["pass"][0],20)
     return False
 
-def initialize_system(init_file,config_file):
+def initialize_system(init_file,config_file, clean_db):
     if(os.path.isfile(config_file)):
         with open(config_file) as f:
             data = json.load(f)
             if ("database" in data):
-                    if (not connect_to_database(data["database"])):
+                    if (not connect_to_database(data["database"], clean_db)):
                         print("Initialization fail - database")
                         return False
             else:

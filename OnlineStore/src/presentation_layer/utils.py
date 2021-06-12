@@ -493,5 +493,10 @@ def search_product_by_name(name, filters):
 def search_product_by_keyword(keyword, filters):
     return service.search_product_by_keyword(keyword, filters)
 
-def initialize_system(init_file,config_file):
-    return service.initialize_system(init_file,config_file)
+
+def initialize_system(init_file, config_file, clean_db):
+    return service.initialize_system(init_file, config_file, clean_db)
+
+
+def clean():
+    service.clean()
