@@ -26,6 +26,11 @@ socket.on('buying product',function(json) {
 socket.on('message',function(json) {
     console.log(json);
 });
+socket.on('offer',function(json) {
+    console.log(json);
+    togglePopup(json)
+});
+
 socket.on('close',function() {
     console.log("close connection");
     emit('close',{})

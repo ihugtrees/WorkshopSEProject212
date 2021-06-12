@@ -737,6 +737,26 @@ def make_offer(user_name, store, product_name, quantity, price, payment_detial, 
         return [False, e.args[0]]
 
 
+
+def accept_offer(store, product_name, user_name, owner_name):
+    try:
+        logging.info("accept offer")
+        return [True, domain_handler.accept_offer(store, product_name, user_name, owner_name)]
+    except Exception as e:
+        logging.error(e.args[0])
+        return [False, e.args[0]]
+
+
+def reject_offer(store, product_name, user_name, owner_name, counter_offer=0):
+    try:
+        logging.info("reject offer")
+        return [True, domain_handler.reject_offer(store, user_name, owner_name, product_name, counter_offer)]
+    except Exception as e:
+        logging.error(e.args[0])
+        return [False, e.args[0]]
+
+
+
 def delete_buying_policy(user_name, store, policy_name: str):
     try:
         logging.info("delete buying policy")

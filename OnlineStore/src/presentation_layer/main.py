@@ -644,6 +644,32 @@ def createBuyingOffer():
     return render_template("createBuyingOffer.html")
 
 
+@app.route('/acceptOffer', methods=['POST', 'GET'])
+def acceptOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        user_name = request.form.get("user_name")
+        return render_template("acceptOffer.html",
+                               message=display_answer(
+                                   utils.accept_offer(storeID, product_name, user_name, session["user"])[1]))
+    return render_template("acceptOffer.html")
+
+
+@app.route('/rejectOffer', methods=['POST', 'GET'])
+def rejectOffer():
+    if (request.method == 'POST'):
+        storeID = session["store"]
+        product_name = request.form.get("product_name")
+        user_name = request.form.get("user_name")
+        counter_offer = request.form.get("counter_Offer")
+        return render_template("rejectOffer.html",
+                               message=display_answer(
+                                   utils.reject_offer(storeID,user_name, session["user"], product_name,counter_offer )[1]))
+    return render_template("rejectOffer.html")
+
+
+
 @app.route('/addNewProduct', methods=['POST', 'GET'])
 def addNewProduct():
     if (request.method == 'POST'):
@@ -832,13 +858,21 @@ def initialize_system():
     a_hash = utils.log_in(a, a)[1]
     manager_hash = utils.log_in(manager1, manager1)[1]
 
-    utils.open_store(store, igor_hash)
-    utils.open_store(store1, manager_hash)
-    utils.assign_store_owner(igor_hash, a, store)
-    utils.assign_store_owner(a_hash, b, store)
-    utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", store1, "dairy")
-    utils.add_new_product_to_store_inventory(igor_hash, "1", "1", 1, 50, "no description", store, "dairy")
-    utils.add_new_product_to_store_inventory(igor_hash, "milk", "milk", 50, 50, "milk description", store,
+    utils.open_store("store1", manager_hash)
+    utils.open_store(store_name, admin_hash)
+    #utils.assign_store_owner(admin_hash, a, store_name)
+    #utils.assign_store_owner(a_hash, b, store_name)
+    utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
+    utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
+    utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
+
+#     utils.open_store(store, igor_hash)
+#     utils.open_store(store1, manager_hash)
+#     utils.assign_store_owner(igor_hash, a, store)
+#     utils.assign_store_owner(a_hash, b, store)
+#     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", store1, "dairy")
+#     utils.add_new_product_to_store_inventory(igor_hash, "1", "1", 1, 50, "no description", store, "dairy")
+#     utils.add_new_product_to_store_inventory(igor_hash, "milk", "milk", 50, 50, "milk description", store,
                                              "milky")
     utils.add_simple_discount(igor_hash, store, "a", "milk 20")
     utils.add_simple_discount(igor_hash, store, "b", "milk 30")
@@ -851,13 +885,16 @@ def initialize_system():
 
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
 
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="milk", quantity=1)
+
+    #utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+
     # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
     # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
     # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     #
-    utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
@@ -866,6 +903,9 @@ def initialize_system():
     utils.log_out(manager_hash)
     utils.log_out(igor_hash)
 
+    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
     # utils.add_product_to_cart(user_name=niv_hash, store_name=store1, product_id="1", quantity=1)
@@ -882,7 +922,7 @@ if __name__ == '__main__':
     parser.add_argument('--clean', action='store_true', default="false", help="clean database")
     args = parser.parse_args()
     if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
-        initialize_system()
+     #   initialize_system()
         socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     else:
         print("Error - initialization")

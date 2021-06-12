@@ -87,6 +87,10 @@ class StoreHandler:
     def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
             store.inventory.take_quantity(cart.basket_dict.get(store.name), store.name)
+
+    def take_quantity_from_store(self, store, product, quantity):
+        stores.get_store_by_name(store).inventory.take_quantity_for_one_product(product, quantity)
+
     @db_session
     def return_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
@@ -193,3 +197,9 @@ class StoreHandler:
 
     def show_buying_policy(self, store):
         return stores.get_store_by_name(store).show_buying_policy()
+
+    def accept_offer(self, store, product_name, user_name, owner_name, num_of_acceptance):
+        return stores.get_store_by_name(store).accept_offer(product_name, user_name, owner_name, num_of_acceptance)
+
+    def reject_offer(self, store, user_name, product_name):
+        return stores.get_store_by_name(store).reject_offer(user_name, product_name)

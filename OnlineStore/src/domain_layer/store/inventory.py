@@ -43,6 +43,9 @@ class Inventory:
             raise Exception(exception_string)
         self.lock.release()
 
+    def take_quantity_for_one_product(self, product, quantity):
+        self.products_dict.get(product).take_quantity(quantity)
+
     def return_quantity(self, basket: Basket, store_name):
         exception_string = ""
         for product_name in basket.products_dict.keys():

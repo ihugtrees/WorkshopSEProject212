@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reject Offer</title>
+    <p>Reject Offer</p>
+</head>
+<body>
+    <form action="/rejectOffer" method="POST">
+         <p>Enter Product Name:</p>
+        <p><input type="text" name="product_name" autofocus="True" /></p>
+         <p>Offer from?:</p>
+        <p><input type="text" name="user_name" /></p>
+        <p>Counter Offer:</p>
+        <p><input type="text" name="counter_Offer" /></p>
+        <p><input type="submit" value="Reject Offer" /></p>
+        <p>{{message}}</p>
+    </form>
+    <form action="/dashboard" method="GET">
+        <p><input type="submit" value="Back To Dashboard" /></p>
+    </form>
+
+
+</body>
+</html>
