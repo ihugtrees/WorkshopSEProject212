@@ -2,6 +2,7 @@ import threading
 from unittest import TestCase
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.communication_layer import publisher
+from OnlineStore.src.data_layer import user_entity
 from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.external.payment_system import PaymentSystem
 from OnlineStore.src.external.payment_system_mock import MockPaymentSystem

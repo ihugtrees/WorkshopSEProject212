@@ -428,7 +428,6 @@ def checkout():
 
 @app.route('/makeOffer', methods=['POST', 'GET'])
 def makeOffer():
-    price = utils.get_cart_info(session['user']).sum
     if request.method == 'POST':
         card_num = request.form.get('card_num')
         year = request.form.get("year")
@@ -453,7 +452,7 @@ def makeOffer():
         return render_template("makeOffer.html", message=
         display_answer(utils.make_offer(session["user"], store, product, int(quantity), int(price), payment_info,
                                         buyer_information)[1]))
-    return render_template("makeOffer.html", price=price)
+    return render_template("makeOffer.html")
 
 
 @app.route('/openStore', methods=['POST', 'GET'])
