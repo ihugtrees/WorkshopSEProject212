@@ -38,7 +38,7 @@ class Inventory:
                 exception_string += e.args[0]
 
         if exception_string != "":
-            self.__rollback_from_take_quantity(basket)
+            self.__rollback_from_take_quantity(basket, store_name)
             self.lock.release()
             raise Exception(exception_string)
         self.lock.release()
@@ -56,11 +56,11 @@ class Inventory:
                 exception_string += e.args[0]
 
 
-    def __rollback_from_take_quantity(self, basket):
+    def __rollback_from_take_quantity(self, basket, store_name):
         for product_name in basket.products_dict.keys():
             try:
                 self.products_dict.get(product_name).take_quantity(
                     basket.products_dict.get(product_name))
-                self.products_dict.get(product_name).add_quantity(basket.products_dict.get(product_name) * 2)
+                self.products_dict.get(product_name).add_quantity(basket.products_dict.get(product_name) * 2, store_name)
             except Exception as e:
                 None

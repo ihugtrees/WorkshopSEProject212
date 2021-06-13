@@ -21,6 +21,7 @@ def store_data_form_db(store_name):
     product_dict = dict()
     for p in products:
         product = Product(p.product_id, p.product_name, p.quantity, p.price, p.category)
+        product.description = p.description
         product_dict[p.product_name] = product
     inventory = Inventory(product_dict)
     store = Store(store_name, store_db.store_founder)
@@ -66,12 +67,13 @@ def get_all_discount_policy_data(store):
 
 
 def get_store_by_name(store_name: str) -> Store:
-    lock.acquire()
-    if store_name in store_dict:
-        ans = store_dict[store_name]
-    else:
-        ans = store_data_form_db(store_name)
-    lock.release()
+    ans = store_data_form_db(store_name)
+    # lock.acquire()
+    # if store_name in store_dict:
+    #     ans = store_dict[store_name]
+    # else:
+    #     ans = store_data_form_db(store_name)
+    # lock.release()
     return ans
 
 @db_session

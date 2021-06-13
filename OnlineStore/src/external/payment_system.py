@@ -8,7 +8,7 @@ class PaymentSystem:
         self.url=url
 
     def pay(self, payment_info: dict) -> str:
-        url = payment_url
+        url = "https://cs-bgu-wsep.herokuapp.com/" # niv gadol
         response = requests.post(url=url, data={"action_type": "handshake"})
         if str(response.content) != "b'OK'":
             raise Exception("Handshake went wrong")
@@ -23,7 +23,7 @@ class PaymentSystem:
         return transaction_id
 
     def cancel_pay(self, transaction_id: int) -> None:
-        url = payment_url
+        url = "https://cs-bgu-wsep.herokuapp.com/"  # niv
         response = requests.post(url=url, data={"action_type": "handshake"})
         if str(response.content) != "b'OK'":
             raise Exception("Handshake went wrong")

@@ -835,82 +835,83 @@ def getEmployeePermissions():
 
 
 def initialize_system():
-    igor = "igor"
-    niv = "niv"
-    a = "a"
-    b = "b"
-    manager1 = "manager1"
-    store = "store"
-    store1 = 'store1'
-    payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                    "holder": "Niv"}
-    buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
-                         "address": "ziso 5/3 beer sheva, israel",
-                         "name": niv}
-
-    utils.register(igor, igor, 20)
-    utils.register(niv, niv, 20)
-    utils.register(a, a, 20)
-    utils.register(b, b, 20)
-    utils.register(manager1, manager1, 20)
-    igor_hash = utils.log_in(igor, igor)[1]
-    niv_hash = utils.log_in(niv, niv)[1]
-    a_hash = utils.log_in(a, a)[1]
-    manager_hash = utils.log_in(manager1, manager1)[1]
-
-    utils.open_store("store1", manager_hash)
-    utils.open_store(store_name, admin_hash)
-    #utils.assign_store_owner(admin_hash, a, store_name)
-    #utils.assign_store_owner(a_hash, b, store_name)
-    utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
-    utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
-    utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
-
-#     utils.open_store(store, igor_hash)
-#     utils.open_store(store1, manager_hash)
-#     utils.assign_store_owner(igor_hash, a, store)
-#     utils.assign_store_owner(a_hash, b, store)
-#     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", store1, "dairy")
-#     utils.add_new_product_to_store_inventory(igor_hash, "1", "1", 1, 50, "no description", store, "dairy")
-#     utils.add_new_product_to_store_inventory(igor_hash, "milk", "milk", 50, 50, "milk description", store,
-                                             "milky")
-    utils.add_simple_discount(igor_hash, store, "a", "milk 20")
-    utils.add_simple_discount(igor_hash, store, "b", "milk 30")
-    # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
-    # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
-
-    # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
-    # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
-
-    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-
-
-    #utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-
-    # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
-    # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
-    # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
-    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    #
-    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-
-    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    # utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
-
-    utils.log_out(manager_hash)
-    utils.log_out(igor_hash)
-
-    #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
-    utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
-    # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
-    # utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
-    # utils.add_product_to_cart(user_name=niv_hash, store_name=store1, product_id="1", quantity=1)
-    utils.log_out(niv_hash)
-    utils.log_out(a_hash)
+    pass
+#     igor = "igor"
+#     niv = "niv"
+#     a = "a"
+#     b = "b"
+#     manager1 = "manager1"
+#     store = "store"
+#     store1 = 'store1'
+#     payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+#                     "holder": "Niv"}
+#     buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600",
+#                          "address": "ziso 5/3 beer sheva, israel",
+#                          "name": niv}
+#
+#     utils.register(igor, igor, 20)
+#     utils.register(niv, niv, 20)
+#     utils.register(a, a, 20)
+#     utils.register(b, b, 20)
+#     utils.register(manager1, manager1, 20)
+#     igor_hash = utils.log_in(igor, igor)[1]
+#     niv_hash = utils.log_in(niv, niv)[1]
+#     a_hash = utils.log_in(a, a)[1]
+#     manager_hash = utils.log_in(manager1, manager1)[1]
+#
+#     utils.open_store("store1", manager_hash)
+#     utils.open_store(store_name, admin_hash)
+#     #utils.assign_store_owner(admin_hash, a, store_name)
+#     #utils.assign_store_owner(a_hash, b, store_name)
+#     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", "store1", "dairy")
+#     utils.add_new_product_to_store_inventory(admin_hash, "1", "1", 1, 50, "no description", store_name, "dairy")
+#     utils.add_new_product_to_store_inventory(admin_hash, "milk", "milk", 50, 50, "milk description", store_name,
+#
+# #     utils.open_store(store, igor_hash)
+# #     utils.open_store(store1, manager_hash)
+# #     utils.assign_store_owner(igor_hash, a, store)
+# #     utils.assign_store_owner(a_hash, b, store)
+# #     utils.add_new_product_to_store_inventory(manager_hash, "1", "1", 1, 50, "no description", store1, "dairy")
+# #     utils.add_new_product_to_store_inventory(igor_hash, "1", "1", 1, 50, "no description", store, "dairy")
+# #     utils.add_new_product_to_store_inventory(igor_hash, "milk", "milk", 50, 50, "milk description", store,
+#                                              "milky")
+#     utils.add_simple_discount(igor_hash, store, "a", "milk 20")
+#     utils.add_simple_discount(igor_hash, store, "b", "milk 30")
+#     # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+#     # utils.add_product_to_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+#
+#     # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+#     # utils.remove_product_from_cart(user_name=igor_hash, store_name=store, product_id="milk", quantity=4)
+#     utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
+#
+#     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+#
+#
+#     #utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#
+#     # utils.add_simple_discount(admin_hash, store_name, "a", "milk 20")
+#     # utils.add_simple_discount(admin_hash, store_name, "b", "milk 30")
+#     # utils.add_product_to_cart(user_name=admin_hash, store_name=store_name, product_id="milk", quantity=4)
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#     #
+#     #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+#
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+#
+#     utils.log_out(manager_hash)
+#     utils.log_out(igor_hash)
+#
+#     #utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+#     utils.add_product_to_cart(user_name=niv_hash, store_name=store_name, product_id="1", quantity=1)
+#     utils.add_product_to_cart(user_name=niv_hash, store_name="store1", product_id="1", quantity=1)
+#     # utils.purchase(user_name=niv_hash, payment_info=payment_info, buyer_information=buyer_information)
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name=store, product_id="1", quantity=1)
+#     # utils.add_product_to_cart(user_name=niv_hash, store_name=store1, product_id="1", quantity=1)
+#     utils.log_out(niv_hash)
+#     utils.log_out(a_hash)
 
 
 if __name__ == '__main__':
