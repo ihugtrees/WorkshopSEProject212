@@ -29,8 +29,9 @@ class Product:
         if self.quantity < num_to_take:
             raise Exception("There are only " + str(self.quantity) + " from " + self.product_name + " in the store.\n")
         self.quantity -= num_to_take
-        quantity_db = user_entity.Product.get(store=store_name, product_id=self.product_name).quantity
-        quantity_db -= num_to_take
+        print("took quantity")
+        user_entity.Product.get(store=store_name, product_id=self.product_name).quantity -= num_to_take
+
 
     # TODO work with db
     def return_quantity(self, num_to_take, store_name):

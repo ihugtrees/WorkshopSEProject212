@@ -89,7 +89,7 @@ class StoreHandler:
             store.inventory.take_quantity(cart.basket_dict.get(store.name), store.name)
 
     def take_quantity_from_store(self, store, product, quantity):
-        stores.get_store_by_name(store).inventory.take_quantity_for_one_product(product, quantity)
+        stores.get_store_by_name(store).inventory.take_quantity_for_one_product(product, quantity, store)
 
     @db_session
     def return_quantity(self, cart: CartDTO):

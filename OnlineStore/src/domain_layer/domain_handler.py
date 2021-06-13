@@ -316,7 +316,7 @@ def purchase_special(user_name: str, store, payment_info: dict, buyer_informatio
             f"{datetime.now()}\nNew Buy\n{user_name} purchased from the store ({store}) the following items: "+ product,
             store,
             "buying product")
-        publisher.send_message(store + " accept your offer, " + product + " in delivery", user_name, "offer")
+        publisher.send_message(store + " accept your offer, " + product + " in delivery. transaction id: " + str(payment_transaction_id), user_name, "offer")
         return payment_transaction_id
     except Exception as e:
         # if payment_done_delivery_done["quantity_taken"]:
@@ -649,8 +649,9 @@ def open_product_to_offer(user_name, store, product_name, minimum):
 
 def make_offer(user_name, store, product_name , quantity, price, payment_detial, buyer_information):
     user_name = auth.get_username_from_hash(user_name)
+    ans = store_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)
     publisher.send_message_to_store_employees(user_name + "send offer on " + product_name, store, "offer")
-    return store_handler.make_offer(user_name, store, product_name, quantity, price, payment_detial, buyer_information)
+    return ans
 
 
 def accept_offer(store, product_name, user_name, owner_name):
@@ -660,7 +661,7 @@ def accept_offer(store, product_name, user_name, owner_name):
     ans = store_handler.accept_offer(store, product_name, user_name, owner_name, num_of_acc)
     if ans is not None:
         (payment_info, buyer_info, quantity, price) = ans
-        return purchase_special(user_name, store, ans[0], ans[1], ans[3], ans[2], product_name)
+        purchase_special(user_name, store, ans[0], ans[1], ans[3], ans[2], product_name)
 
 
 def reject_offer(store, user_name, owner_name, product_name, counter_offer= 0):
@@ -668,6 +669,9 @@ def reject_offer(store, user_name, owner_name, product_name, counter_offer= 0):
     permission_handler.is_permmited_to(owner_name, Action.ADD_DISCOUNT.value, store)
     if counter_offer != "":
         publisher.send_message(store + " reject your offer on " + product_name + " and offer you a counter offer equal to " + counter_offer, user_name, "offer")
+    else:
+        publisher.send_message(store + " reject your offer on " + product_name, user_name, "offer")
+
     return store_handler.reject_offer(store, user_name, product_name)
 
 

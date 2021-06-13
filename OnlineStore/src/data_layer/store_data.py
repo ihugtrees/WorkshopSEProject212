@@ -67,13 +67,13 @@ def get_all_discount_policy_data(store):
 
 
 def get_store_by_name(store_name: str) -> Store:
-    ans = store_data_form_db(store_name)
-    # lock.acquire()
-    # if store_name in store_dict:
-    #     ans = store_dict[store_name]
-    # else:
-    #     ans = store_data_form_db(store_name)
-    # lock.release()
+    # ans = store_data_form_db(store_name)
+    lock.acquire()
+    if store_name in store_dict:
+        ans = store_dict[store_name]
+    else:
+        ans = store_data_form_db(store_name)
+    lock.release()
     return ans
 
 @db_session
@@ -91,9 +91,9 @@ def add_product_to_store(store_name,product_details):
     product_id = product_details["product_id"],
     product_name = product_details["product_name"],
     quantity = product_details["quantity"],
-    description = "harta brata",
+    description = "",
     price = product_details["price"],
-    category = "hrata barta",
+    category = "null",
     rating = 0 ) # maybe not?
 
 

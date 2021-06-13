@@ -88,7 +88,7 @@ class Store:
         if quantity > self.inventory.products_dict[product_name].quantity:
             raise Exception("no such quantity")
         if price < self.buying_offers[product_name].minimum:
-            raise Exception("the minimum price is: " + self.buying_offers[product_name].minimum)
+            raise Exception("the minimum price is: " + str(self.buying_offers[product_name].minimum))
         self.buying_offers[product_name].offers[user_name] = (quantity, price)
         self.buying_offers[product_name].payment_detial[user_name] = payment_detial
         self.buying_offers[product_name].buyer_information[user_name] = buyer_information
