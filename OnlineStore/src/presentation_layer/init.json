@@ -1,11 +1,10 @@
-{"commands": ["register(hilay,hilay,20)",
-    "register(rina,rina,20)",
-    "login(hilay,hilay)",
-  "open_store(shoes, hilay)",
-  "assign_store_manager(hilay, rina, shoes)",
-    "assign_store_owner(hilay, rina, shoes)",
-    "add_new_product_to_store_inventory(hilay,shoes,shoes,10,shoes,10,1,shoes)",
-    "add_simple_discount(hilay, shoes, a, shoes 10)",
-    "add_product_to_cart(hilay, 1, 1, shoes)",
-  "purchase(hilay, 123123, home)",
-  "logout(hilay)"]}
+{"commands": [
+  "register(U1,U1,20)",
+    "register(U2,U2,20)",
+  "register(U3,U3,20)",
+  "register(U4,U4,20)",
+    "login(U1,U1)",
+  "open_store(S1, U1)",
+    "add_new_product_to_store_inventory(U1,Wine,Wine,40,Wine,35,1,S1)",
+    "assign_store_owner(U1, U4, S1)",
+  "logout(U1)"]}

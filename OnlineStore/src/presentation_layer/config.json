@@ -4,8 +4,8 @@
     "filename": "database.sqlite"
   },
   "admin": {
-    "user": "admin",
-    "pass": "admin"
+    "user": "A1",
+    "pass": "A1"
   },
   "external_systems": {
     "payment": {
