@@ -83,7 +83,7 @@ class StoreHandler:
         for store in self.__get_stores_from_cart(cart):
             ans = ans and store.is_policies_eligible(user)
         return ans
-    @db_session
+
     def take_quantity(self, cart: CartDTO):
         for store in self.__get_stores_from_cart(cart):
             store.inventory.take_quantity(cart.basket_dict.get(store.name), store.name)

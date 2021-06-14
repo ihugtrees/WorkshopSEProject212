@@ -167,7 +167,10 @@ def remove_from_cart(user_name, product_name, quantity, store_name):
 
 @db_session
 def empty_cart(user_name):
-    user_entity.User.get(user_name=user_name).productInCart = []
+    try:
+        user_entity.User.get(user_name=user_name).productInCart = []
+    except Exception as e:
+        print(e)
 
 
 @db_session

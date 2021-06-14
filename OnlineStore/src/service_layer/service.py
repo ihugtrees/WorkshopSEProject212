@@ -279,9 +279,9 @@ def purchase(user_name: str, payment_info: dict, buyer_information: dict):
     """
 
     try:
-        logging.info("Starting purchase " + user_name)
+        logging.info(f"Starting purchase {domain_handler.auth.get_username_from_hash(user_name)}")
         ans = domain_handler.purchase(user_name, payment_info, buyer_information)
-        logging.info("Succesful purchase user name = " + user_name)
+        logging.info(f"Successful purchase by {domain_handler.auth.get_username_from_hash(user_name)}")
         return [True, ans]
     except Exception as e:
         logging.error("purchase fail " + e.args[0])
@@ -299,7 +299,7 @@ def logout(user_name):
     """
 
     try:
-        logging.info("logout user name: " + user_name)
+        logging.info("logout user name: " + domain_handler.auth.get_username_from_hash(user_name))
         domain_handler.logout(user_name)
         return [True, None]
     except Exception as e:
