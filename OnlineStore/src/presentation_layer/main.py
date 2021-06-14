@@ -12,10 +12,8 @@ from OnlineStore.src.presentation_layer import convert_data
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
-socketio = SocketIO(app, async_mode='threading')
-
-
-# socketio = SocketIO(app, threading=True)
+# socketio = SocketIO(app, async_mode='threading')
+socketio = SocketIO(app)
 
 
 @socketio.on('join')
@@ -935,8 +933,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
         #   initialize_system()
-        socketio.run(app=app, debug=True, port=8443, use_reloader=False)
-        # socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+        # socketio.run(app=app, debug=True, port=8443, use_reloader=False)
+        socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
 
     else:
         print("Error - initialization")
