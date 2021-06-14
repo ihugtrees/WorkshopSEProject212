@@ -1,10 +1,6 @@
 from unittest import TestCase
 
 from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
-from OnlineStore.src.domain_layer.store.discont_policy.atomic_term import AtomicTerm
-from OnlineStore.src.domain_layer.store.discont_policy.discount_policy import DiscountPolicy
-from OnlineStore.src.domain_layer.store.discont_policy.term_discount import TermDiscount
-from OnlineStore.src.domain_layer.store.store import Store
 
 
 class TestBuyingPolicy(TestCase):

@@ -747,7 +747,7 @@ def accept_offer(store, product_name, user_name, owner_name):
         return [False, e.args[0]]
 
 
-def reject_offer(store, product_name, user_name, owner_name, counter_offer=0):
+def reject_offer(store, product_name, user_name, owner_name, counter_offer=""):
     try:
         logging.info("reject offer")
         return [True, domain_handler.reject_offer(store, user_name, owner_name, product_name, counter_offer)]

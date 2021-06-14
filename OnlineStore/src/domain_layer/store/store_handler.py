@@ -184,7 +184,8 @@ class StoreHandler:
         return stores.get_store_by_name(store).delete_discount(discount_name)
 
     def add_policy(self, store, policy_name: str, s_term: str, no_flag=False):
-        return stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
+        ans = stores.get_store_by_name(store).add_buying_policy(policy_name, s_term, no_flag=no_flag)
+        stores.add_buying_policy(store, policy_name, s_term)
 
     def open_product_to_offer(self, store, product_name, minimum):
         return stores.get_store_by_name(store).open_product_to_offer(product_name, minimum)

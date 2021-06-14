@@ -3,6 +3,7 @@ from unittest import TestCase
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.communication_layer import publisher
 from OnlineStore.src.data_layer import user_entity
+from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
 from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.external.payment_system import PaymentSystem
 from OnlineStore.src.external.payment_system_mock import MockPaymentSystem
@@ -335,7 +336,7 @@ class TestService(TestCase):
         self.assertTrue(len(store_history_before) == len(store_history_after))
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
-    def test_purchase_buying_policy_fail(self):
+    def test_purchase_buying_policy_mock_fail(self):
         user_name = users_hash["user_name9"]
         store_name = "store9"
         product_name = "product"
@@ -512,6 +513,32 @@ class TestService(TestCase):
         service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 50")
         self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1,len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict))
 
+    def test_buying_policy_fail(self):
+        user_name = users_hash["user_name9"]
+        store_name = "store9"
+        product_name = "product"
+        service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 500")
+
+        anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
+        # self.assertTrue(anst[0], anst[1])
+        cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
+
+        ans = service.purchase(user_name,
+                               {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                                "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
+                                                   "address": "ziso 5/3 beer sheva, israel",
+                                                   "name": "niv"})
+
+        cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
+
+        self.assertTrue((ans[0] == False), ans[1])
+        self.assertTrue((service.get_store_for_tests(store_name)[1].inventory.products_dict.get(product_name).quantity
+                         == 10), "quantity drop")
+        for store_name, basket in cart_before.basket_dict.items():
+            self.assertDictEqual(basket.products_dict, cart_after.basket_dict[store_name].products_dict)
+        self.assertTrue(len(store_history_before) == len(store_history_after))
+        self.assertTrue(len(user_history_before) == len(user_history_after))
+
     def test_assign_store_manager(self):  # 4.3
         user_name = users_hash["user_name1"]
         new_store_manager_name = "user_name2"
@@ -530,6 +557,37 @@ class TestService(TestCase):
         not_user_manager = users_hash["user_name3"]
         ans4, result = service.assign_store_manager(not_user_manager, "user_name4", store_name)
         self.assertFalse(ans4, result)
+
+    def test_accept_offer(self):
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.open_product_to_offer(user_name, store_name, "product", 20)
+        user_name2 = users_hash["user_name2"]
+        payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+         "holder": "Niv"},
+        shipment = {"city": "sss", "country": "Israel", "zip": "8538600",
+                            "address": "ziso 5/3 beer sheva, israel",
+                            "name": "niv"}
+        service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, shipment)
+        service.accept_offer(store_name, "product", "user_name2", user_name)
+        quantity = service.get_store_for_tests(store_name)[1].inventory.products_dict["product"].quantity
+        self.assertTrue(quantity == 9)
+
+    def test_reject_offer(self):
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.open_product_to_offer(user_name, store_name, "product", 20)
+        user_name2 = users_hash["user_name2"]
+        payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+         "holder": "Niv"},
+        shipment = {"city": "sss", "country": "Israel", "zip": "8538600",
+                            "address": "ziso 5/3 beer sheva, israel",
+                            "name": "niv"}
+        service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, shipment)
+        service.reject_offer(store_name, "product", "user_name2", user_name, "")
+        num_of_offers = len(service.get_store_for_tests(store_name)[1].buying_offers["product"].offers)
+        self.assertTrue(num_of_offers == 0)
+
 
     def test_assign_store_manager_sync(self):
         user_name0 = users_hash["user_name0"]

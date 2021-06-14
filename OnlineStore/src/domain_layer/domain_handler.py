@@ -664,7 +664,7 @@ def accept_offer(store, product_name, user_name, owner_name):
         purchase_special(user_name, store, ans[0], ans[1], ans[3], ans[2], product_name)
 
 
-def reject_offer(store, user_name, owner_name, product_name, counter_offer= 0):
+def reject_offer(store, user_name, owner_name, product_name, counter_offer= ""):
     owner_name = auth.get_username_from_hash(owner_name)
     permission_handler.is_permmited_to(owner_name, Action.ADD_DISCOUNT.value, store)
     if counter_offer != "":
