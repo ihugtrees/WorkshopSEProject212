@@ -19,9 +19,12 @@ class WebsiteUser(HttpUser):
             self.client.post(f"/logout", verify=False)
             time.sleep(9)
 
-    # @task(3)
-    # def view_items(self):
-    #     self.client.get(f"/", verify=False)
+    @task
+    def guests(self):
+        while 1:
+            self.client.get(f"/guest_dashboard?", verify=False)
+            self.client.post(f"/logout", verify=False)
+            time.sleep(9)
 
     def on_start(self):
         self.client.get("/", verify=False)
