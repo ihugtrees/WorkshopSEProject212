@@ -20,46 +20,37 @@ parser.add_argument('--clean', action='store_true', default="false", help="clean
 args = parser.parse_args()
 
 if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=False):
-    for i in range(0, users_num):
+    for i in range(users_num):
         x = utils.register(f'u{i}', f'u{i}', i)
         if x[0]:
             print(f'reg: {i}')
 
-    for i in range(0, users_num):
-        user_hash = utils.log_in(f'u{i}', f'u{i}')
-        if user_hash[0]:
-            users[f'u{i}'] = user_hash[1]
-        else:
-            print('fail login')
-            continue
-
+    for i in range(users_num):
         if i % 10 == 0:
+            user_hash = utils.log_in(f'u{i}', f'u{i}')
+            user_hash1 = utils.log_in(f'u{i+1}', f'u{i+1}')
+            if user_hash[0]:
+                users[f'u{i}'] = user_hash[1]
+                users[f'u{i+1}'] = user_hash1[1]
             x = utils.open_store(f's{i}', users[f'u{i}'])
-            if x[0]:
-                print(f'store: {i}')
             for j in range(prod_num):
                 x = utils.add_new_product_to_store_inventory(users[f'u{i}'], f'p{j}', f'p{j}', 1, 10, f'descrp: p{j}',
                                                              f's{i}', 'test cat')
-                # if x[0] and j % 100 == 0:
-                #     print(f'store: {i}, store: {j}')
             print(f'store: {i} done')
 
 else:
     raise Exception("couldn't initialize")
 
 
-# class TestLoad(TestCase):
-#     def test_purchase(self):
-#         #     for i in range(users_num):
-#         #         if i % 10 == 0:
-#         #             print(f'purchase: {i}')
-#         #             buyer = users[f'u{i + 1}']
-#         #             # buyer = utils.log_in(f'u{i + 1}', f'u{i + 1}')
-#         #             for j in range(prod_num):
-#         #                 utils.add_product_to_cart(buyer, f'p{j}', 1, f's{i}')
-#         #                 utils.purchase(buyer, payment_info, buyer_information)
-#         #             pur = utils.get_user_purchases_history(buyer)[1]
-#         #             self.assertTrue(len(pur) == prod_num)
-#         print("done!!!")
-
-# def test_items(self):
+class TestLoad(TestCase):
+    def test_purchase(self):
+        for i in range(users_num):
+            if i % 10 == 0:
+                print(f'purchase: {i}')
+                buyer = users[f'u{i + 1}']
+                # buyer = utils.log_in(f'u{i + 1}', f'u{i + 1}')
+                for j in range(prod_num):
+                    utils.add_product_to_cart(buyer, f'p{j}', 1, f's{i}')
+                    utils.purchase(buyer, payment_info, buyer_information)
+                pur = utils.get_user_purchases_history(buyer)[1]
+                self.assertTrue(len(pur) == prod_num)
