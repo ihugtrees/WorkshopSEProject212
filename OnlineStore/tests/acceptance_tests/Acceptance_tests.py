@@ -1,21 +1,20 @@
 import threading
 from unittest import TestCase
+
+import OnlineStore.src.data_layer.permissions_data as permissions
+import OnlineStore.src.data_layer.purchase_data as purchases
+import OnlineStore.src.data_layer.store_data as stores
+import OnlineStore.src.data_layer.users_data as users
 import OnlineStore.src.domain_layer.domain_handler as domain_handler
 from OnlineStore.src.communication_layer import publisher
-from OnlineStore.src.data_layer import user_entity
-from OnlineStore.src.domain_layer.store.buying_policy.buying_policy import BuyingPolicy
+from OnlineStore.src.domain_layer.store.buying_policy_mock import BuyingPolicyMock
 from OnlineStore.src.domain_layer.store.store import Store
 from OnlineStore.src.external.payment_system import PaymentSystem
 from OnlineStore.src.external.payment_system_mock import MockPaymentSystem
 from OnlineStore.src.external.supply_system import SupplySystem
 from OnlineStore.src.external.supply_system_mock import MockSupplySystem
-from OnlineStore.src.service_layer import service
 from OnlineStore.src.security.authentication import Authentication
-from OnlineStore.src.domain_layer.store.buying_policy_mock import BuyingPolicyMock
-import OnlineStore.src.data_layer.users_data as users
-import OnlineStore.src.data_layer.purchase_data as purchases
-import OnlineStore.src.data_layer.permissions_data as permissions
-import OnlineStore.src.data_layer.store_data as stores
+from OnlineStore.src.service_layer import service
 
 product_id: int = 0
 users_hash: dict = dict()
@@ -26,6 +25,7 @@ buyer_information = {"city": "Israel", "country": "Beer Sheva", "zip": "8538600"
                      "name": "niv"}
 
 filters = {'min': 0, 'max': 500, 'prating': 0, 'category': '', 'srating': 0}
+
 
 def take_info(user_name, store_name):
     cart = service.get_cart_info(user_name)[1]
@@ -49,6 +49,7 @@ class TestService(TestCase):
             db.generate_mapping(check_tables=False)
         db.drop_all_tables(with_all_data=True)
         db.create_tables()
+        service.register('admin', 'admin', 20, True)
 
         for i in range(0, 10):
             service.get_into_site()
@@ -284,10 +285,11 @@ class TestService(TestCase):
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
-                     "address": "ziso 5/3 beer sheva, israel",
-                     "name": "niv"})
+        ans = service.purchase(user_name,
+                               {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                                                   "address": "ziso 5/3 beer sheva, israel",
+                                                   "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -315,10 +317,11 @@ class TestService(TestCase):
 
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "0000", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
-                     "address": "ziso 5/3 beer sheva, israel",
-                     "name": "niv"})
+        ans = service.purchase(user_name,
+                               {"card_number": "0000", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                                                   "address": "ziso 5/3 beer sheva, israel",
+                                                   "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -343,13 +346,14 @@ class TestService(TestCase):
         service.get_store_for_tests(store_name)[1].buying_policy = BuyingPolicyMock()
 
         anst = service.add_product_to_cart(user_name, product_name, 1, store_name)
-        #self.assertTrue(anst[0], anst[1])
+        # self.assertTrue(anst[0], anst[1])
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
-                     "address": "ziso 5/3 beer sheva, israel",
-                     "name": "niv"})
+        ans = service.purchase(user_name,
+                               {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                                "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
+                                                   "address": "ziso 5/3 beer sheva, israel",
+                                                   "name": "niv"})
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -393,7 +397,7 @@ class TestService(TestCase):
         store = service.get_store_for_tests(store_name)[1]
         quantity = store.inventory.products_dict[product_name].quantity
 
-        self.assertTrue(quantity == 0,quantity)
+        self.assertTrue(quantity == 0, quantity)
         ans, store_history = service.get_store_purchase_history(user_name0, store_name)
         self.assertTrue(ans, store_history)
         self.assertTrue(len(store_history) == 2, str(len(store_history)))
@@ -435,10 +439,11 @@ class TestService(TestCase):
         ans = service.get_user_purchases_history(user_name)
         self.assertTrue(((ans[0] and (len(ans[1]) == 0)) or not ans[0]), ans[1])
 
-        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
-                     "address": "ziso 5/3 beer sheva, israel",
-                     "name": "niv"})
+        ans = service.purchase(user_name,
+                               {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
+                                "holder": "Niv"}, {"city": "Haifa", "country": "Israel", "zip": "8538600",
+                                                   "address": "ziso 5/3 beer sheva, israel",
+                                                   "name": "niv"})
         self.assertTrue(ans[0], ans[1])
 
         ans = service.get_user_purchases_history(user_name)
@@ -470,7 +475,7 @@ class TestService(TestCase):
 
         ans = service.edit_product_description(user_name, new_description, store_name, product_name)
         description_in_system = service.get_store_for_tests(store_name)[1].inventory.products_dict[
-                                        product_name].description
+            product_name].description
         self.assertTrue(ans[0] and (description_in_system == new_description), ans[1])
 
         ans = service.edit_product_description(user_name, new_description, store_name, "product17")
@@ -511,7 +516,8 @@ class TestService(TestCase):
         user_name = users_hash["user_name1"]
         store_name = "store1"
         service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 50")
-        self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1,len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict))
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1,
+                        len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict))
 
     def test_buying_policy_fail(self):
         user_name = users_hash["user_name9"]
@@ -564,10 +570,10 @@ class TestService(TestCase):
         service.open_product_to_offer(user_name, store_name, "product", 20)
         user_name2 = users_hash["user_name2"]
         payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-         "holder": "Niv"},
+                        "holder": "Niv"},
         shipment = {"city": "sss", "country": "Israel", "zip": "8538600",
-                            "address": "ziso 5/3 beer sheva, israel",
-                            "name": "niv"}
+                    "address": "ziso 5/3 beer sheva, israel",
+                    "name": "niv"}
         service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, shipment)
         service.accept_offer(store_name, "product", "user_name2", user_name)
         quantity = service.get_store_for_tests(store_name)[1].inventory.products_dict["product"].quantity
@@ -579,15 +585,14 @@ class TestService(TestCase):
         service.open_product_to_offer(user_name, store_name, "product", 20)
         user_name2 = users_hash["user_name2"]
         payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-         "holder": "Niv"},
+                        "holder": "Niv"},
         shipment = {"city": "sss", "country": "Israel", "zip": "8538600",
-                            "address": "ziso 5/3 beer sheva, israel",
-                            "name": "niv"}
+                    "address": "ziso 5/3 beer sheva, israel",
+                    "name": "niv"}
         service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, shipment)
         service.reject_offer(store_name, "product", "user_name2", user_name, "")
         num_of_offers = len(service.get_store_for_tests(store_name)[1].buying_offers["product"].offers)
         self.assertTrue(num_of_offers == 0)
-
 
     def test_assign_store_manager_sync(self):
         user_name0 = users_hash["user_name0"]
@@ -663,8 +668,29 @@ class TestService(TestCase):
         ans = service.get_store_purchase_history(user_name, store_name)
         self.assertTrue(ans[0], ans[1])
 
-    def test_get_store_purchase_history_admin(self):  # 6.4.1
-        pass
+    def test_get_user_purchase_history_admin(self):  # 6.4.1
+        hash_admin = service.login('admin', 'admin')
+        self.assertTrue(hash_admin[0])
+        hash_admin = hash_admin[1]
+        hash_user = service.login('user_name0', 'password0')
+        self.assertTrue(hash_user[0])
+        hash_user = hash_user[1]
+        res = service.purchase(hash_user, payment_info, buyer_information)
+        self.assertTrue(res[0])
+        res = service.get_user_purchase_history_admin(hash_admin, 'user_name0')
+        self.assertTrue(res[0])
+
+    def test_get_store_purchase_history_admin(self):  # 6.4.2
+        hash_admin = service.login('admin', 'admin')
+        self.assertTrue(hash_admin[0])
+        hash_admin = hash_admin[1]
+        hash_user = service.login('user_name0', 'password0')
+        self.assertTrue(hash_user[0])
+        hash_user = hash_user[1]
+        res = service.purchase(hash_user, payment_info, buyer_information)
+        self.assertTrue(res[0])
+        res = service.get_store_purchase_history_admin(hash_admin, 'store0')
+        self.assertTrue(res[0])
 
     def test_get_into_site_sync(self):
         try:
@@ -712,7 +738,7 @@ class TestService(TestCase):
         user_name1 = "user_name1"
         user_name2 = "user_name2"
         user_name3 = "user_name3"
-        service.assign_store_owner(users_hash[user_name1],user_name2,"store1")
+        service.assign_store_owner(users_hash[user_name1], user_name2, "store1")
         service.assign_store_owner(users_hash[user_name1], user_name3, "store1")
         self.assertTrue(len(publisher.topics["store1"]) == 3)
         service.add_product_to_cart(users_hash["user_name4"], "product", 1, "store1")
@@ -736,7 +762,6 @@ class TestService(TestCase):
         service.remove_store_owner(users_hash[user_name1], user_name2, "store1")
         self.assertTrue(len(users.pending_messages[user_name2]) == 2, f"len(list) of {user_name2} should be 1")
 
-
     def tearDown(self):
         domain_handler.supply_adapter.supply_system = SupplySystem()
         domain_handler.payment_adapter.payment_system = PaymentSystem()
@@ -749,5 +774,3 @@ class TestService(TestCase):
         domain_handler.auth = Authentication()
         permissions.permissions = dict()
         publisher.topics = dict()
-
-
