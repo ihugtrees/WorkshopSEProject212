@@ -105,13 +105,16 @@ def dashboard():
         if utils.userIsStoreManager(user, store_id)[0]:
             session["store"] = store_id
             return render_template("dashboardStoreManager.html")
-        if utils.is_user_admin(session['user'])[0]:
+
+        admin = utils.is_user_admin(session['user'])
+        if admin[0] and admin[1]:
             return render_template("dashboardAdmin.html",
                                    welcome=f"Hi {session['username']} What would You like to do?")
         else:
             return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
-        if utils.is_user_admin(session['user'])[0]:
+        admin = utils.is_user_admin(session['user'])
+        if admin[0] and admin[1]:
             return render_template("dashboardAdmin.html",
                                    welcome=f"Hi {session['username']} What would You like to do?")
         session["store"] = "None" if "store" not in session else session["store"]
@@ -482,7 +485,9 @@ def pastPurchases():
     purchase_list = None
     if request.method == 'GET' and 'user' in session and session["user"] is not None:
         purchase_list = utils.get_user_purchases_history(session["user"])
-    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+
+    admin = utils.is_user_admin(session['user'])
+    if request.method == 'POST' and admin[0] and admin[1]:
         purchase_list = utils.get_user_purchase_history_admin(session['user'], request.form["username"])
     if purchase_list is not None:
         if purchase_list[0]:
@@ -499,7 +504,8 @@ def pastStorePurchases():
     purchase_list = None
     if request.method == 'GET' and 'store' in session and session["store"] is not None:
         purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
-    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+    admin = utils.is_user_admin(session["user"])
+    if request.method == 'POST' and admin[0] and admin[1]:
         purchase_list = utils.get_store_purchase_history_admin(session["user"], request.form['store'])
     if purchase_list is not None:
         if purchase_list[0]:

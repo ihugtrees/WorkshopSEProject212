@@ -1,10 +1,13 @@
-{"commands": [
-  "register(U1,U1,20)",
+{
+  "commands": [
+    "register(U1,U1,20)",
     "register(U2,U2,20)",
-  "register(U3,U3,20)",
-  "register(U4,U4,20)",
+    "register(U3,U3,20)",
+    "register(U4,U4,20)",
     "login(U1,U1)",
-  "open_store(S1, U1)",
+    "open_store(S1, U1)",
     "add_new_product_to_store_inventory(U1,Wine,Wine,40,Wine,35,1,S1)",
     "assign_store_owner(U1, U4, S1)",
-  "logout(U1)"]}
+    "logout(U1)"
+  ]
+}
