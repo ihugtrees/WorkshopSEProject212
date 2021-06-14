@@ -926,3 +926,4 @@ if __name__ == '__main__':
         socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     else:
         print("Error - initialization")
+
