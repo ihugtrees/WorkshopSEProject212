@@ -19,7 +19,7 @@ class TestProduct(TestCase):
         self.assertTrue(self.prod.quantity == 2)
 
     def test_edit_product_description(self):
-        self.assertRaises(Exception, self.prod.edit_product_description, 1)
+        self.assertRaises(Exception, self.prod.edit_product_details, 1)
         self.assertTrue(self.prod.description == '')
-        self.prod.edit_product_description('prod')
+        self.prod.edit_product_details('prod')
         self.assertTrue(self.prod.description == 'prod')

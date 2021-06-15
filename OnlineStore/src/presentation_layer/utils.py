@@ -162,12 +162,11 @@ def remove_product_from_store_inventory(user_name, product_id, store_name):
     return service.remove_product_from_store_inventory(user_name, product_id, store_name)
 
 
-# TODO implement this func in service_layer
-def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
-                 category, discount_type, buying_type):
-    return service.edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
-                                category, discount_type, buying_type)
-    # return True
+def edit_product(user_name, product_name, price, quantity, description, store_name,
+                 category):
+    return service.edit_product(user_name, store_name,
+                                {"product_name": product_name, "quantity": quantity, "description": description,
+                                 "price": price, "category": category})
 
 
 # TODO we need to implement all those functions in service_layer
@@ -214,7 +213,8 @@ def make_offer(user_name, store_name, product_name, quantity, price, payment_det
 def accept_offer(store, product_name, user_name, owner_name):
     return service.accept_offer(store, product_name, user_name, owner_name)
 
-def reject_offer(store, user_name, owner_name, product_name, counter_offer= 0):
+
+def reject_offer(store, user_name, owner_name, product_name, counter_offer=0):
     return service.reject_offer(store, product_name, user_name, owner_name, counter_offer=counter_offer)
 
 
@@ -420,14 +420,6 @@ def userIsStoreManager(user_hash, store_name):
 
 # def remove_product_from_store_inventory(user_name, product_id, store_name):
 #     return service.remove_product_from_store_inventory(user_name, product_id, store_name)
-
-
-# # TODO implement this func in service_layer
-# def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
-#                  category, discount_type, buying_type):
-#     return service.edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
-#                                 category, discount_type, buying_type)
-#     # return True
 
 
 # # TODO we need to implement all those functions in service_layer

@@ -553,22 +553,18 @@ def removeProduct():
 def editProduct():
     if (request.method == 'POST'):
         storeID = session["store"]
-        productID = request.form.get('productID')
         productName = request.form.get('productName')
         productPrice = request.form.get('productPrice')
         productAmout = request.form.get('productAmout')
         productDescription = request.form.get('productDescription')
-        productDiscountType = request.form.get('productDiscountType')
-        productBuyingType = request.form.get('productBuyingType')
         productCategory = request.form.get('productCategory')
         # take care this func is not implemented yet, only edit description
         return render_template("editProduct.html",
                                message=display_answer(
-                                   utils.edit_product(session["user"], product_id=productID, product_name=productName,
+                                   utils.edit_product(session["user"], product_name=productName,
                                                       price=productPrice, quantity=productAmout,
                                                       description=productDescription,
-                                                      store_name=storeID, category=productCategory,
-                                                      discount_type=productDiscountType, buying_type=productBuyingType)[
+                                                      store_name=storeID, category=productCategory)[
                                        1]))
     return render_template("editProduct.html")
 
