@@ -24,12 +24,10 @@ class Product:
     def take_quantity(self, num_to_take, store_name):
         if num_to_take <= 0:
             raise Exception("Negative or zero quantity\n")
-        #self.quantity = user_entity.Product.get(store=store_name, product_id=self.product_name).quantity
-        #print(self.quantity)
+        self.quantity = user_entity.Product.get(store=store_name, product_id=self.product_name).quantity
         if self.quantity < num_to_take:
             raise Exception("There are only " + str(self.quantity) + " from " + self.product_name + " in the store.\n")
         self.quantity -= num_to_take
-        print("took quantity")
         user_entity.Product.get(store=store_name, product_id=self.product_name).quantity -= num_to_take
 
 

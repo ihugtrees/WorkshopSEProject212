@@ -19,7 +19,7 @@ class PaymentSystem:
         transaction_id = int(response.content)
         if transaction_id == -1:
             raise Exception("Payment system rejected the payment")
-        print(f"Transaction id:{int(response.content)}")
+        # print(f"Transaction id:{int(response.content)}")
         return transaction_id
 
     def cancel_pay(self, transaction_id: int) -> None:
