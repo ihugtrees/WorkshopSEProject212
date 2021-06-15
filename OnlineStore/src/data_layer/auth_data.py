@@ -31,12 +31,13 @@ def get_user_auth(user_name):
     user_auth = user_entity.UserAuth.get(user_name=user_name)
     if user_auth is None:
         raise Exception("User Does not exist")
-    return  {"user_name": user_name,
+    return {"user_name": user_name,
             "password_hash": user_auth.password_hash
             }
 
+
 @db_session
-def user_exist(user_name)->bool:
+def user_exist(user_name) -> bool:
     try:
         user_entity.UserAuth[user_name]
         return True
