@@ -685,7 +685,7 @@ def rejectOffer():
 
 @app.route('/addNewProduct', methods=['POST', 'GET'])
 def addNewProduct():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeID = session['store']
         product_Name = request.form.get('productName')
         product_Price = request.form.get("productPrice")
