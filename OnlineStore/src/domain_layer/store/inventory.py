@@ -26,7 +26,8 @@ class Inventory:
         self.products_dict[product_details["product_id"]] = Product(product_details["product_id"],
                                                                     product_details["product_name"],
                                                                     product_details["quantity"],
-                                                                    product_details["price"])
+                                                                    product_details["price"],
+                                                                    product_details["category"])
         self.lock.release()
 
     def take_quantity(self, basket: Basket, store_name):

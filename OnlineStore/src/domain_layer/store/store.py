@@ -26,7 +26,7 @@ class Store:
     def edit_product(self, product_id, product_details):
         if product_id not in self.inventory.products_dict:
             raise Exception("cant edit non existent product")
-        self.inventory.products_dict[product_id].edit_product_description(product_details, self.name)
+        self.inventory.products_dict[product_id].edit_product_details(product_details, self.name)
 
     def is_policies_eligible(self, user: UserDTO) -> None:
         if self.buying_policy is not None:
