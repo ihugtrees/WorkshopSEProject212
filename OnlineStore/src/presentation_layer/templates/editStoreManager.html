@@ -8,15 +8,40 @@
     <form action="/editStoreManager" method="POST">
         <p>Enter User ID:</p>
         <p><input type="text" name="userid" autofocus="True" /></p>
-        <p>Enter Permission Update:</p>
-        <p><input type="text" name="permissionUpdate" /></p>
+        <input type="hidden" name="permissions" value="0"/>
+
+        <input type="checkbox" id="seeHistory" onchange="handleChange(this)" value="2">
+        <label for="seeHistory"> See History</label><br>
+        <input type="checkbox" id="addDiscount" onchange="handleChange(this)" value="19">
+        <label for="addDiscount"> Edit Policies</label><br>
+        <input type="checkbox" id="addToInventory" onchange="handleChange(this)" value="15">
+        <label for="addToInventory"> Add To Inventory</label><br>
+        <input type="checkbox" id="removeFromInventory" onchange="handleChange(this)" value="16">
+        <label for="removeFromInventory"> Remove From Inventory</label><br>
         <p><input type="submit" value="Edit Store Manager" /></p>
+
     </form>
     <form action="/dashboard" method="GET">
         <p><input type="submit" value="Back to Dashboard" /></p>
     </form>
     <p>{{message}}</p>
 
+<script>
+    var c = 0;
+    function handleChange(checkbox) {
+    if(checkbox.checked == true){
+        document.getElementById(checkbox.id).setAttribute("checked", "checked");
+        c = ((1 << parseInt(checkbox.value)) | c);
+        document.getElementsByName("permissions")[0].value = c;
+        console.log(c)
+    }else{
+        document.getElementById(checkbox.id).removeAttribute("disabled");
+        c = ((1 << (~parseInt(checkbox.value))) & c);
+        document.getElementsByName("permissions")[0].value = c;
+        console.log(c)
+   }
+}
+</script>
 
 </body>
 </html>

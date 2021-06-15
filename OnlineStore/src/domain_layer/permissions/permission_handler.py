@@ -61,3 +61,6 @@ class PermissionHandler:
             store_name (str):
         """
         permissions.get_permissions_by_user_name(user_name).is_store_manager(store_name)
+
+    def get_employee_permissions_in_store(self, employee_name, store_name):
+        return permissions.get_permissions_by_user_name(employee_name).get_store_permissions(store_name)

@@ -263,7 +263,7 @@ def add_simple_discount(user_name, store_name, discount_name, discount_value):
 
 
 def get_employee_details(user_name, store_name, employeeid):
-    return service.get_employee_details(user_name, store_name, employeeid)
+    return service.get_employee_information(user_name, employeeid, store_name)
 
 
 def get_employee_permissions(user_name, store_name, employeeid):

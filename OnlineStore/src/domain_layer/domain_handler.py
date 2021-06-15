@@ -491,7 +491,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
     permission_handler.is_permmited_to(user_name, Action.SET_MANAGER_PERMISSIONS.value,
                                        store_name)
     user_handler.is_assigned_by_me(user_name, store_manager_name, store_name)
-    permission_handler.set_permissions(action.OWNER_INITIAL_PERMISSSIONS & new_permissions,
+    permission_handler.set_permissions((action.MANAGER_INITIAL_PERMISSIONS | action.OWNER_INITIAL_PERMISSSIONS & new_permissions),
                                        store_manager_name,
                                        store_name)
 
@@ -543,7 +543,17 @@ def get_employee_information(user_name: str, employee_name: str, store_name: str
     permission_handler.is_permmited_to(user_name=user_name, action=Action.EMPLOYEE_INFO.value,
                                        store_name=store_name)
     permission_handler.is_working_in_store(employee_name, store_name)
-    return user_handler.get_employee_information(employee_name)
+    info = user_handler.get_employee_information(employee_name)
+    info = info.__dict__
+    info.pop("cart")
+    info.pop("_UserDTO__is_admin")
+    try:
+        permission_handler.is_store_owner(store_name=store_name, user_name=employee_name)
+        info["owner"] = "YES"
+    except:
+        info["Manager"] = "YES"
+
+    return info
 
 
 # 4.9.2
@@ -558,10 +568,9 @@ def get_employee_permissions(user_name: str, store_name: str, employee_name: str
     :return: The permissions (int)
     """
     user_name = auth.get_username_from_hash(user_name)
-    permission_handler.is_permmited_to(user_name, Action.EMPLOYEE_PERMISSIONS, store_name)
+    permission_handler.is_permmited_to(user_name, Action.EMPLOYEE_PERMISSIONS.value, store_name)
     permission_handler.is_working_in_store(employee_name, store_name)
-    return user_handler.get_employee_information(
-        employee_name)  # TODO FOR NOW RETURN INFORMATION MAYBE TO CHANGE TO NEW FUNCTION
+    return permission_handler.get_employee_permissions_in_store(employee_name=employee_name, store_name=store_name)
 
 
 # 4.11

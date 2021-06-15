@@ -249,7 +249,7 @@ def editStoreManager():
     if (request.method == 'POST'):
         userid = request.form.get('userid')
         storeid = session["store"]
-        permissionUpdate = request.form.get('permissionUpdate')
+        permissionUpdate = request.form.get('permissions')
         return render_template("editStoreManager.html", message=
         display_answer(utils.edit_store_manager_permissions(session["user"], userid, permissionUpdate, storeid)[1]))
     return render_template("editStoreManager.html")

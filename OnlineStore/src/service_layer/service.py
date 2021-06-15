@@ -485,7 +485,7 @@ def edit_store_manager_permissions(user_name: str, store_manager_name: str, new_
 
     try:
         logging.info("edit_store_manager_permissions")
-        domain_handler.edit_store_manager_permissions(user_name, store_manager_name, new_permissions, store_name)
+        domain_handler.edit_store_manager_permissions(user_name, store_manager_name, int(new_permissions), store_name)
         return [True, None]
     except Exception as e:
         logging.error("edit_store_manager_permissions " + e.args[0])

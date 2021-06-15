@@ -47,3 +47,6 @@ class UserPermissions:
             raise Exception(f"Not an employee of the store({store_name})")
         if store_permissions & (1 << Action.IS_MANAGER.value) == 0:
             raise Exception(f"Not manager in the store({store_name})")
+
+    def get_store_permissions(self, store_name):
+        return self.__permissions_in_store[store_name]
