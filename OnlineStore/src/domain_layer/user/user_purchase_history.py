@@ -7,6 +7,7 @@ class UserPurchaseHistory:
     def __init__(self):
         self.purchases = dict()
         self.lock = Lock()
+
     @db_session
     def add_purchase(self, purchase: Receipt):
         self.lock.acquire()

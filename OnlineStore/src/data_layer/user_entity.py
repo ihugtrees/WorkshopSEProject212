@@ -49,6 +49,7 @@ class Store(db.Entity):
     products = Set('Product')
     buying_policy = Set('BuyingPolicy')
     discount_policy = Set('DiscountPolicy')
+    store_purchase_history = Set('StorePurchaseHistory')
 
 
 class Product(db.Entity):
@@ -113,6 +114,25 @@ class ProductInHistory(db.Entity):
     product_name = Required(str)
     quantity = Required(int)
     user_purchase_history = Required(UserPurchaseHistory)
+
+
+class StorePurchaseHistory(db.Entity):
+    store_name = Required(Store)
+    receipt_id = Required(str)
+    user_name = Required(str)
+    total_sum = Required(int)
+    date = Required(datetime)
+    destination = Required(str)
+    products = Set("ProductInHistoryStore")
+    transaction_id = Required(int)
+    PrimaryKey(store_name, receipt_id)
+
+
+class ProductInHistoryStore(db.Entity):
+    product_name = Required(str)
+    quantity = Required(int)
+    store_purchase_history = Required(StorePurchaseHistory)
+    PrimaryKey(store_purchase_history, product_name)
 
 
 class UserAuth(db.Entity):
