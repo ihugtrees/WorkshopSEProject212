@@ -106,7 +106,7 @@ class StoreHandler:
         if rating is None:
             rating = 0
         store_list = list()
-        for key, store in stores.get_all_stores().items():
+        for key, store in stores.get_all_stores(rating).items():
             if store.rating >= rating:
                 store_list.append(store)
         return store_list
