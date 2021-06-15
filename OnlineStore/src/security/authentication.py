@@ -1,6 +1,5 @@
 import hashlib
 from threading import Lock
-
 import OnlineStore.src.data_layer.auth_data as auth_data
 
 
@@ -32,16 +31,13 @@ class Authentication:
             self._hash_to_name[username_hash] = username
             self._name_to_hash[username] = username_hash
 
-    def change_password(self, user_name, old_password, new_password):
-        user_name = self._hash_to_name[user_name]
-        if user_name not in self.passwords or not auth_data.user_exist(user_name=user_name):
+    def change_password(self, user_name, old_password, new_password): # TODO CHANGE
+        if user_name not in self.passwords.values():
             raise Exception("Error in user session")
-        if self.passwords[user_name] != hashlib.sha256(old_password.encode()).hexdigest():
+        if user_name != hashlib.sha256(old_password.encode()).hexdigest():
             raise Exception("wrong password")
         else:
-            self.passwords[user_name] = hashlib.sha256(new_password.encode()).hexdigest()
-            auth_data.remove_auth(user_name)
-            auth_data.add_auth(user_name,  self.passwords[user_name])
+            self.passwords[self._hash_to_name[user_name]] = hashlib.sha256(new_password.encode()).hexdigest()
 
     def login(self, username, password) -> str:
         self.lock_rest.acquire()

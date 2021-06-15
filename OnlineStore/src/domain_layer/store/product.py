@@ -30,6 +30,7 @@ class Product:
         self.quantity -= num_to_take
         user_entity.Product.get(store=store_name, product_id=self.product_name).quantity -= num_to_take
 
+
     # TODO work with db
     def return_quantity(self, num_to_take, store_name):
         if num_to_take <= 0:
@@ -40,6 +41,7 @@ class Product:
         self.lock.release()
 
     def calculate_product_sum(self, quantity: int) -> int:
+        # TODO FOR NOW ONLY QUANTITY*PRICE
         return self.price * quantity
 
     @db_session
@@ -50,15 +52,14 @@ class Product:
         user_entity.Product.get(store=store_name, product_id=self.product_name).quantity += quant
 
     @db_session
-    def edit_product_details(self, product_details, store_name):
-        quantity = int(product_details['quantity'])
-        price = int(product_details['price'])
-        self.quantity = quantity
-        self.price = price
-        self.description = product_details['description']
-        self.category = product_details['category']
-        prod_db = user_entity.Product.get(store=store_name, product_id=self.product_name)
-        prod_db.price = price
-        prod_db.quantity = quantity
-        prod_db.description = product_details['description']
-        prod_db.category = product_details['category']
+    def edit_product_description(self, product_description, store_name):
+        if type(product_description) != str:
+            raise Exception("description must be string")
+        self.description = product_description
+        user_entity.Product.get(store=store_name, product_id=self.product_name).description = product_description
+        #product_db.description = product_description
+
+
+
+    def change_quantity(self, store_name, product_name, quantity, ):
+        pass
