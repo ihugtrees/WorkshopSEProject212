@@ -1,5 +1,6 @@
 import hashlib
 from threading import Lock
+import OnlineStore.src.data_layer.auth_data as auth_data
 
 
 class Authentication:
@@ -12,19 +13,25 @@ class Authentication:
         self.lock_rest = Lock()
 
     def register(self, username, password) -> None:
+        username_hash = hashlib.sha256(username.encode()).hexdigest()
         self.lock_reg.acquire()
-        if username in self.passwords:
+        if username in self.passwords or auth_data.user_exist(username_hash):
             self.lock_reg.release()
             raise Exception("User name already exists")
         else:
-            self.passwords[username] = hashlib.sha256(password.encode()).hexdigest()
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
+            try:
+                auth_data.add_auth(username, password_hash)
+            except Exception as e:
+                self.lock_reg.release()
+                raise e
+            self.passwords[username] = password_hash
             self.lock_reg.release()
-            username_hash = hashlib.sha256(username.encode()).hexdigest()
             self.users[username_hash] = False
             self._hash_to_name[username_hash] = username
             self._name_to_hash[username] = username_hash
 
-    def change_password(self, user_name, old_password, new_password):
+    def change_password(self, user_name, old_password, new_password): # TODO CHANGE
         if user_name not in self.passwords.values():
             raise Exception("Error in user session")
         if user_name != hashlib.sha256(old_password.encode()).hexdigest():
@@ -32,14 +39,13 @@ class Authentication:
         else:
             self.passwords[self._hash_to_name[user_name]] = hashlib.sha256(new_password.encode()).hexdigest()
 
-
-
     def login(self, username, password) -> str:
         self.lock_rest.acquire()
-
-        if username not in self.passwords:
+        if not auth_data.user_exist(user_name=username):
             self.lock_rest.release()
-            raise Exception("User not in the system")
+            raise Exception("User does not exist in the system")
+        if username not in self.passwords.keys():
+            self.__set_auth_from_db(username)
         if self.passwords[username] != hashlib.sha256(password.encode()).hexdigest():
             self.lock_rest.release()
             raise Exception("Password is not correct")
@@ -55,7 +61,7 @@ class Authentication:
         self.lock_rest.acquire()
         if username_hash not in self.users:
             self.lock_rest.release()
-            raise Exception("Not a user")
+            raise Exception("Something went wrong try to login again or User does not exist in the system")
         if self.users[username_hash] is False:
             self.lock_rest.release()
             raise Exception("Not Logged In")
@@ -73,11 +79,13 @@ class Authentication:
         self.users[user_name] = True
         self._hash_to_name[user_name] = user_name
         self._name_to_hash[user_name] = user_name
+        auth_data.add_auth(user_name, user_name)
 
     def remove_guest(self, guest_name: str):
         self.users.pop(guest_name)
         self._hash_to_name.pop(guest_name)
         self._name_to_hash.pop(guest_name)
+        auth_data.remove_auth(guest_name)
 
     def check_logged_and_take_lock(self, username) -> Lock:
         """
@@ -97,3 +105,11 @@ class Authentication:
         except:
             self.lock_rest.release()
             return None
+
+    def __set_auth_from_db(self, username):
+        auth_dict = auth_data.get_user_auth(user_name=username)
+        self.passwords[auth_dict["user_name"]] = auth_dict["password_hash"]
+        username_hash = hashlib.sha256(username.encode()).hexdigest()
+        self.users[username_hash] = False
+        self._hash_to_name[username_hash] = username
+        self._name_to_hash[username] = username_hash

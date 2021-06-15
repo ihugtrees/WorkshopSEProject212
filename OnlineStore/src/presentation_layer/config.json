@@ -1,5 +1,13 @@
 {
   "database": {
+    "providerr": "postgres",
+    "user": "avnadmin",
+    "password": "dx48ztqpsf369680",
+    "host": "pg-cf50fb5-post-6c34.aivencloud.com",
+    "database": "defaultdb",
+    "port": "21019",
+    "ca": "ca.pem",
+    "uri": "postgres://avnadmin:dx48ztqpsf369680@pg-cf50fb5-post-6c34.aivencloud.com:21019/defaultdb?sslmode=require",
     "provider": "sqlite",
     "filename": "database.sqlite"
   },

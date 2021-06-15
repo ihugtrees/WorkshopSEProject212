@@ -862,9 +862,12 @@ def handle_command(command, logged_in):
 
 
 def connect_to_database(data, clean_db):
+    # if "provider" in data:
     if "provider" in data and "filename" in data:
         try:
             from OnlineStore.src.data_layer.user_entity import db
+            # db.bind(provider=data["provider"], user=data["user"], password=data["password"], host=data["host"],
+            #         dbname=data["database"], port=data["port"])
             db.bind(provider=data["provider"], filename=f"{os.getcwd()}/{data['filename']}", create_db=True)
             db.generate_mapping(create_tables=True)
             if clean_db:
@@ -920,6 +923,8 @@ def initialize_system(init_file, config_file, clean_db):
     else:
         logging.error("Config file missing")
         return False
+    if clean_db is False:
+        return True
     if os.path.isfile(init_file):
         with open(init_file) as f:
             logged_in = {}

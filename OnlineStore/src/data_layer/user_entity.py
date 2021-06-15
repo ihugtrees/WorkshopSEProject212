@@ -17,6 +17,7 @@ class User(db.Entity):
     userPurchaseHistory = Set("UserPurchaseHistory")
     userPermissions = Set('UserPermissions')
     appoint = Set('Appoint')
+    topics = Set('Topic')
 
 
 class PendingMessages(db.Entity):
@@ -112,3 +113,13 @@ class ProductInHistory(db.Entity):
     product_name = Required(str)
     quantity = Required(int)
     user_purchase_history = Required(UserPurchaseHistory)
+
+
+class UserAuth(db.Entity):
+    user_name = PrimaryKey(str)
+    password_hash = Required(str)
+
+
+class Topic(db.Entity):
+    store_name = PrimaryKey(str)
+    subscribers = Set(User)
