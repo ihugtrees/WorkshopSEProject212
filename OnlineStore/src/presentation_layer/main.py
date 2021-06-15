@@ -596,7 +596,7 @@ def editPurchaseType():
         details = request.form.get('details')
         return render_template("editPurchaseType.html", message=
         display_answer(
-            utils.edit_buying_types(session["user"], storeID=storeID, purchaseType=purchaseType, details=details)[1]))
+            utils.edit_buying_types(session["user"], store_name=storeID, buying_types=purchaseType, details=details)[1]))
     return render_template("editPurchaseType.html")
 
 
@@ -618,7 +618,7 @@ def editDiscountType():
         details = request.form.get('details')
         return render_template("editDiscountType.html", message=
         display_answer(
-            utils.edit_discount_type(session["user"], storeID=storeID, discountType=discountType, details=details)[1]))
+            utils.edit_discount_type(session["user"], store_name=storeID, discount_type=discountType, details=details)[1]))
     return render_template("editDiscountType.html")
 
 
@@ -744,7 +744,7 @@ def editPurchasePolicy():
         purchasePolicy = request.form.get('purchaseType')
         details = request.form.get('details')
         return render_template("editPurchasePolicy.html", message=
-        utils.edit_buying_policy(session["user"], storeID=storeID, purchasePolicy=purchasePolicy, details=details)[1])
+        utils.edit_buying_policy(session["user"], store_name=storeID, buying_policy=purchasePolicy, details=details)[1])
     return render_template("editPurchasePolicy.html")
 
 
@@ -804,12 +804,13 @@ def addSimpleDiscount():
 
 @app.route('/editDiscountPolicy', methods=['POST', 'GET'])
 def editDiscountPolicy():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         storeID = request.form.get('storeID')
         discountPolicy = request.form.get('discountPolicy')
         details = request.form.get('details')
         return render_template("editDiscountPolicy.html", message=
-        utils.edit_discount_policy(session["user"], storeID=storeID, discountPolicy=discountPolicy, details=details)[1])
+        utils.edit_discount_policy(session["user"], store_name=storeID, discount_policy=discountPolicy,
+                                   details=details)[1])
     return render_template("editDiscountPolicy.html")
 
 
@@ -844,8 +845,6 @@ def getEmployeePermissions():
 
 def initialize_system():
     pass
-
-
 #     igor = "igor"
 #     niv = "niv"
 #     a = "a"
@@ -939,4 +938,3 @@ if __name__ == '__main__':
 
     else:
         print("Error - initialization")
-
