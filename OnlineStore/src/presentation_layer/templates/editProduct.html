@@ -6,6 +6,8 @@
 </head>
 <body>
     <form action="/editProduct" method="POST">
+        <p>Enter Product ID:</p>
+        <p><input type="text" name="productID" autofocus="True" /></p>
         <p>Enter Product Name:</p>
         <p><input type="text" name="productName" /></p>
         <p>Enter Prodect Price:</p>
@@ -16,6 +18,10 @@
         <p><input type="text" name="productDescription" /></p>
                 <p>Enter Product Category:</p>
         <p><input type="text" name="productCategory" /></p>
+                <p>Enter Product Discount Type:</p>
+        <p><input type="text" name="productDiscountType" /></p>
+                <p>Enter Product Buying Type:</p>
+        <p><input type="text" name="productBuyingType" /></p>
         <p><input type="submit" value="Edit Product" /></p>
         <p>{{message}}</p>
     </form>

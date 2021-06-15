@@ -105,7 +105,11 @@ class StoreHandler:
     def get_stores_with_rating(self, rating):
         if rating is None:
             rating = 0
-        return stores.get_all_stores(rating)
+        store_list = list()
+        for key, store in stores.get_all_stores().items():
+            if store.rating >= rating:
+                store_list.append(store)
+        return store_list
 
     def get_products_with_filters(self, store, filters):
         """

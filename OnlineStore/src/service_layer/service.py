@@ -401,14 +401,10 @@ def edit_product_description(user_name: str, product_description: str, store_nam
         return [False, e.args[0]]
 
 
-def edit_product(user_name, store_name, prod_details):
-    try:
-        logging.info("edit_product")
-        domain_handler.edit_product(user_name, store_name, prod_details)
-        return [True, "Success"]
-    except Exception as e:
-        logging.error("edit_product_details fail: " + e.args[0])
-        return [False, e.args[0]]
+# TODO check if need that function
+def edit_product(user_name, product_id, product_name, price, quantity, description, store_name,
+                 category, discount_type, buying_type):
+    return [False, "Not implemented yet1"]
 
 
 # 4.3
@@ -741,6 +737,7 @@ def make_offer(user_name, store, product_name, quantity, price, payment_detial, 
         return [False, e.args[0]]
 
 
+
 def accept_offer(store, product_name, user_name, owner_name):
     try:
         logging.info("accept offer")
@@ -757,6 +754,7 @@ def reject_offer(store, product_name, user_name, owner_name, counter_offer=""):
     except Exception as e:
         logging.error(e.args[0])
         return [False, e.args[0]]
+
 
 
 def delete_buying_policy(user_name, store, policy_name: str):
