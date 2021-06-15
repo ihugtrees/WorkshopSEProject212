@@ -12,6 +12,7 @@ from OnlineStore.src.presentation_layer import convert_data
 app = Flask(__name__)
 app.secret_key = 'ItShouldBeAnythingButSecret'  # you can set any secret key but remember it should be secret
 
+# socketio = SocketIO(app, async_mode='threading')
 socketio = SocketIO(app)
 
 
@@ -62,10 +63,12 @@ def display_answer(ans):
 @app.route('/', methods=['POST', 'GET'])
 def web_login():
     if request.method == 'POST':
-        # if 'user' in session and session['user'] is not None:
-        #     return redirect('/wronglogin')  # maybe bug
-        username = request.form.get('username')
-        password = request.form.get('password')
+        if len(request.args.keys()) > 0:
+            username = request.args['username']
+            password = request.args['password']
+        else:
+            username = request.form.get('username')
+            password = request.form.get('password')
         username_hash = utils.log_in(username, password)
         if username_hash[0]:
             resp = redirect('/dashboard')
@@ -102,13 +105,16 @@ def dashboard():
         if utils.userIsStoreManager(user, store_id)[0]:
             session["store"] = store_id
             return render_template("dashboardStoreManager.html")
-        if utils.is_user_admin(session['user'])[0]:
+
+        admin = utils.is_user_admin(session['user'])
+        if admin[0] and admin[1]:
             return render_template("dashboardAdmin.html",
                                    welcome=f"Hi {session['username']} What would You like to do?")
         else:
             return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
     if 'user' in session and session['user'] is not None:
-        if utils.is_user_admin(session['user'])[0]:
+        admin = utils.is_user_admin(session['user'])
+        if admin[0] and admin[1]:
             return render_template("dashboardAdmin.html",
                                    welcome=f"Hi {session['username']} What would You like to do?")
         session["store"] = "None" if "store" not in session else session["store"]
@@ -177,10 +183,15 @@ def logout():
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    if (request.method == 'POST'):
-        username = request.form.get('username')
-        age = request.form.get('age')
-        password = request.form.get('password')
+    if request.method == 'POST':
+        if len(request.args.keys()) > 0:
+            username = request.args['username']
+            age = request.args['age']
+            password = request.args['password']
+        else:
+            username = request.form.get('username')
+            age = request.form.get('age')
+            password = request.form.get('password')
         if username is not None and password is not None:
             ans = utils.register(username, password, age)
             return render_template("signup.html", message=display_answer(ans[1]))
@@ -474,7 +485,9 @@ def pastPurchases():
     purchase_list = None
     if request.method == 'GET' and 'user' in session and session["user"] is not None:
         purchase_list = utils.get_user_purchases_history(session["user"])
-    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+
+    admin = utils.is_user_admin(session['user'])
+    if request.method == 'POST' and admin[0] and admin[1]:
         purchase_list = utils.get_user_purchase_history_admin(session['user'], request.form["username"])
     if purchase_list is not None:
         if purchase_list[0]:
@@ -491,7 +504,8 @@ def pastStorePurchases():
     purchase_list = None
     if request.method == 'GET' and 'store' in session and session["store"] is not None:
         purchase_list = utils.get_store_purchase_history(session["user"], session["store"])
-    if request.method == 'POST' and utils.is_user_admin(session["user"])[0]:
+    admin = utils.is_user_admin(session["user"])
+    if request.method == 'POST' and admin[0] and admin[1]:
         purchase_list = utils.get_store_purchase_history_admin(session["user"], request.form['store'])
     if purchase_list is not None:
         if purchase_list[0]:
@@ -664,9 +678,9 @@ def rejectOffer():
         counter_offer = request.form.get("counter_Offer")
         return render_template("rejectOffer.html",
                                message=display_answer(
-                                   utils.reject_offer(storeID,user_name, session["user"], product_name,counter_offer )[1]))
+                                   utils.reject_offer(storeID, user_name, session["user"], product_name, counter_offer)[
+                                       1]))
     return render_template("rejectOffer.html")
-
 
 
 @app.route('/addNewProduct', methods=['POST', 'GET'])
@@ -835,6 +849,8 @@ def getEmployeePermissions():
 
 def initialize_system():
     pass
+
+
 #     igor = "igor"
 #     niv = "niv"
 #     a = "a"
@@ -921,8 +937,11 @@ if __name__ == '__main__':
     parser.add_argument('--config_file', action='store', default="config.json", help="Config file")
     parser.add_argument('--clean', action='store_true', default="false", help="clean database")
     args = parser.parse_args()
-    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=False):
-     #   initialize_system()
+    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
+        #   initialize_system()
+        # socketio.run(app=app, debug=True, port=8443, use_reloader=False)
         socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
+
     else:
         print("Error - initialization")
+
