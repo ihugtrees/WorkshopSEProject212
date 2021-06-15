@@ -134,7 +134,7 @@ def search_product_by_id(product_id):  # 2.6.???? # TODO WHAT IS THIS
     :return: Product
     """
 
-    for store in stores.get_all_stores().values():
+    for store in stores.get_all_stores():
         if product_id in store.inventory.products_dict:
             ans = store.inventory.products_dict[product_id]
             return ans

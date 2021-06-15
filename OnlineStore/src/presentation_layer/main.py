@@ -687,7 +687,6 @@ def rejectOffer():
 def addNewProduct():
     if (request.method == 'POST'):
         storeID = session['store']
-        productID = request.form.get("productID")
         product_Name = request.form.get('productName')
         product_Price = request.form.get("productPrice")
         product_Amount = request.form.get("productAmount")
@@ -695,7 +694,7 @@ def addNewProduct():
         product_Category = request.form.get("productCategory")
         return render_template("addNewProduct.html",
                                message=display_answer(
-                                   utils.add_new_product_to_store_inventory(session["user"], productID,
+                                   utils.add_new_product_to_store_inventory(session["user"], product_Name,
                                                                             product_Name, product_Price, product_Amount,
                                                                             product_Description, storeID,
                                                                             product_Category)[1]))

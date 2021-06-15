@@ -35,27 +35,31 @@ def store_data_form_db(store_name):
     store.discount_policy.discount_dict = get_all_discount_policy_data(store_name)
     return store
 
+
 @db_session
 def store_data_form_db_rating(rating):
     rating = int(rating)
-    store_db = user_entity.Store.get(rating=rating)
-    store_name = store_db.store_name
-    products = user_entity.Product.select(lambda p: p.store.name == store_name)
-    product_dict = dict()
-    for p in products:
-        product = Product(p.product_id, p.product_name, p.quantity, p.price, p.category)
-        product.description = p.description
-        product_dict[p.product_name] = product
-    inventory = Inventory(product_dict)
-    store = Store(store_name, store_db.store_founder)
-    store.inventory = inventory
-    store.rating = store_db.rating
-    store_dict[store_name] = store
-    store.buying_policy = BuyingPolicy()
-    store.buying_policy.terms_dict = get_all_buying_policy_data(store_name)
-    store.discount_policy = DiscountPolicy()
-    store.discount_policy.discount_dict = get_all_discount_policy_data(store_name)
-    return store
+    store_db = user_entity.Store.select(lambda s: s.rating >= rating)
+    store_list = list()
+    for s in store_db:
+        store_name = s.name
+        products = user_entity.Product.select(lambda p: p.store.name == store_name)
+        product_dict = dict()
+        for p in products:
+            product = Product(p.product_id, p.product_name, p.quantity, p.price, p.category)
+            product.description = p.description
+            product_dict[p.product_name] = product
+        inventory = Inventory(product_dict)
+        store = Store(store_name, s.store_founder)
+        store.inventory = inventory
+        store.rating = s.rating
+        store_dict[store_name] = store
+        store.buying_policy = BuyingPolicy()
+        store.buying_policy.terms_dict = get_all_buying_policy_data(store_name)
+        store.discount_policy = DiscountPolicy()
+        store.discount_policy.discount_dict = get_all_discount_policy_data(store_name)
+        store_list.append(store)
+    return store_list
 
 
 @db_session
@@ -117,7 +121,7 @@ def add_product_to_store(store_name, product_details):
                         quantity=product_details["quantity"],
                         description="",
                         price=product_details["price"],
-                        category="null",
+                        category=product_details["category"],
                         rating=0)  # maybe not?
 
 
