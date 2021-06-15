@@ -112,7 +112,12 @@ def dashboard():
                                    welcome=f"Hi {session['username']} What would You like to do?")
         else:
             return render_template("dashboard.html", welcome=f"Hi {session['username']} What would You like to do?")
+    
     if 'user' in session and session['user'] is not None:
+        
+        if len(session['user']) == 20:
+            return render_template("dashboardGuest.html",
+                                welcome=f"Hi {session['username']} What would You like to do?")
         admin = utils.is_user_admin(session['user'])
         if admin[0] and admin[1]:
             return render_template("dashboardAdmin.html",
@@ -937,7 +942,7 @@ if __name__ == '__main__':
     parser.add_argument('--config_file', action='store', default="config.json", help="Config file")
     parser.add_argument('--clean', action='store_true', default="false", help="clean database")
     args = parser.parse_args()
-    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
+    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=False):
         #   initialize_system()
         # socketio.run(app=app, debug=True, port=8443, use_reloader=False)
         socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)

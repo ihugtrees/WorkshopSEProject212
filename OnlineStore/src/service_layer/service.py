@@ -284,7 +284,7 @@ def purchase(user_name: str, payment_info: dict, buyer_information: dict):
         logging.info(f"Successful purchase by {domain_handler.auth.get_username_from_hash(user_name)}")
         return [True, ans]
     except Exception as e:
-        logging.error("purchase fail " + e.args[0])
+        logging.error("purchase fail " + str(e.args[0]))
         return [False, e.args[0]]
 
 

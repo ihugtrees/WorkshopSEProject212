@@ -574,15 +574,10 @@ class TestService(TestCase):
         store_name = "store1"
         service.open_product_to_offer(user_name, store_name, "product", 20)
         user_name2 = users_hash["user_name2"]
-        payment_info = {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                        "holder": "Niv"},
-        shipment = {"city": "sss", "country": "Israel", "zip": "8538600",
-                    "address": "ziso 5/3 beer sheva, israel",
-                    "name": "niv"}
-        service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, shipment)
+        service.make_offer(user_name2, store_name, "product", 1, 23, payment_info, buyer_information)
         service.accept_offer(store_name, "product", "user_name2", user_name)
         quantity = service.get_store_for_tests(store_name)[1].inventory.products_dict["product"].quantity
-        self.assertTrue(quantity == 9)
+        self.assertTrue(quantity == 9, quantity)
 
     def test_reject_offer(self):
         user_name = users_hash["user_name1"]

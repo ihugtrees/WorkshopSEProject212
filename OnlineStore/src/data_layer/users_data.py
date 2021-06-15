@@ -216,6 +216,7 @@ def add_user_to_topic(store_name, user_name):
     topic.subscribers.add(user_entity.User[user_name])
 
 
+@db_session
 def get_topic_subscribers(store_name):
     topic = user_entity.Topic.get(store_name=store_name)
     if topic is None:
