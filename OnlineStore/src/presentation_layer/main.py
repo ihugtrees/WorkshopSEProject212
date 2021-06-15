@@ -921,7 +921,7 @@ if __name__ == '__main__':
     parser.add_argument('--config_file', action='store', default="config.json", help="Config file")
     parser.add_argument('--clean', action='store_true', default="false", help="clean database")
     args = parser.parse_args()
-    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=True):
+    if utils.initialize_system(init_file=args.init_file, config_file=args.config_file, clean_db=False):
      #   initialize_system()
         socketio.run(app=app, debug=True, certfile='cert.pem', keyfile='key.pem', port=8443, use_reloader=False)
     else:

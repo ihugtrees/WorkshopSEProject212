@@ -6,5 +6,5 @@ class Receipt:
         self.total_sum = total_sum
         self.date = date
         self.destination = destination
-        self.products = products
+        self.products = products #{product_name: quantity}
         self.transaction_id = transaction_id

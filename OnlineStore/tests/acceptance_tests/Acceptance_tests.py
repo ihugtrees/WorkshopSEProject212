@@ -346,10 +346,7 @@ class TestService(TestCase):
         #self.assertTrue(anst[0], anst[1])
         cart_before, store_history_before, user_history_before = take_info(user_name, store_name)
 
-        ans = service.purchase(user_name, {"card_number": "123123", "year": "2024", "month": "3", "ccv": "111", "id": "205557564",
-                "holder": "Niv"}, {"city": "sss", "country": "Israel", "zip": "8538600",
-                     "address": "ziso 5/3 beer sheva, israel",
-                     "name": "niv"})
+        ans = service.purchase(user_name, payment_info, buyer_information)
 
         cart_after, store_history_after, user_history_after = take_info(user_name, store_name)
 
@@ -367,7 +364,16 @@ class TestService(TestCase):
         user_name2 = users_hash["user_name2"]
         user_name3 = users_hash["user_name3"]
         store_name = "store4"
-        product_name = "product"
+        product_name = "product1"
+        product = {
+            "product_id": product_name,
+            "product_name": product_name,
+            "quantity": 10,
+            "price": 10
+        }
+        ans = service.add_new_product_to_store_inventory(user_name=user_name0, store_name=store_name, product_details=product)
+        self.assertTrue(ans[0], ans[1])
+        add_to_cart1 = service.add_product_to_cart(user_name0, product_name, 5, store_name)
         add_to_cart1 = service.add_product_to_cart(user_name1, product_name, 5, store_name)
         self.assertTrue(add_to_cart1[0], add_to_cart1[1])
         service.add_product_to_cart(user_name2, product_name, 5, store_name)

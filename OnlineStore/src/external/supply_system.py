@@ -18,7 +18,7 @@ class SupplySystem:
         transaction_id = int(response.content)
         if transaction_id == -1:
             raise Exception("Delivery system rejected the delivery")
-        print(f"Transaction id:{int(response.content)}")
+        # print(f"Transaction id:{int(response.content)}")
         return transaction_id
 
 

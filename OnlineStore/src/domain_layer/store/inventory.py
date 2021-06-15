@@ -1,3 +1,5 @@
+from pony.orm import db_session
+
 from OnlineStore.src.domain_layer.store.product import Product
 from OnlineStore.src.domain_layer.user.basket import Basket
 import OnlineStore.src.data_layer.store_data as stores
@@ -28,19 +30,15 @@ class Inventory:
         self.lock.release()
 
     def take_quantity(self, basket: Basket, store_name):
-        exception_string = ""
         self.lock.acquire()
-        for product_name in basket.products_dict.keys():
-            try:
-                self.products_dict.get(product_name).take_quantity(
-                    basket.products_dict.get(product_name), store_name)
-            except Exception as e:
-                exception_string += e.args[0]
-
-        if exception_string != "":
-            self.__rollback_from_take_quantity(basket, store_name)
-            self.lock.release()
-            raise Exception(exception_string)
+        with db_session:
+            for product_name in basket.products_dict.keys():
+                try:
+                    self.products_dict.get(product_name).take_quantity(
+                        basket.products_dict.get(product_name), store_name)
+                except Exception as e:
+                    self.lock.release()
+                    raise e
         self.lock.release()
 
     def take_quantity_for_one_product(self, product, quantity, store):

@@ -23,7 +23,16 @@ def send_message(message, to, event):
         lock.release()
 
 
+def __get_and_set_topic(store_name):
+    topics[store_name] = user_data_handler.get_topic_subscribers(store_name)
+
+
 def send_message_to_store_employees(message, store_name, event):
+    store_subscribers = topics.get(store_name)
+    if store_subscribers is None:
+        __get_and_set_topic(store_name)
+
+    store_subscribers = topics.get(store_name)
     for owner in topics[store_name]:
         send_message(message, owner, event)
 
@@ -48,12 +57,14 @@ def subscribe(username, store_name):
     if store_name not in topics:
         topics[store_name] = list()
     topics[store_name].append(username)
+    user_data_handler.add_user_to_topic(store_name=store_name, user_name=username)
 
 
 def unsubscribe(username, store_name):
     if store_name not in topics:
         raise Exception("Unsubscribe fail")
     topics[store_name].remove(username)
+    user_data_handler.remove_user_from_topic(store_name, username)
 
 
 def delete_store(store_name) -> None:

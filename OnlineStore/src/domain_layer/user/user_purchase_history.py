@@ -7,6 +7,7 @@ class UserPurchaseHistory:
     def __init__(self):
         self.purchases = dict()
         self.lock = Lock()
+
     @db_session
     def add_purchase(self, purchase: Receipt):
         self.lock.acquire()
@@ -20,8 +21,6 @@ class UserPurchaseHistory:
         products_list = list()
 
         for k,p in purchase.products.items():
-            print(k)
-            print(p)
             purchase_history.products.add(user_entity.ProductInHistory(quantity = p , product_name=k, user_purchase_history=purchase_history))
 
         self.lock.release()

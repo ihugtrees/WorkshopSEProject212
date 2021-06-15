@@ -167,7 +167,10 @@ def remove_from_cart(user_name, product_name, quantity, store_name):
 
 @db_session
 def empty_cart(user_name):
-    user_entity.User.get(user_name=user_name).productInCart = []
+    try:
+        user_entity.User.get(user_name=user_name).productInCart = []
+    except Exception as e:
+        print(e)
 
 
 @db_session
@@ -193,3 +196,31 @@ def remove_guest(guest_name):
 
 def register_guest(guest_name):
     users[guest_name] = User(guest_name)
+
+
+@db_session
+def remove_user_from_topic(store_name, username):
+    topic = user_entity.Topic.get(store_name=store_name)
+    if topic is None:
+        raise Exception("Something went wrong")
+    for subscriber in topic.subscribers:
+        if subscriber.user_name == username:
+            subscriber.delete()
+
+
+@db_session
+def add_user_to_topic(store_name, user_name):
+    topic = user_entity.Topic.get(store_name=store_name)
+    if topic is None:
+        topic = user_entity.Topic(store_name=store_name, subscribers=[])
+    topic.subscribers.add(user_entity.User[user_name])
+
+
+def get_topic_subscribers(store_name):
+    topic = user_entity.Topic.get(store_name=store_name)
+    if topic is None:
+        raise Exception("Something went wrong")
+    subscribers = list()
+    for sub in topic.subscribers:
+        subscribers.append(sub.user_name)
+    return subscribers
