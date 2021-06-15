@@ -550,6 +550,25 @@ class TestService(TestCase):
         self.assertTrue(len(store_history_before) == len(store_history_after))
         self.assertTrue(len(user_history_before) == len(user_history_after))
 
+    def test_remove_buying_policy(self):
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.add_buying_policy(user_name, store_name, "p1", "milk quantity > 50")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 1,
+                        len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict))
+        ans = service.delete_buying_policy(user_name, store_name, "p1")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict) == 0,
+                        len(service.get_store_for_tests(store_name)[1].buying_policy.terms_dict))
+        self.assertTrue(ans[0])
+
+    def test_delete_discount(self):
+        user_name = users_hash["user_name1"]
+        store_name = "store1"
+        service.add_term_discount(user_name, store_name, "d1", "milk 20", "milk quantity > 50")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].discount_policy.discount_dict) == 1)
+        service.delete_discount_policy(user_name, store_name, "d1")
+        self.assertTrue(len(service.get_store_for_tests(store_name)[1].discount_policy.discount_dict) == 0)
+
     def test_assign_store_manager(self):  # 4.3
         user_name = users_hash["user_name1"]
         new_store_manager_name = "user_name2"
